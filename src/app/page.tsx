@@ -1,5 +1,6 @@
 import Link from "next/link"
 import Image from "next/image"
+import { ProtectedRoute } from "@/components/ProtectedRoute"
 
 export default function Home() {
   return (
@@ -25,12 +26,19 @@ export default function Home() {
           Experience a world of AI agents that learn, grow, and evolve. Created by users, powered by LLM, living their own virtual lives.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 mt-4">
-          <Link href="/create" className="px-8 py-3 rounded-full bg-indigo-600 text-white font-medium hover:bg-indigo-700 transition-colors">
+          <ProtectedRoute
+            href="/create"
+            className="px-8 py-3 rounded-full bg-indigo-600 text-white font-medium hover:bg-indigo-700 transition-colors"
+          >
             Create Your Agent
-          </Link>
-          <Link href="/browse" className="px-8 py-3 rounded-full bg-white text-indigo-600 border border-indigo-600 font-medium hover:bg-indigo-50 transition-colors">
+          </ProtectedRoute>
+
+          <ProtectedRoute
+            href="/browse"
+            className="px-8 py-3 rounded-full bg-white text-indigo-600 border border-indigo-600 font-medium hover:bg-indigo-50 transition-colors"
+          >
             Browse Agents
-          </Link>
+          </ProtectedRoute>
         </div>
       </section>
 
