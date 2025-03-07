@@ -1,8 +1,8 @@
 'use client'
 
 import { useState, FormEvent } from 'react'
-import Button from '@/components/ui/Button'
-import Input from '@/components/ui/Input'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 
 interface EmailVerificationFormProps {
   step: 'email' | 'verification'
@@ -29,7 +29,7 @@ export default function EmailVerificationForm({
     e.preventDefault()
     if (inputEmail.trim()) {
       await onSendCode(inputEmail.trim())
-      // 开始倒计时
+      // Start countdown
       setCountdown(60)
       const timer = setInterval(() => {
         setCountdown((prev) => {
@@ -53,7 +53,7 @@ export default function EmailVerificationForm({
   const handleResendCode = async () => {
     if (countdown === 0) {
       await onSendCode(email)
-      // 重新开始倒计时
+      // Restart countdown
       setCountdown(60)
       const timer = setInterval(() => {
         setCountdown((prev) => {
@@ -73,14 +73,14 @@ export default function EmailVerificationForm({
         <form onSubmit={handleEmailSubmit} className="space-y-4">
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-              邮箱地址
+              Email Address
             </label>
             <Input
               id="email"
               type="email"
               value={inputEmail}
-              onChange={(e) => setInputEmail(e.target.value)}
-              placeholder="请输入您的邮箱"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setInputEmail(e.target.value)}
+              placeholder="Please enter your email"
               required
               className="mt-1 block w-full"
               disabled={isLoading}
@@ -89,10 +89,9 @@ export default function EmailVerificationForm({
           <Button
             type="submit"
             className="w-full"
-            isLoading={isLoading}
             disabled={isLoading || !inputEmail.trim()}
           >
-            获取验证码
+            {isLoading ? 'Sending...' : 'Get Verification Code'}
           </Button>
         </form>
       ) : (
@@ -100,14 +99,14 @@ export default function EmailVerificationForm({
           <div>
             <div className="flex items-center justify-between">
               <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                邮箱地址
+                Email Address
               </label>
               <button
                 type="button"
                 onClick={onBackToEmail}
                 className="text-sm text-blue-600 hover:text-blue-800"
               >
-                修改
+                Edit
               </button>
             </div>
             <p className="mt-1 block w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-gray-600">
@@ -116,14 +115,14 @@ export default function EmailVerificationForm({
           </div>
           <div>
             <label htmlFor="code" className="block text-sm font-medium text-gray-700">
-              验证码
+              Verification Code
             </label>
             <Input
               id="code"
               type="text"
               value={code}
-              onChange={(e) => setCode(e.target.value)}
-              placeholder="请输入验证码"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCode(e.target.value)}
+              placeholder="Please enter verification code"
               required
               className="mt-1 block w-full"
               disabled={isLoading}
@@ -137,14 +136,13 @@ export default function EmailVerificationForm({
               className={`text-sm ${countdown > 0 ? 'text-gray-500' : 'text-blue-600 hover:text-blue-800'
                 }`}
             >
-              {countdown > 0 ? `重新发送 (${countdown}s)` : '重新发送'}
+              {countdown > 0 ? `Resend (${countdown}s)` : 'Resend'}
             </button>
             <Button
               type="submit"
-              isLoading={isLoading}
               disabled={isLoading || !code.trim()}
             >
-              登录
+              {isLoading ? 'Verifying...' : 'Login'}
             </Button>
           </div>
         </form>

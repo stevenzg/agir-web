@@ -1,6 +1,6 @@
 import { API_BASE_URL, REQUEST_TIMEOUT } from '@/config';
 
-// API响应错误
+// API response error
 export class ApiError extends Error {
   code: string;
   details?: Record<string, string[]>;
@@ -13,7 +13,7 @@ export class ApiError extends Error {
   }
 }
 
-// 认证相关的API响应类型
+// Authentication related API response types
 interface TokenResponse {
   access_token: string;
   refresh_token: string;
@@ -21,27 +21,27 @@ interface TokenResponse {
 }
 
 /**
- * 处理API响应并解析错误
+ * Handle API response and parse errors
  */
 async function handleResponse<T>(response: Response): Promise<T> {
   if (response.ok) {
     return response.json();
   }
 
-  // 处理错误响应
+  // Handle error response
   let errorData;
   try {
     errorData = await response.json();
   } catch {
-    // 如果无法解析为JSON，使用状态文本
+    // If unable to parse as JSON, use status text
     throw new ApiError(
-      response.statusText || '请求失败',
+      response.statusText || 'Request failed',
       'request_failed',
     );
   }
 
-  // 构建标准化错误对象
-  const message = errorData.detail || errorData.message || '请求失败';
+  // Build standardized error object
+  const message = errorData.detail || errorData.message || 'Request failed';
   const code = errorData.code || `http_${response.status}`;
   const details = errorData.errors || errorData.details;
 
@@ -49,7 +49,7 @@ async function handleResponse<T>(response: Response): Promise<T> {
 }
 
 /**
- * 带超时的fetch函数
+ * Fetch function with timeout
  */
 async function fetchWithTimeout(url: string, options: RequestInit): Promise<Response> {
   const controller = new AbortController();
@@ -66,12 +66,12 @@ async function fetchWithTimeout(url: string, options: RequestInit): Promise<Resp
     });
   } catch (error) {
     if (error instanceof Error && error.name === 'AbortError') {
-      throw new ApiError('请求超时', 'request_timeout');
+      throw new ApiError('Request timeout', 'request_timeout');
     }
     
     if (error instanceof Error) {
-      // 处理网络错误
-      throw new ApiError(error.message || '网络请求失败', 'network_error');
+      // Handle network errors
+      throw new ApiError(error.message || 'Network request failed', 'network_error');
     }
     
     throw error;
@@ -81,8 +81,8 @@ async function fetchWithTimeout(url: string, options: RequestInit): Promise<Resp
 }
 
 /**
- * 发送验证码到指定邮箱
- * @param email 邮箱地址
+ * Send verification code to the specified email
+ * @param email Email address
  */
 export async function sendVerificationCode(email: string): Promise<void> {
   try {
@@ -96,25 +96,25 @@ export async function sendVerificationCode(email: string): Promise<void> {
 
     await handleResponse<void>(response);
   } catch (error) {
-    // 处理特定的邮箱验证错误
+    // Handle specific email verification errors
     if (error instanceof ApiError) {
       throw error;
     }
     
-    // 未知错误转换为ApiError
+    // Convert unknown errors to ApiError
     if (error instanceof Error) {
-      throw new ApiError(error.message || '发送验证码失败', 'send_code_failed');
+      throw new ApiError(error.message || 'Failed to send verification code', 'send_code_failed');
     }
     
-    throw new ApiError('发送验证码失败', 'send_code_failed');
+    throw new ApiError('Failed to send verification code', 'send_code_failed');
   }
 }
 
 /**
- * 验证邮箱和验证码
- * @param email 邮箱地址
- * @param code 验证码
- * @returns 包含访问令牌和刷新令牌的响应
+ * Verify email and verification code
+ * @param email Email address
+ * @param code Verification code
+ * @returns Response containing access token and refresh token
  */
 export async function verifyEmail(email: string, code: string): Promise<TokenResponse> {
   try {
@@ -128,23 +128,23 @@ export async function verifyEmail(email: string, code: string): Promise<TokenRes
 
     return await handleResponse<TokenResponse>(response);
   } catch (error) {
-    // 处理验证码相关错误
+    // Handle verification code related errors
     if (error instanceof ApiError) {
       throw error;
     }
     
     if (error instanceof Error) {
-      throw new ApiError(error.message || '验证码验证失败', 'verification_failed');
+      throw new ApiError(error.message || 'Verification code validation failed', 'verification_failed');
     }
     
-    throw new ApiError('验证码验证失败', 'verification_failed');
+    throw new ApiError('Verification code validation failed', 'verification_failed');
   }
 }
 
 /**
- * 刷新访问令牌
- * @param refreshToken 刷新令牌
- * @returns 包含新访问令牌的响应
+ * Refresh access token
+ * @param refreshToken Refresh token
+ * @returns Response containing new access token
  */
 export async function refreshToken(refreshToken: string): Promise<{ access_token: string; token_type: string }> {
   try {
@@ -163,15 +163,15 @@ export async function refreshToken(refreshToken: string): Promise<{ access_token
     }
     
     if (error instanceof Error) {
-      throw new ApiError(error.message || '刷新令牌失败', 'token_refresh_failed');
+      throw new ApiError(error.message || 'Failed to refresh token', 'token_refresh_failed');
     }
     
-    throw new ApiError('刷新令牌失败', 'token_refresh_failed');
+    throw new ApiError('Failed to refresh token', 'token_refresh_failed');
   }
 }
 
 /**
- * 登出
+ * Logout
  */
 export async function logout(): Promise<void> {
   const accessToken = localStorage.getItem('accessToken');
@@ -191,15 +191,15 @@ export async function logout(): Promise<void> {
 
     await handleResponse<void>(response);
     
-    // 清除本地存储的令牌
+    // Clear tokens from local storage
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
   } catch (error) {
     console.error('Logout failed:', error);
-    // 即使API调用失败，也清除本地令牌
+    // Clear local tokens even if API call fails
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
     
-    // 此处不抛出错误，确保用户始终能登出
+    // Don't throw error here to ensure user can always logout
   }
 } 

@@ -6,7 +6,7 @@ import EmailVerificationForm from './components/EmailVerificationForm'
 import { sendVerificationCode, verifyEmail } from '@/services/auth'
 import { useAuth } from '@/context/AuthContext'
 
-// 定义详细错误类型
+// Define detailed error type
 interface ApiError {
   code: string
   message: string
@@ -21,27 +21,27 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<ApiError | null>(null)
 
-  // 错误处理工具函数
+  // Error handling utility function
   const handleApiError = (err: unknown): ApiError => {
-    console.error('API错误:', err)
+    console.error('API Error:', err)
 
-    // 标准API错误
+    // Standard API error
     if (typeof err === 'object' && err !== null && 'code' in err && 'message' in err) {
       return err as ApiError
     }
 
-    // 未知错误或网络错误
+    // Unknown error or network error
     if (err instanceof Error) {
       return {
         code: 'unknown_error',
-        message: err.message || '发生错误，请稍后重试'
+        message: err.message || 'An error occurred, please try again later'
       }
     }
 
-    // 默认错误
+    // Default error
     return {
       code: 'system_error',
-      message: '系统错误，请稍后重试'
+      message: 'System error, please try again later'
     }
   }
 
@@ -49,9 +49,9 @@ export default function LoginPage() {
     try {
       setIsLoading(true)
       setError(null)
-      // 调用 API 发送验证码
+      // Call API to send verification code
       await sendVerificationCode(inputEmail)
-      // 保存邮箱并进入验证码输入步骤
+      // Save email and proceed to verification code input step
       setEmail(inputEmail)
       setStep('verification')
     } catch (err) {
@@ -65,13 +65,13 @@ export default function LoginPage() {
     try {
       setIsLoading(true)
       setError(null)
-      // 调用 API 验证邮箱和验证码
+      // Call API to verify email and code
       const result = await verifyEmail(email, code)
 
-      // 使用AuthContext登录
+      // Use AuthContext to login
       login(result.access_token, result.refresh_token)
 
-      // 登录成功，重定向到首页
+      // Login successful, redirect to homepage
       router.push('/')
     } catch (err) {
       setError(handleApiError(err))
@@ -85,31 +85,31 @@ export default function LoginPage() {
     setError(null)
   }
 
-  // 获取友好的错误消息
+  // Get friendly error message
   const getErrorMessage = () => {
     if (!error) return null
 
-    // 处理特定错误类型的友好消息
+    // Handle friendly messages for specific error types
     switch (error.code) {
       case 'invalid_email':
-        return '邮箱格式不正确，请检查后重试'
+        return 'Invalid email format, please check and try again'
       case 'invalid_code':
-        return '验证码不正确，请重新输入'
+        return 'Incorrect verification code, please try again'
       case 'code_expired':
-        return '验证码已过期，请重新获取'
+        return 'Verification code has expired, please request a new one'
       case 'too_many_attempts':
-        return '尝试次数过多，请稍后再试'
+        return 'Too many attempts, please try again later'
       case 'network_error':
-        return '网络连接失败，请检查您的网络'
+        return 'Network connection failed, please check your network'
       default:
-        return error.message || '发生错误，请稍后重试'
+        return error.message || 'An error occurred, please try again later'
     }
   }
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50">
       <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-md">
-        <h1 className="mb-6 text-center text-2xl font-bold text-gray-800">登录</h1>
+        <h1 className="mb-6 text-center text-2xl font-bold text-gray-800">Login</h1>
 
         {error && (
           <div className="mb-4 rounded-md bg-red-50 p-4 text-sm text-red-700">
