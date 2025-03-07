@@ -1,71 +1,104 @@
 'use client'
 
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react'
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react'
 import { useRouter } from 'next/navigation'
-import { refreshToken, logout } from '@/services/auth'
+import { refreshToken } from '@/services/auth'
+import { AUTH_CONFIG } from '@/config'
+
+interface User {
+  id?: string
+  email?: string
+}
 
 interface AuthContextType {
   isAuthenticated: boolean
-  loading: boolean
-  logout: () => Promise<void>
+  isLoading: boolean
+  user: User | null
+  login: (accessToken: string, refreshTokenValue: string) => void
+  logout: () => void
   getAccessToken: () => string | null
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
+  const [isLoading, setIsLoading] = useState(true)
+  const [user, setUser] = useState<User | null>(null)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [loading, setLoading] = useState(true)
   const router = useRouter()
 
-  // 检查认证状态并处理令牌刷新
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const token = localStorage.getItem('accessToken')
-        const refreshTokenValue = localStorage.getItem('refreshToken')
+  // 从存储中获取 token
+  const getAccessToken = (): string | null => {
+    if (typeof window === 'undefined') return null
+    return localStorage.getItem(AUTH_CONFIG.TOKEN_STORAGE_KEY)
+  }
 
-        if (!token || !refreshTokenValue) {
-          setIsAuthenticated(false)
-          setLoading(false)
-          return
-        }
+  // 存储 token
+  const login = (accessToken: string, refreshTokenValue: string) => {
+    if (typeof window === 'undefined') return
+    localStorage.setItem(AUTH_CONFIG.TOKEN_STORAGE_KEY, accessToken)
+    localStorage.setItem(AUTH_CONFIG.REFRESH_TOKEN_STORAGE_KEY, refreshTokenValue)
+    setIsAuthenticated(true)
+    // 这里可以解析 JWT 获取用户信息，或者发起请求获取用户信息
+    setUser({ email: 'user@example.com' }) // 示例，实际应获取真实用户信息
+  }
 
-        // 简单检查令牌是否存在，实际应用中可能需要验证令牌
-        setIsAuthenticated(true)
-
-        // 这里可以添加令牌刷新逻辑
-        // 例如: 检查令牌过期时间，如果快过期则刷新
-
-      } catch (error) {
-        console.error('Authentication error:', error)
-        setIsAuthenticated(false)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    checkAuth()
-  }, [])
-
-  const handleLogout = async () => {
-    await logout()
+  // 登出并清除 token
+  const logout = () => {
+    if (typeof window === 'undefined') return
+    localStorage.removeItem(AUTH_CONFIG.TOKEN_STORAGE_KEY)
+    localStorage.removeItem(AUTH_CONFIG.REFRESH_TOKEN_STORAGE_KEY)
     setIsAuthenticated(false)
+    setUser(null)
     router.push('/login')
   }
 
-  const getAccessToken = () => {
-    return localStorage.getItem('accessToken')
-  }
+  // 初始化检查认证状态
+  useEffect(() => {
+    const initAuth = async () => {
+      try {
+        setIsLoading(true)
+        const token = getAccessToken()
+        const storedRefreshToken = localStorage.getItem(AUTH_CONFIG.REFRESH_TOKEN_STORAGE_KEY)
+
+        if (!token && !storedRefreshToken) {
+          setIsLoading(false)
+          return
+        }
+
+        // 如果有token，则视为已认证
+        if (token) {
+          setIsAuthenticated(true)
+          // 这里应该加入获取用户信息的逻辑
+          setUser({ email: 'user@example.com' }) // 示例，实际应获取真实用户信息
+        }
+        // 如果token过期但有刷新token，尝试刷新
+        else if (storedRefreshToken) {
+          try {
+            const result = await refreshToken(storedRefreshToken)
+            localStorage.setItem(AUTH_CONFIG.TOKEN_STORAGE_KEY, result.access_token)
+            setIsAuthenticated(true)
+            // 同样，这里应该获取用户信息
+            setUser({ email: 'user@example.com' })
+          } catch (error) {
+            // 刷新失败，清除所有token
+            localStorage.removeItem(AUTH_CONFIG.TOKEN_STORAGE_KEY)
+            localStorage.removeItem(AUTH_CONFIG.REFRESH_TOKEN_STORAGE_KEY)
+          }
+        }
+      } catch (error) {
+        console.error('Auth initialization error:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    initAuth()
+  }, [])
 
   return (
     <AuthContext.Provider
-      value={{
-        isAuthenticated,
-        loading,
-        logout: handleLogout,
-        getAccessToken,
-      }}
+      value={{ isAuthenticated, isLoading, user, login, logout, getAccessToken }}
     >
       {children}
     </AuthContext.Provider>
