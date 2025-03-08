@@ -207,7 +207,7 @@ export default function AgentsLayout({ children }: AgentsLayoutProps) {
 
         {/* 主内容区域 - 独立滚动，响应式宽度 */}
         <main className="flex-1 bg-zinc-50 rounded-tl-2xl md:rounded-tl-2xl rounded-br-2xl overflow-y-auto h-[calc(100vh-4rem)]">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-4 md:py-8">
+          <div className="max-w-7xl mt-4 mx-auto px-4 sm:px-6 md:px-8 py-4 md:py-8 bg-white rounded-3xl">
             {children}
           </div>
         </main>
