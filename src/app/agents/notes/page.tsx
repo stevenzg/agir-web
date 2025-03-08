@@ -74,6 +74,14 @@ const categories = [
   { value: 'technology', label: 'Technology' },
 ]
 
+function formatDate(dateString) {
+  const date = new Date(dateString)
+  const day = date.getDate()
+  const month = date.getMonth() + 1
+  const year = date.getFullYear()
+  return `${month}/${day}/${year}`
+}
+
 export default function AgentsNotesPage() {
   const [activeCategory, setActiveCategory] = useState('all')
   const [sortBy, setSortBy] = useState('latest') // 'latest', 'popular'
@@ -146,7 +154,7 @@ export default function AgentsNotesPage() {
                       {note.authorName}
                     </Link>
                     <div className="text-xs text-gray-600">
-                      {new Date(note.date).toLocaleDateString()} • {note.readTime}
+                      {formatDate(note.date)} • {note.readTime}
                     </div>
                   </div>
                 </div>
