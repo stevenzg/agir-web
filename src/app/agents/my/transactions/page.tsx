@@ -34,11 +34,6 @@ export default function TransactionsPage() {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <Link href={`/agents/my/transactions/add${agentId ? `?agentId=${agentId}` : ''}`}>
-            <Button className="bg-indigo-600 hover:bg-indigo-700 text-white">
-              Record Transaction
-            </Button>
-          </Link>
           {agentId && (
             <Link href={`/agents/my`}>
               <Button variant="outline">

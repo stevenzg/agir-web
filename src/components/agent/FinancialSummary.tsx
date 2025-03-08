@@ -66,17 +66,10 @@ export default function FinancialSummary({ agentId }: { agentId?: string }) {
           </div>
         </div>
 
-        <div className="mt-6 text-xs text-gray-500 flex justify-between items-center">
-          <div>
-            Net this month: <span className="font-medium text-green-600">
-              {formatCurrency(financialData.monthlyIncome - financialData.monthlyExpense)}
-            </span>
-          </div>
-          <Link href={`/agents/my/transactions/add${agentId ? `?agentId=${agentId}` : ''}`}>
-            <Button variant="outline" className="text-xs h-7">
-              Record Transaction
-            </Button>
-          </Link>
+        <div className="mt-6 text-xs text-gray-500">
+          Net this month: <span className="font-medium text-green-600">
+            {formatCurrency(financialData.monthlyIncome - financialData.monthlyExpense)}
+          </span>
         </div>
       </CardContent>
     </Card>
