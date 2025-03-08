@@ -23,11 +23,12 @@ export default function CreateAgentPage() {
   const [formData, setFormData] = useState({
     name: '',
     appearance: '',
-    background: '',
-    personality: '',
+    occupation: '',
+    location: '',
     interests: '',
-    speech: '',
-    goals: ''
+    communication: '',
+    values: '',
+    background: ''
   })
 
   // Handle form field changes
@@ -89,7 +90,7 @@ export default function CreateAgentPage() {
     <div className="min-h-screen bg-slate-50 py-12">
       <div className="mx-auto max-w-3xl rounded-lg bg-white p-8 shadow-md">
         <div className="mb-6 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-gray-800">Create Virtual Agent</h1>
+          <h1 className="text-2xl font-bold text-gray-800">Create Your Agent</h1>
           <Link href="/" className="text-sm text-indigo-600 hover:text-indigo-800">
             Back to Home
           </Link>
@@ -99,12 +100,11 @@ export default function CreateAgentPage() {
         <div className="mb-6 rounded-md bg-amber-50 p-4 text-sm text-amber-700 border border-amber-200">
           <p className="font-medium mb-1">Important: Privacy Information</p>
           <p className="mb-2">
-            You can provide your real information if you wish, but it is not required.
-            Feel free to create a completely fictional agent instead.
+            Fill this form as if introducing someone at a social gathering. You can use real information if you wish, but it is not required.
           </p>
           <p>
-            <strong>Note:</strong> Only the agent name and abilities/expertise will be visible to other users.
-            All other personal details (appearance, background, personality traits) will remain private.
+            <strong>Note:</strong> Only the agent name and interests/expertise will be visible to other users.
+            All other personal details will remain private.
           </p>
         </div>
 
@@ -117,7 +117,7 @@ export default function CreateAgentPage() {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label htmlFor="name" className="mb-2 block text-sm font-medium text-gray-700">
-              Agent Name
+              Name
             </label>
             <Input
               id="name"
@@ -126,15 +126,15 @@ export default function CreateAgentPage() {
               required
               value={formData.name}
               onChange={handleChange}
-              placeholder="Example: Alex Mercer, Jade Wong, etc."
+              placeholder="How would they introduce themselves?"
               className="w-full"
             />
-            <p className="mt-1 text-xs text-gray-500">Choose a name for your agent. <span className="text-amber-600">This will be publicly visible.</span></p>
+            <p className="mt-1 text-xs text-gray-500">The name people would call your agent. <span className="text-amber-600">This will be publicly visible.</span></p>
           </div>
 
           <div>
             <label htmlFor="appearance" className="mb-2 block text-sm font-medium text-gray-700">
-              Physical Appearance
+              Appearance & First Impression
             </label>
             <textarea
               id="appearance"
@@ -142,39 +142,39 @@ export default function CreateAgentPage() {
               rows={3}
               value={formData.appearance}
               onChange={handleChange}
-              placeholder="Describe how your agent looks: height, build, hair, eyes, style of dress, etc."
+              placeholder="What would someone notice first about them? How do they present themselves?"
               className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
             />
             <p className="mt-1 text-xs text-gray-500">This information will remain private and will not be shared with other users.</p>
           </div>
 
           <div>
-            <label htmlFor="background" className="mb-2 block text-sm font-medium text-gray-700">
-              Background Story
+            <label htmlFor="occupation" className="mb-2 block text-sm font-medium text-gray-700">
+              Occupation & Expertise
             </label>
             <textarea
-              id="background"
-              name="background"
-              rows={4}
-              value={formData.background}
+              id="occupation"
+              name="occupation"
+              rows={2}
+              value={formData.occupation}
               onChange={handleChange}
-              placeholder="Where was your agent born? What's their history? What key events shaped them?"
+              placeholder="What do they do? What are they known for professionally?"
               className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
             />
-            <p className="mt-1 text-xs text-gray-500">This information will remain private and will not be shared with other users.</p>
+            <p className="mt-1 text-xs text-gray-500">This helps define your agent's knowledge areas. <span className="text-amber-600">This will be partially visible to others.</span></p>
           </div>
 
           <div>
-            <label htmlFor="personality" className="mb-2 block text-sm font-medium text-gray-700">
-              Personality & Temperament
+            <label htmlFor="location" className="mb-2 block text-sm font-medium text-gray-700">
+              Location & Origin
             </label>
             <textarea
-              id="personality"
-              name="personality"
-              rows={3}
-              value={formData.personality}
+              id="location"
+              name="location"
+              rows={2}
+              value={formData.location}
               onChange={handleChange}
-              placeholder="Example: Introverted but warm with friends, analytical, prone to daydreaming, values honesty above all..."
+              placeholder="Where are they from? Where do they live now?"
               className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
             />
             <p className="mt-1 text-xs text-gray-500">This information will remain private and will not be shared with other users.</p>
@@ -182,7 +182,7 @@ export default function CreateAgentPage() {
 
           <div>
             <label htmlFor="interests" className="mb-2 block text-sm font-medium text-gray-700">
-              Interests & Expertise
+              Interests & Hobbies
             </label>
             <textarea
               id="interests"
@@ -190,39 +190,55 @@ export default function CreateAgentPage() {
               rows={3}
               value={formData.interests}
               onChange={handleChange}
-              placeholder="Example: Passionate about astronomy, skilled at chess, loves indie music, knowledgeable about ancient history..."
+              placeholder="What do they enjoy talking about? What activities do they like? What topics get them excited?"
               className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
             />
-            <p className="mt-1 text-xs text-gray-500">These skills and interests will be publicly visible to help others find your agent.</p>
+            <p className="mt-1 text-xs text-gray-500">These interests will help others find and connect with your agent. <span className="text-amber-600">This will be publicly visible.</span></p>
           </div>
 
           <div>
-            <label htmlFor="speech" className="mb-2 block text-sm font-medium text-gray-700">
-              Speech & Communication Style
+            <label htmlFor="communication" className="mb-2 block text-sm font-medium text-gray-700">
+              Communication Style
             </label>
             <textarea
-              id="speech"
-              name="speech"
-              rows={3}
-              value={formData.speech}
+              id="communication"
+              name="communication"
+              rows={2}
+              value={formData.communication}
               onChange={handleChange}
-              placeholder="How does your agent talk? Do they use slang? Academic language? Are they terse or verbose? Any catchphrases?"
+              placeholder="How do they talk? Are they outgoing or reserved? Formal or casual? Quick to joke or serious?"
               className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
             />
             <p className="mt-1 text-xs text-gray-500">This information will remain private and will not be shared with other users.</p>
           </div>
 
           <div>
-            <label htmlFor="goals" className="mb-2 block text-sm font-medium text-gray-700">
-              Goals & Motivations
+            <label htmlFor="values" className="mb-2 block text-sm font-medium text-gray-700">
+              Values & Beliefs
             </label>
             <textarea
-              id="goals"
-              name="goals"
-              rows={3}
-              value={formData.goals}
+              id="values"
+              name="values"
+              rows={2}
+              value={formData.values}
               onChange={handleChange}
-              placeholder="What drives your agent? What are their ambitions, fears, and core motivations?"
+              placeholder="What matters to them? What principles guide their decisions?"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
+            />
+            <p className="mt-1 text-xs text-gray-500">This information will remain private and will not be shared with other users.</p>
+          </div>
+
+          <div>
+            <label htmlFor="background" className="mb-2 block text-sm font-medium text-gray-700">
+              Brief Background
+            </label>
+            <textarea
+              id="background"
+              name="background"
+              rows={3}
+              value={formData.background}
+              onChange={handleChange}
+              placeholder="What's their story in a nutshell? Any key life experiences that shaped them?"
               className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
             />
             <p className="mt-1 text-xs text-gray-500">This information will remain private and will not be shared with other users.</p>
