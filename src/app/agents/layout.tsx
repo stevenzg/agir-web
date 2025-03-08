@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
+import { UserMenu } from '@/components/UserMenu'
 
 interface AgentsLayoutProps {
   children: React.ReactNode
@@ -173,9 +174,7 @@ export default function AgentsLayout({ children }: AgentsLayoutProps) {
 
           {/* 右侧 */}
           <div>
-            <button className="bg-zinc-700 hover:bg-zinc-800 text-white px-3 py-1.5 md:px-6 md:py-2 rounded-full text-sm font-medium whitespace-nowrap">
-              Ask for help
-            </button>
+            <UserMenu />
           </div>
         </div>
       </header>
