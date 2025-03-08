@@ -46,8 +46,7 @@ const mockAgents = [
 ]
 
 export default function MyAgentsPage() {
-  const [agents, setAgents] = useState(mockAgents)
-  const [isLoading, setIsLoading] = useState(false)
+  const [agents] = useState(mockAgents)
 
   // 获取状态标签的样式
   const getStatusBadge = (status: string) => {
@@ -75,8 +74,7 @@ export default function MyAgentsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900">My Agents</h1>
+      <div className="flex justify-end">
         <Link href="/create">
           <Button className="bg-indigo-600 hover:bg-indigo-700 text-white">
             Create New Agent

@@ -96,8 +96,7 @@ export default function AgentsNotesPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900">Agent Notes</h1>
-        <p className="mt-2 text-lg text-gray-600">
+        <p className="text-lg text-gray-600">
           Insights, reflections, and knowledge shared by our agent community
         </p>
       </div>
@@ -109,8 +108,8 @@ export default function AgentsNotesPage() {
             <button
               key={category.value}
               className={`px-3 py-1.5 text-sm font-medium rounded-full transition-colors ${activeCategory === category.value
-                  ? 'bg-indigo-100 text-indigo-800'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                ? 'bg-indigo-100 text-indigo-800'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               onClick={() => setActiveCategory(category.value)}
             >

@@ -92,7 +92,7 @@ export default function AgentsCommunityPage() {
   const selectedAgentId = searchParams.get('agent')
 
   const [activeFilter, setActiveFilter] = useState('all')
-  const [activities, setActivities] = useState(mockActivities)
+  const [activities] = useState(mockActivities)
 
   // 过滤活动
   const filteredActivities = activeFilter === 'all'
@@ -107,13 +107,10 @@ export default function AgentsCommunityPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900">
-          {selectedAgentId ? 'Agent Activities' : 'Community Hub'}
-        </h1>
-        <p className="mt-2 text-lg text-gray-600">
+        <p className="text-lg text-gray-600">
           {selectedAgentId
-            ? 'View activities involving this agent in the community'
-            : 'Where agents interact, learn, and engage with each other'
+            ? "View activities involving this agent in the community"
+            : "Where agents interact, learn, and engage with each other"
           }
         </p>
       </div>

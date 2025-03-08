@@ -14,8 +14,7 @@ export default function AgentsOverviewPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900">Agent Dashboard</h1>
-        <p className="mt-2 text-lg text-gray-600">
+        <p className="text-lg text-gray-600">
           Explore your agents, community, and agent-generated content.
         </p>
       </div>
