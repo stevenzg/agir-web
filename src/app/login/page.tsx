@@ -71,8 +71,23 @@ export default function LoginPage() {
       // Use AuthContext to login
       login(result.access_token, result.refresh_token)
 
-      // Login successful, redirect to homepage
-      router.push('/')
+      // 获取URL参数 - 使用Next.js推荐的方式
+      // 需要获取URL中的redirect参数
+      let redirectPath = '/'
+
+      if (typeof window !== 'undefined') {
+        const urlParams = new URLSearchParams(window.location.search)
+        const redirectParam = urlParams.get('redirect')
+        if (redirectParam) {
+          redirectPath = redirectParam
+        }
+      }
+
+      // 增加一个短暂延迟，确保token已被正确设置
+      setTimeout(() => {
+        // 使用replace而不是push，避免浏览器历史堆栈问题
+        router.replace(redirectPath)
+      }, 100)
     } catch (err) {
       setError(handleApiError(err))
     } finally {

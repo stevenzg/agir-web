@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
-import { useAuth } from '@/context/AuthContext'
 
 // Define types for options
 type SkinToneOption = {
@@ -136,7 +135,6 @@ export default function CustomizeFacePage() {
   const [activeCategory, setActiveCategory] = useState(featureCategories[0].id)
   const [selectedFeatures, setSelectedFeatures] = useState<Record<string, string>>({})
   const [isLoading, setIsLoading] = useState(false)
-  const { isAuthenticated } = useAuth()
 
   // Set initial selected features
   useEffect(() => {
@@ -165,7 +163,6 @@ export default function CustomizeFacePage() {
       setIsLoading(true)
 
       // TODO: Save the selected features to the agent profile
-      // This is where you'd make the API call to save the face configuration
       console.log('Selected features:', selectedFeatures)
 
       // Simulate API call

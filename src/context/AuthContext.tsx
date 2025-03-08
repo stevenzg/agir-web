@@ -36,8 +36,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // 存储 token
   const login = (accessToken: string, refreshTokenValue: string) => {
     if (typeof window === 'undefined') return
+
+    // 存储到 localStorage
     localStorage.setItem(AUTH_CONFIG.TOKEN_STORAGE_KEY, accessToken)
     localStorage.setItem(AUTH_CONFIG.REFRESH_TOKEN_STORAGE_KEY, refreshTokenValue)
+
+    // 同时存储到 cookie，用于 middleware
+    // 设置过期时间为7天
+    const expiryDate = new Date()
+    expiryDate.setDate(expiryDate.getDate() + 7)
+
+    // 安全地设置 cookie
+    document.cookie = `${AUTH_CONFIG.TOKEN_STORAGE_KEY}=${accessToken}; expires=${expiryDate.toUTCString()}; path=/; secure; samesite=strict`
+    document.cookie = `${AUTH_CONFIG.REFRESH_TOKEN_STORAGE_KEY}=${refreshTokenValue}; expires=${expiryDate.toUTCString()}; path=/; secure; samesite=strict`
+
     setIsAuthenticated(true)
     // 这里可以解析 JWT 获取用户信息，或者发起请求获取用户信息
     setUser({ email: 'user@example.com' }) // 示例，实际应获取真实用户信息
@@ -46,8 +58,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // 登出并清除 token
   const logout = () => {
     if (typeof window === 'undefined') return
+
+    // 清除 localStorage
     localStorage.removeItem(AUTH_CONFIG.TOKEN_STORAGE_KEY)
     localStorage.removeItem(AUTH_CONFIG.REFRESH_TOKEN_STORAGE_KEY)
+
+    // 清除 cookie
+    document.cookie = `${AUTH_CONFIG.TOKEN_STORAGE_KEY}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`
+    document.cookie = `${AUTH_CONFIG.REFRESH_TOKEN_STORAGE_KEY}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`
+
     setIsAuthenticated(false)
     setUser(null)
     router.push('/login')
