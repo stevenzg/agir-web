@@ -1,6 +1,21 @@
+"use client"
+
 import Link from "next/link"
 import Image from "next/image"
 import { ProtectedRoute } from "@/components/ProtectedRoute"
+import { useAuth } from "@/context/AuthContext"
+import {
+  Avatar,
+  AvatarFallback
+} from "@/components/ui/avatar"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 export default function Home() {
   return (
@@ -10,11 +25,14 @@ export default function Home() {
         <div className="flex items-center">
           <Image src="/logo.svg" alt="agir logo" width={120} height={40} priority className="h-10 w-auto" />
         </div>
-        <nav className="hidden md:flex space-x-6">
-          <a href="#features" className="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400">Features</a>
-          <a href="#agents" className="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400">Agents</a>
-          <a href="#api" className="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400">API</a>
-        </nav>
+        <div className="flex items-center space-x-6">
+          <nav className="hidden md:flex space-x-6">
+            <a href="#features" className="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400">Features</a>
+            <a href="#agents" className="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400">Agents</a>
+            <a href="#api" className="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400">API</a>
+          </nav>
+          <UserMenu />
+        </div>
       </header>
 
       {/* Hero Section */}
@@ -260,5 +278,63 @@ console.log(response);  // Agent's personalized response`}
         </div>
       </footer>
     </div>
+  )
+}
+
+function UserMenu() {
+  const { user, logout, isAuthenticated } = useAuth()
+
+  // If not logged in, show login button
+  if (!isAuthenticated) {
+    return (
+      <Link
+        href="/login"
+        className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+      >
+        Login
+      </Link>
+    )
+  }
+
+  // Get user's first letter as avatar fallback
+  const userInitial = user?.email ? user.email[0].toUpperCase() : '?'
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger className="focus:outline-none">
+        <Avatar className="cursor-pointer">
+          {/* Since there's no avatar property in the User interface, we're only showing the fallback */}
+          <AvatarFallback className="bg-indigo-600 text-white">
+            {userInitial}
+          </AvatarFallback>
+        </Avatar>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-56">
+        <DropdownMenuLabel>
+          <div className="flex flex-col space-y-1">
+            <p className="text-sm font-medium leading-none">User Account</p>
+            <p className="text-xs leading-none text-gray-500">{user?.email || ''}</p>
+          </div>
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem asChild>
+          <Link href="/profile" className="cursor-pointer w-full">
+            Profile
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href="/settings" className="cursor-pointer w-full">
+            Settings
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          className="text-red-500 cursor-pointer focus:text-red-500"
+          onClick={() => logout()}
+        >
+          Logout
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
 }
