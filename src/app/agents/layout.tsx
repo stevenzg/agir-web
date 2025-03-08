@@ -86,17 +86,17 @@ export default function AgentsLayout({ children }: AgentsLayoutProps) {
                 className={cn(
                   "flex items-center mx-2 px-4 py-2.5 text-sm font-medium rounded-md relative",
                   isActive(link.href)
-                    ? "bg-green-100 text-green-600"
-                    : "text-gray-700 hover:bg-gray-50"
+                    ? "bg-zinc-100 text-zinc-600"
+                    : "text-zinc-700 hover:bg-zinc-50"
                 )}
               >
                 {isActive(link.href) && (
-                  <span className="absolute left-0 inset-y-0 w-1 bg-green-500 rounded-r-md" />
+                  <span className="absolute left-0 inset-y-0 w-1 bg-zinc-700 rounded-r-md" />
                 )}
                 <span className="text-xl mr-4 inline-flex items-center justify-center">{link.icon}</span>
                 {link.name}
                 {isActive(link.href) && (
-                  <span className="w-5 h-5 rounded-full bg-green-400 flex items-center justify-center text-white text-xs absolute right-3">
+                  <span className="w-5 h-5 rounded-full bg-zinc-700 flex items-center justify-center text-white text-xs absolute right-3">
                     ✓
                   </span>
                 )}
@@ -113,7 +113,7 @@ export default function AgentsLayout({ children }: AgentsLayoutProps) {
             <Link
               href="/feedback"
               onClick={handleNavLinkClick}
-              className="flex items-center mx-2 px-4 py-2.5 text-sm font-medium rounded-md text-gray-600 hover:bg-gray-50"
+              className="flex items-center mx-2 px-4 py-2.5 text-sm font-medium rounded-md text-zinc-600 hover:bg-zinc-50"
             >
               <span className="text-xl mr-4 inline-flex items-center justify-center">💬</span>
               Feedback
@@ -123,7 +123,7 @@ export default function AgentsLayout({ children }: AgentsLayoutProps) {
             <Link
               href="/settings"
               onClick={handleNavLinkClick}
-              className="flex items-center mx-2 px-4 py-2.5 text-sm font-medium rounded-md text-gray-600 hover:bg-gray-50"
+              className="flex items-center mx-2 px-4 py-2.5 text-sm font-medium rounded-md text-zinc-600 hover:bg-zinc-50"
             >
               <span className="text-xl mr-4 inline-flex items-center justify-center">⚙️</span>
               Settings
@@ -148,12 +148,12 @@ export default function AgentsLayout({ children }: AgentsLayoutProps) {
               aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
             >
               {isMobileMenuOpen ? (
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-700">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-zinc-700">
                   <line x1="18" y1="6" x2="6" y2="18"></line>
                   <line x1="6" y1="6" x2="18" y2="18"></line>
                 </svg>
               ) : (
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-700">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-zinc-700">
                   <line x1="4" y1="12" x2="20" y2="12"></line>
                   <line x1="4" y1="6" x2="20" y2="6"></line>
                   <line x1="4" y1="18" x2="20" y2="18"></line>
@@ -162,9 +162,6 @@ export default function AgentsLayout({ children }: AgentsLayoutProps) {
             </button>
 
             <Link href="/" className="hidden md:flex items-center space-x-2">
-              <div className="bg-green-400 text-white rounded-full p-1.5 flex items-center justify-center">
-                <span className="text-lg">🤖</span>
-              </div>
               <span className="text-xl font-bold">Agir</span>
             </Link>
           </div>
@@ -176,7 +173,7 @@ export default function AgentsLayout({ children }: AgentsLayoutProps) {
 
           {/* 右侧 */}
           <div>
-            <button className="bg-green-400 hover:bg-green-500 text-white px-3 py-1.5 md:px-6 md:py-2 rounded-full text-sm font-medium whitespace-nowrap">
+            <button className="bg-zinc-700 hover:bg-zinc-800 text-white px-3 py-1.5 md:px-6 md:py-2 rounded-full text-sm font-medium whitespace-nowrap">
               Ask for help
             </button>
           </div>
@@ -186,7 +183,7 @@ export default function AgentsLayout({ children }: AgentsLayoutProps) {
       {/* 移动端背景遮罩 */}
       {isMobile && isMobileMenuOpen && (
         <div
-          className="fixed inset-0 bg-gray-800 bg-opacity-50 z-40"
+          className="fixed inset-0 bg-zinc-800 bg-opacity-50 z-40"
           onClick={() => setIsMobileMenuOpen(false)}
           aria-hidden="true"
         />
@@ -209,7 +206,7 @@ export default function AgentsLayout({ children }: AgentsLayoutProps) {
         </aside>
 
         {/* 主内容区域 - 独立滚动，响应式宽度 */}
-        <main className="flex-1 bg-gray-50 rounded-tl-2xl md:rounded-tl-2xl rounded-br-2xl overflow-y-auto h-[calc(100vh-4rem)]">
+        <main className="flex-1 bg-zinc-50 rounded-tl-2xl md:rounded-tl-2xl rounded-br-2xl overflow-y-auto h-[calc(100vh-4rem)]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-4 md:py-8">
             {children}
           </div>
