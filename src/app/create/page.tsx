@@ -279,7 +279,7 @@ export default function CreateAgentPage() {
   return (
     <div>
       <ProtectedRoute href="/create">
-        <span>Authentication Check</span>
+        <span className="sr-only">Authentication Check</span>
       </ProtectedRoute>
       {isAuthenticated && renderAgentForm()}
     </div>

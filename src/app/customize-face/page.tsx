@@ -347,7 +347,7 @@ export default function CustomizeFacePage() {
   return (
     <div>
       <ProtectedRoute href="/customize-face">
-        <span>Authentication Check</span>
+        <span className="sr-only">Authentication Check</span>
       </ProtectedRoute>
       {isAuthenticated && pageContent}
     </div>
