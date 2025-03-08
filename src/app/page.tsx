@@ -235,7 +235,7 @@ console.log(response);  // Agent's personalized response`}
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 bg-gradient-to-r from-zinc-600 to-purple-600 dark:from-zinc-700 dark:to-purple-700">
+      <section className="py-16 bg-gradient-to-r from-zinc-700 to-zinc-800 dark:from-zinc-800 dark:to-zinc-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-bold text-white mb-6">
             Create Your Own Intelligent Agent Today
