@@ -18,23 +18,8 @@ export default function CreateAgentPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<ApiError | null>(null)
 
-  // Agent form state
-  const [formData, setFormData] = useState({
-    name: '',
-    appearance: '',
-    occupation: '',
-    location: '',
-    interests: '',
-    communication: '',
-    values: '',
-    background: ''
-  })
-
-  // Handle form field changes
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target
-    setFormData(prev => ({ ...prev, [name]: value }))
-  }
+  // Simplified Agent form state, only keeping name
+  const [agentName, setAgentName] = useState('')
 
   // Error handling utility function
   const handleApiError = (err: unknown): ApiError => {
@@ -64,19 +49,30 @@ export default function CreateAgentPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
+    if (!agentName.trim()) {
+      setError({
+        code: 'validation_error',
+        message: 'Please enter an agent name'
+      })
+      return
+    }
+
     try {
       setIsLoading(true)
       setError(null)
 
       // TODO: Call API to create agent
       // This is where you'd make the API call to create the agent
-      // const response = await createAgent(formData)
+      // const response = await createAgent({ name: agentName })
 
       // For now, just simulate a successful creation
       await new Promise(resolve => setTimeout(resolve, 1000))
 
-      // Redirect to the agent details page or dashboard
-      router.push('/')
+      // Create a temporary ID, should be obtained from API response
+      const tempAgentId = 'agent-' + Date.now()
+
+      // Redirect to edit page, carrying new created Agent ID
+      router.push(`/edit-agent?id=${tempAgentId}&name=${encodeURIComponent(agentName)}&isNew=true`)
 
     } catch (err) {
       setError(handleApiError(err))
@@ -89,7 +85,7 @@ export default function CreateAgentPage() {
     <div className="min-h-screen bg-slate-50 py-12">
       <div className="mx-auto max-w-3xl rounded-lg bg-white p-8 shadow-md">
         <div className="mb-6 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-gray-800">Create Your Agent</h1>
+          <h1 className="text-2xl font-bold text-gray-800">Create New Agent</h1>
           <Link href="/" className="text-sm text-indigo-600 hover:text-indigo-800">
             Back to Home
           </Link>
@@ -116,131 +112,21 @@ export default function CreateAgentPage() {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label htmlFor="name" className="mb-2 block text-sm font-medium text-gray-700">
-              Name
+              Agent Name
             </label>
             <Input
               id="name"
               name="name"
               type="text"
               required
-              value={formData.name}
-              onChange={handleChange}
-              placeholder="How would they introduce themselves?"
+              value={agentName}
+              onChange={(e) => setAgentName(e.target.value)}
+              placeholder="Enter a name for your agent"
               className="w-full"
             />
-            <p className="mt-1 text-xs text-gray-500">The name people would call your agent. <span className="text-amber-600">This will be publicly visible.</span></p>
-          </div>
-
-          <div>
-            <label htmlFor="appearance" className="mb-2 block text-sm font-medium text-gray-700">
-              Appearance & First Impression
-            </label>
-            <textarea
-              id="appearance"
-              name="appearance"
-              rows={3}
-              value={formData.appearance}
-              onChange={handleChange}
-              placeholder="What would someone notice first about them? How do they present themselves?"
-              className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
-            />
-            <p className="mt-1 text-xs text-gray-500">This information will remain private and will not be shared with other users.</p>
-          </div>
-
-          <div>
-            <label htmlFor="occupation" className="mb-2 block text-sm font-medium text-gray-700">
-              Occupation & Expertise
-            </label>
-            <textarea
-              id="occupation"
-              name="occupation"
-              rows={2}
-              value={formData.occupation}
-              onChange={handleChange}
-              placeholder="What do they do? What are they known for professionally?"
-              className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
-            />
-            <p className="mt-1 text-xs text-gray-500">This helps define your agent&apos;s knowledge areas. <span className="text-amber-600">This will be partially visible to others.</span></p>
-          </div>
-
-          <div>
-            <label htmlFor="location" className="mb-2 block text-sm font-medium text-gray-700">
-              Location & Origin
-            </label>
-            <textarea
-              id="location"
-              name="location"
-              rows={2}
-              value={formData.location}
-              onChange={handleChange}
-              placeholder="Where are they from? Where do they live now?"
-              className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
-            />
-            <p className="mt-1 text-xs text-gray-500">This information will remain private and will not be shared with other users.</p>
-          </div>
-
-          <div>
-            <label htmlFor="interests" className="mb-2 block text-sm font-medium text-gray-700">
-              Interests & Hobbies
-            </label>
-            <textarea
-              id="interests"
-              name="interests"
-              rows={3}
-              value={formData.interests}
-              onChange={handleChange}
-              placeholder="What do they enjoy talking about? What activities do they like? What topics get them excited?"
-              className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
-            />
-            <p className="mt-1 text-xs text-gray-500">These interests will help others find and connect with your agent. <span className="text-amber-600">This will be publicly visible.</span></p>
-          </div>
-
-          <div>
-            <label htmlFor="communication" className="mb-2 block text-sm font-medium text-gray-700">
-              Communication Style
-            </label>
-            <textarea
-              id="communication"
-              name="communication"
-              rows={2}
-              value={formData.communication}
-              onChange={handleChange}
-              placeholder="How do they talk? Are they outgoing or reserved? Formal or casual? Quick to joke or serious?"
-              className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
-            />
-            <p className="mt-1 text-xs text-gray-500">This information will remain private and will not be shared with other users.</p>
-          </div>
-
-          <div>
-            <label htmlFor="values" className="mb-2 block text-sm font-medium text-gray-700">
-              Values & Beliefs
-            </label>
-            <textarea
-              id="values"
-              name="values"
-              rows={2}
-              value={formData.values}
-              onChange={handleChange}
-              placeholder="What matters to them? What principles guide their decisions?"
-              className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
-            />
-            <p className="mt-1 text-xs text-gray-500">This information will remain private and will not be shared with other users.</p>
-          </div>
-
-          <div>
-            <label htmlFor="background" className="mb-2 block text-sm font-medium text-gray-700">
-              Brief Background
-            </label>
-            <textarea
-              id="background"
-              name="background"
-              rows={3}
-              value={formData.background}
-              onChange={handleChange}
-              placeholder="What's their story in a nutshell? Any key life experiences that shaped them?"
-              className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
-            />
-            <p className="mt-1 text-xs text-gray-500">This information will remain private and will not be shared with other users.</p>
+            <p className="mt-1 text-xs text-gray-500">
+              Choose a name for your agent. <span className="text-amber-600">This will be publicly visible.</span>
+            </p>
           </div>
 
           <div className="flex justify-end space-x-4">
@@ -258,15 +144,8 @@ export default function CreateAgentPage() {
               className="bg-indigo-600 text-white hover:bg-indigo-700"
               disabled={isLoading}
             >
-              {isLoading ? 'Creating Agent...' : 'Create Agent'}
+              {isLoading ? 'Creating...' : 'Continue to Customize'}
             </Button>
-            <Link
-              href="/customize-face"
-              className="ml-2 px-4 py-2 text-sm flex items-center justify-center text-indigo-600 hover:text-indigo-800"
-            >
-              <span className="mr-2">Customize Face</span>
-              <span className="text-lg">😊</span>
-            </Link>
           </div>
         </form>
       </div>

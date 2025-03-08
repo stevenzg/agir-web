@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 
 // Define types for options
@@ -132,11 +132,26 @@ const featureCategories: FeatureCategory[] = [
 
 export default function CustomizeFacePage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+
   const [activeCategory, setActiveCategory] = useState(featureCategories[0].id)
   const [selectedFeatures, setSelectedFeatures] = useState<Record<string, string>>({})
   const [isLoading, setIsLoading] = useState(false)
+  const [agentId, setAgentId] = useState<string | null>(null)
 
-  // Set initial selected features
+  // 获取URL参数中的Agent ID
+  useEffect(() => {
+    const id = searchParams.get('id')
+    if (id) {
+      setAgentId(id)
+      // 这里可以添加逻辑，根据agentId加载当前的面部配置
+    } else {
+      // 如果没有提供ID，跳转到创建页面
+      router.push('/create')
+    }
+  }, [searchParams, router])
+
+  // 初始化选择特征
   useEffect(() => {
     const initialFeatures: Record<string, string> = {}
     featureCategories.forEach(category => {
@@ -162,14 +177,20 @@ export default function CustomizeFacePage() {
     try {
       setIsLoading(true)
 
-      // TODO: Save the selected features to the agent profile
+      if (!agentId) {
+        console.error('No agent ID provided')
+        return
+      }
+
+      // TODO: 保存选择的特征到API
+      console.log('Saving face for agent:', agentId)
       console.log('Selected features:', selectedFeatures)
 
-      // Simulate API call
+      // 模拟API调用
       await new Promise(resolve => setTimeout(resolve, 1000))
 
-      // Navigate back to the agent page or wherever appropriate
-      router.push('/agent-profile')
+      // 保存后导航到Agent详情或个人资料页
+      router.push(`/agent-profile?id=${agentId}`)
     } catch (error) {
       console.error('Error saving face:', error)
     } finally {
@@ -177,7 +198,7 @@ export default function CustomizeFacePage() {
     }
   }
 
-  // Get the active category data
+  // 获取当前活动分类数据
   const activeCategoryData = featureCategories.find(c => c.id === activeCategory)
 
   return (
@@ -185,9 +206,19 @@ export default function CustomizeFacePage() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-6 flex items-center justify-between">
           <h1 className="text-2xl font-bold text-gray-800">Customize Agent Face</h1>
-          <Link href="/" className="text-sm text-indigo-600 hover:text-indigo-800">
-            Back to Home
-          </Link>
+          <div className="flex space-x-4">
+            {agentId && (
+              <Link
+                href={`/edit-agent?id=${agentId}`}
+                className="text-sm text-indigo-600 hover:text-indigo-800"
+              >
+                Edit Agent Details
+              </Link>
+            )}
+            <Link href="/" className="text-sm text-indigo-600 hover:text-indigo-800">
+              Back to Home
+            </Link>
+          </div>
         </div>
 
         <div className="bg-white rounded-lg shadow-md overflow-hidden">

@@ -16,7 +16,7 @@ export function middleware(request: NextRequest) {
   const hasValidToken = Boolean(token || tokenFromHeader)
   
   // 定义需要保护的路径
-  const protectedPaths = ['/create', '/customize-face', '/agent-profile', '/settings']
+  const protectedPaths = ['/create', '/edit-agent', '/customize-face', '/agent-profile', '/settings']
   const path = request.nextUrl.pathname
   
   // 检查当前路径是否需要保护
@@ -43,6 +43,7 @@ export const config = {
   matcher: [
     // 需要保护的路径
     '/create',
+    '/edit-agent',
     '/customize-face',
     '/agent-profile',
     '/settings',
