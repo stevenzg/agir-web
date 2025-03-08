@@ -22,10 +22,12 @@ export default function CreateAgentPage() {
   // Agent form state
   const [formData, setFormData] = useState({
     name: '',
-    description: '',
+    appearance: '',
+    background: '',
     personality: '',
-    skills: '',
-    initialPrompt: '',
+    interests: '',
+    speech: '',
+    goals: ''
   })
 
   // Handle form field changes
@@ -87,10 +89,23 @@ export default function CreateAgentPage() {
     <div className="min-h-screen bg-slate-50 py-12">
       <div className="mx-auto max-w-3xl rounded-lg bg-white p-8 shadow-md">
         <div className="mb-6 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-gray-800">Create New Agent</h1>
+          <h1 className="text-2xl font-bold text-gray-800">Create Virtual Agent</h1>
           <Link href="/" className="text-sm text-indigo-600 hover:text-indigo-800">
             Back to Home
           </Link>
+        </div>
+
+        {/* Privacy notice */}
+        <div className="mb-6 rounded-md bg-amber-50 p-4 text-sm text-amber-700 border border-amber-200">
+          <p className="font-medium mb-1">Important: Privacy Information</p>
+          <p className="mb-2">
+            You can provide your real information if you wish, but it is not required.
+            Feel free to create a completely fictional agent instead.
+          </p>
+          <p>
+            <strong>Note:</strong> Only the agent name and abilities/expertise will be visible to other users.
+            All other personal details (appearance, background, personality traits) will remain private.
+          </p>
         </div>
 
         {error && (
@@ -111,29 +126,47 @@ export default function CreateAgentPage() {
               required
               value={formData.name}
               onChange={handleChange}
-              placeholder="Enter agent name"
+              placeholder="Example: Alex Mercer, Jade Wong, etc."
               className="w-full"
             />
+            <p className="mt-1 text-xs text-gray-500">Choose a name for your agent. <span className="text-amber-600">This will be publicly visible.</span></p>
           </div>
 
           <div>
-            <label htmlFor="description" className="mb-2 block text-sm font-medium text-gray-700">
-              Description
+            <label htmlFor="appearance" className="mb-2 block text-sm font-medium text-gray-700">
+              Physical Appearance
             </label>
             <textarea
-              id="description"
-              name="description"
+              id="appearance"
+              name="appearance"
               rows={3}
-              value={formData.description}
+              value={formData.appearance}
               onChange={handleChange}
-              placeholder="Describe what your agent does"
+              placeholder="Describe how your agent looks: height, build, hair, eyes, style of dress, etc."
               className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
             />
+            <p className="mt-1 text-xs text-gray-500">This information will remain private and will not be shared with other users.</p>
+          </div>
+
+          <div>
+            <label htmlFor="background" className="mb-2 block text-sm font-medium text-gray-700">
+              Background Story
+            </label>
+            <textarea
+              id="background"
+              name="background"
+              rows={4}
+              value={formData.background}
+              onChange={handleChange}
+              placeholder="Where was your agent born? What's their history? What key events shaped them?"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
+            />
+            <p className="mt-1 text-xs text-gray-500">This information will remain private and will not be shared with other users.</p>
           </div>
 
           <div>
             <label htmlFor="personality" className="mb-2 block text-sm font-medium text-gray-700">
-              Personality
+              Personality & Temperament
             </label>
             <textarea
               id="personality"
@@ -141,39 +174,58 @@ export default function CreateAgentPage() {
               rows={3}
               value={formData.personality}
               onChange={handleChange}
-              placeholder="Describe your agent's personality traits"
+              placeholder="Example: Introverted but warm with friends, analytical, prone to daydreaming, values honesty above all..."
               className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
             />
+            <p className="mt-1 text-xs text-gray-500">This information will remain private and will not be shared with other users.</p>
           </div>
 
           <div>
-            <label htmlFor="skills" className="mb-2 block text-sm font-medium text-gray-700">
-              Skills
-            </label>
-            <Input
-              id="skills"
-              name="skills"
-              type="text"
-              value={formData.skills}
-              onChange={handleChange}
-              placeholder="Comma-separated list of skills"
-              className="w-full"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="initialPrompt" className="mb-2 block text-sm font-medium text-gray-700">
-              Initial Prompt
+            <label htmlFor="interests" className="mb-2 block text-sm font-medium text-gray-700">
+              Interests & Expertise
             </label>
             <textarea
-              id="initialPrompt"
-              name="initialPrompt"
-              rows={5}
-              value={formData.initialPrompt}
+              id="interests"
+              name="interests"
+              rows={3}
+              value={formData.interests}
               onChange={handleChange}
-              placeholder="Instructions to guide your agent"
+              placeholder="Example: Passionate about astronomy, skilled at chess, loves indie music, knowledgeable about ancient history..."
               className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
             />
+            <p className="mt-1 text-xs text-gray-500">These skills and interests will be publicly visible to help others find your agent.</p>
+          </div>
+
+          <div>
+            <label htmlFor="speech" className="mb-2 block text-sm font-medium text-gray-700">
+              Speech & Communication Style
+            </label>
+            <textarea
+              id="speech"
+              name="speech"
+              rows={3}
+              value={formData.speech}
+              onChange={handleChange}
+              placeholder="How does your agent talk? Do they use slang? Academic language? Are they terse or verbose? Any catchphrases?"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
+            />
+            <p className="mt-1 text-xs text-gray-500">This information will remain private and will not be shared with other users.</p>
+          </div>
+
+          <div>
+            <label htmlFor="goals" className="mb-2 block text-sm font-medium text-gray-700">
+              Goals & Motivations
+            </label>
+            <textarea
+              id="goals"
+              name="goals"
+              rows={3}
+              value={formData.goals}
+              onChange={handleChange}
+              placeholder="What drives your agent? What are their ambitions, fears, and core motivations?"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
+            />
+            <p className="mt-1 text-xs text-gray-500">This information will remain private and will not be shared with other users.</p>
           </div>
 
           <div className="flex justify-end space-x-4">
@@ -191,7 +243,7 @@ export default function CreateAgentPage() {
               className="bg-indigo-600 text-white hover:bg-indigo-700"
               disabled={isLoading}
             >
-              {isLoading ? 'Creating...' : 'Create Agent'}
+              {isLoading ? 'Creating Agent...' : 'Create Agent'}
             </Button>
           </div>
         </form>

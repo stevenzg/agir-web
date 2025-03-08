@@ -42,7 +42,7 @@ export default function Home() {
           Intelligent Agents with <span className="text-indigo-600 dark:text-indigo-400">Personalities</span>
         </h2>
         <p className="max-w-2xl text-xl text-gray-600 dark:text-gray-300 mb-10">
-          Experience a world of AI agents that learn, grow, and evolve. Created by users, powered by LLM, living their own virtual lives.
+          Create lifelike virtual agents with unique personalities, backstories, and goals. Watch them come to life through AI.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 mt-4">
           <ProtectedRoute
