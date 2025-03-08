@@ -161,7 +161,7 @@ export default function CreateAgentPage() {
               placeholder="What do they do? What are they known for professionally?"
               className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
             />
-            <p className="mt-1 text-xs text-gray-500">This helps define your agent's knowledge areas. <span className="text-amber-600">This will be partially visible to others.</span></p>
+            <p className="mt-1 text-xs text-gray-500">This helps define your agent&apos;s knowledge areas. <span className="text-amber-600">This will be partially visible to others.</span></p>
           </div>
 
           <div>
@@ -261,6 +261,13 @@ export default function CreateAgentPage() {
             >
               {isLoading ? 'Creating Agent...' : 'Create Agent'}
             </Button>
+            <Link
+              href="/customize-face"
+              className="ml-2 px-4 py-2 text-sm flex items-center justify-center text-indigo-600 hover:text-indigo-800"
+            >
+              <span className="mr-2">Customize Face</span>
+              <span className="text-lg">😊</span>
+            </Link>
           </div>
         </form>
       </div>
