@@ -87,17 +87,17 @@ export default function AgentsLayout({ children }: AgentsLayoutProps) {
                 className={cn(
                   "flex items-center mx-2 px-4 py-2.5 text-sm font-medium rounded-md relative",
                   isActive(link.href)
-                    ? "bg-zinc-100 text-zinc-600"
-                    : "text-zinc-700 hover:bg-zinc-50"
+                    ? "bg-zinc-100 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300"
+                    : "text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-700/50"
                 )}
               >
                 {isActive(link.href) && (
-                  <span className="absolute left-0 inset-y-0 w-1 bg-zinc-700 rounded-r-md" />
+                  <span className="absolute left-0 inset-y-0 w-1 bg-zinc-700 dark:bg-zinc-400 rounded-r-md" />
                 )}
                 <span className="text-xl mr-4 inline-flex items-center justify-center">{link.icon}</span>
                 {link.name}
                 {isActive(link.href) && (
-                  <span className="w-5 h-5 rounded-full bg-zinc-700 flex items-center justify-center text-white text-xs absolute right-3">
+                  <span className="w-5 h-5 rounded-full bg-zinc-700 dark:bg-zinc-600 flex items-center justify-center text-white text-xs absolute right-3">
                     ✓
                   </span>
                 )}
@@ -114,7 +114,7 @@ export default function AgentsLayout({ children }: AgentsLayoutProps) {
             <Link
               href="/feedback"
               onClick={handleNavLinkClick}
-              className="flex items-center mx-2 px-4 py-2.5 text-sm font-medium rounded-md text-zinc-600 hover:bg-zinc-50"
+              className="flex items-center mx-2 px-4 py-2.5 text-sm font-medium rounded-md text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-700/50"
             >
               <span className="text-xl mr-4 inline-flex items-center justify-center">💬</span>
               Feedback
@@ -124,7 +124,7 @@ export default function AgentsLayout({ children }: AgentsLayoutProps) {
             <Link
               href="/settings"
               onClick={handleNavLinkClick}
-              className="flex items-center mx-2 px-4 py-2.5 text-sm font-medium rounded-md text-zinc-600 hover:bg-zinc-50"
+              className="flex items-center mx-2 px-4 py-2.5 text-sm font-medium rounded-md text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-700/50"
             >
               <span className="text-xl mr-4 inline-flex items-center justify-center">⚙️</span>
               Settings
@@ -138,7 +138,7 @@ export default function AgentsLayout({ children }: AgentsLayoutProps) {
   return (
     <div className="min-h-screen flex flex-col">
       {/* 顶部导航栏 */}
-      <header className="bg-white sticky top-0 z-50 shadow-sm md:shadow-none">
+      <header className="bg-white dark:bg-slate-800 sticky top-0 z-50 shadow-sm md:shadow-none">
         <div className="flex h-16 items-center justify-between px-4 md:px-6">
           {/* 左侧 - Logo 和汉堡菜单 */}
           <div className="flex items-center md:w-64">
@@ -149,12 +149,12 @@ export default function AgentsLayout({ children }: AgentsLayoutProps) {
               aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
             >
               {isMobileMenuOpen ? (
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-zinc-700">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-zinc-700 dark:text-zinc-300">
                   <line x1="18" y1="6" x2="6" y2="18"></line>
                   <line x1="6" y1="6" x2="18" y2="18"></line>
                 </svg>
               ) : (
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-zinc-700">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-zinc-700 dark:text-zinc-300">
                   <line x1="4" y1="12" x2="20" y2="12"></line>
                   <line x1="4" y1="6" x2="20" y2="6"></line>
                   <line x1="4" y1="18" x2="20" y2="18"></line>
@@ -163,13 +163,13 @@ export default function AgentsLayout({ children }: AgentsLayoutProps) {
             </button>
 
             <Link href="/" className="hidden md:flex items-center space-x-2">
-              <span className="text-xl font-bold">Agir</span>
+              <span className="text-xl font-bold dark:text-white">Agir</span>
             </Link>
           </div>
 
           {/* 中间 - 页面标题 */}
           <div className="flex-1 mx-4 md:ml-8 md:mr-4 text-left">
-            <h1 className="text-lg md:text-xl font-bold truncate">{getPageTitle()}</h1>
+            <h1 className="text-lg md:text-xl font-bold truncate dark:text-white">{getPageTitle()}</h1>
           </div>
 
           {/* 右侧 */}
@@ -190,14 +190,14 @@ export default function AgentsLayout({ children }: AgentsLayoutProps) {
 
       <div className="flex flex-1 overflow-hidden relative">
         {/* 桌面侧边栏 - 只在非移动设备显示 */}
-        <aside className="hidden md:block w-64 bg-white flex-shrink-0 h-[calc(100vh-4rem)] overflow-y-auto">
+        <aside className="hidden md:block w-64 bg-white dark:bg-slate-800 flex-shrink-0 h-[calc(100vh-4rem)] overflow-y-auto">
           <SidebarContent />
         </aside>
 
         {/* 移动端侧边抽屉菜单 */}
         <aside
           className={cn(
-            "fixed md:hidden top-16 left-0 h-[calc(100vh-4rem)] w-64 bg-white z-50 transition-transform duration-300 ease-in-out overflow-y-auto",
+            "fixed md:hidden top-16 left-0 h-[calc(100vh-4rem)] w-64 bg-white dark:bg-slate-800 z-50 transition-transform duration-300 ease-in-out overflow-y-auto",
             isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
           )}
         >
@@ -205,8 +205,8 @@ export default function AgentsLayout({ children }: AgentsLayoutProps) {
         </aside>
 
         {/* 主内容区域 - 独立滚动，响应式宽度 */}
-        <main className="flex-1 bg-zinc-50 rounded-tl-2xl md:rounded-tl-2xl rounded-br-2xl overflow-y-auto h-[calc(100vh-4rem)]">
-          <div className="max-w-7xl mt-4 mx-auto px-4 sm:px-6 md:px-8 py-4 md:py-8 bg-white rounded-3xl">
+        <main className="flex-1 bg-zinc-50 dark:bg-slate-900 rounded-tl-2xl md:rounded-tl-2xl rounded-br-2xl overflow-y-auto h-[calc(100vh-4rem)]">
+          <div className="max-w-7xl mt-4 mx-auto px-4 sm:px-6 md:px-8 py-4 md:py-8 bg-white dark:bg-slate-800 rounded-3xl">
             {children}
           </div>
         </main>

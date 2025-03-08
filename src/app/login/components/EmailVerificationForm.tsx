@@ -72,7 +72,7 @@ export default function EmailVerificationForm({
       {step === 'email' ? (
         <form onSubmit={handleEmailSubmit} className="space-y-4">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
               Email Address
             </label>
             <Input
@@ -98,23 +98,23 @@ export default function EmailVerificationForm({
         <form onSubmit={handleCodeSubmit} className="space-y-4">
           <div>
             <div className="flex items-center justify-between">
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 Email Address
               </label>
               <button
                 type="button"
                 onClick={onBackToEmail}
-                className="text-sm text-blue-600 hover:text-blue-800"
+                className="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
               >
                 Edit
               </button>
             </div>
-            <p className="mt-1 block w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-gray-600">
+            <p className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 px-3 py-2 text-gray-600 dark:text-gray-300">
               {email}
             </p>
           </div>
           <div>
-            <label htmlFor="code" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="code" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
               Verification Code
             </label>
             <Input
@@ -133,7 +133,7 @@ export default function EmailVerificationForm({
               type="button"
               onClick={handleResendCode}
               disabled={countdown > 0 || isLoading}
-              className={`text-sm ${countdown > 0 ? 'text-gray-500' : 'text-blue-600 hover:text-blue-800'
+              className={`text-sm ${countdown > 0 ? 'text-gray-500 dark:text-gray-400' : 'text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300'
                 }`}
             >
               {countdown > 0 ? `Resend (${countdown}s)` : 'Resend'}

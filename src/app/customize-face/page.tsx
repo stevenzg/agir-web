@@ -203,37 +203,39 @@ function CustomizeFaceContent() {
   const activeCategoryData = featureCategories.find(c => c.id === activeCategory)
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-12">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 pb-12">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-6 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-gray-800">Customize Agent Face</h1>
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Customize Agent Face</h1>
           <div className="flex space-x-4">
             {agentId && (
               <Link
                 href={`/edit-agent?id=${agentId}`}
-                className="text-sm text-indigo-600 hover:text-indigo-800"
+                className="text-sm text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300"
               >
                 Edit Agent Details
               </Link>
             )}
-            <Link href="/" className="text-sm text-indigo-600 hover:text-indigo-800">
+            <Link href="/" className="text-sm text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300">
               Back to Home
             </Link>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-md overflow-hidden">
+        <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md overflow-hidden">
           <div className="flex flex-col md:flex-row">
-            <div className="w-full md:w-64 bg-gray-50 border-r border-gray-200">
-              <div className="p-4 border-b border-gray-200">
-                <h2 className="font-semibold text-gray-700">Features</h2>
+            <div className="w-full md:w-64 bg-gray-50 dark:bg-slate-700 border-r border-gray-200 dark:border-gray-600">
+              <div className="p-4 border-b border-gray-200 dark:border-gray-600">
+                <h2 className="font-semibold text-gray-700 dark:text-gray-300">Features</h2>
               </div>
               <ul>
                 {featureCategories.map(category => (
-                  <li key={category.id} className="border-b border-gray-200 last:border-b-0">
+                  <li key={category.id} className="border-b border-gray-200 dark:border-gray-600 last:border-b-0">
                     <button
                       onClick={() => handleCategoryClick(category.id)}
-                      className={`w-full flex items-center p-4 hover:bg-gray-100 transition-colors ${activeCategory === category.id ? 'bg-indigo-50 text-indigo-600' : 'text-gray-700'
+                      className={`w-full flex items-center p-4 hover:bg-gray-100 dark:hover:bg-slate-600 transition-colors ${activeCategory === category.id
+                          ? 'bg-indigo-50 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400'
+                          : 'text-gray-700 dark:text-gray-300'
                         }`}
                     >
                       <span className="mr-3 text-lg">{category.icon}</span>
@@ -246,7 +248,7 @@ function CustomizeFaceContent() {
 
             <div className="flex-1 p-6 flex flex-col md:flex-row">
               <div className="w-full md:w-2/3 pr-0 md:pr-6 mb-6 md:mb-0">
-                <h2 className="text-lg font-medium text-gray-700 mb-4">{activeCategoryData?.name}</h2>
+                <h2 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-4">{activeCategoryData?.name}</h2>
                 <div className="grid grid-cols-3 gap-4">
                   {activeCategoryData?.options.map(option => (
                     <div
@@ -266,8 +268,8 @@ function CustomizeFaceContent() {
               </div>
 
               <div className="w-full md:w-1/3">
-                <h2 className="text-lg font-medium text-gray-700 mb-4">Preview</h2>
-                <div className="bg-white border border-gray-200 rounded-full aspect-square w-full max-w-xs mx-auto flex items-center justify-center">
+                <h2 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-4">Preview</h2>
+                <div className="bg-white dark:bg-slate-700 border border-gray-200 dark:border-gray-600 rounded-full aspect-square w-full max-w-xs mx-auto flex items-center justify-center">
                   <div className="relative w-4/5 h-4/5 flex flex-col items-center justify-center">
                     <div className="w-full h-full flex flex-col items-center justify-center">
                       <div className="face-container relative">

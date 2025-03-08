@@ -103,18 +103,18 @@ export default function TransactionList({
   const formatAmount = (amount: number, type: TransactionType): React.ReactElement => {
     const formattedAmount = `$${amount.toFixed(2)}`
     return type === 'income'
-      ? <span className="text-green-600">+{formattedAmount}</span>
-      : <span className="text-red-600">-{formattedAmount}</span>
+      ? <span className="text-green-600 dark:text-green-400">+{formattedAmount}</span>
+      : <span className="text-red-600 dark:text-red-400">-{formattedAmount}</span>
   }
 
   return (
-    <Card className="border border-gray-100">
+    <Card className="border border-gray-100 dark:border-gray-700">
       <CardHeader className="pb-2">
         <CardTitle className="text-lg font-medium flex items-center justify-between">
           Recent Transactions
           {showViewAll && (
             <Link href={`/agents/my/transactions${agentId ? `?agentId=${agentId}` : ''}`}>
-              <Button variant="ghost" className="text-xs text-indigo-600 hover:text-indigo-800 h-8">
+              <Button variant="ghost" className="text-xs text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300 h-8">
                 View All
               </Button>
             </Link>
@@ -140,7 +140,7 @@ export default function TransactionList({
                 <TableRow key={transaction.id}>
                   <TableCell className="font-medium">{formatDate(transaction.date)}</TableCell>
                   <TableCell>
-                    <Link href={`/agents/my/transactions/${transaction.id}${agentId ? `?agentId=${agentId}` : ''}`} className="hover:text-indigo-600">
+                    <Link href={`/agents/my/transactions/${transaction.id}${agentId ? `?agentId=${agentId}` : ''}`} className="hover:text-indigo-600 dark:hover:text-indigo-400">
                       {transaction.description}
                     </Link>
                   </TableCell>
@@ -152,7 +152,7 @@ export default function TransactionList({
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={4} className="text-center py-6 text-gray-500">
+                <TableCell colSpan={4} className="text-center py-6 text-gray-500 dark:text-gray-400">
                   No transactions found
                 </TableCell>
               </TableRow>

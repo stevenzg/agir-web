@@ -36,12 +36,12 @@ export default function FinancialSummary({ agentId }: { agentId?: string }) {
   }
 
   return (
-    <Card className="border border-gray-100">
+    <Card className="border border-gray-100 dark:border-gray-700">
       <CardHeader className="pb-2">
         <CardTitle className="text-lg font-medium flex items-center justify-between">
           Financial Summary
           <Link href={`/agents/my/transactions${agentId ? `?agentId=${agentId}` : ''}`}>
-            <Button variant="ghost" className="text-xs text-indigo-600 hover:text-indigo-800 h-8">
+            <Button variant="ghost" className="text-xs text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300 h-8">
               View Transactions
             </Button>
           </Link>
@@ -53,21 +53,21 @@ export default function FinancialSummary({ agentId }: { agentId?: string }) {
       <CardContent>
         <div className="grid grid-cols-3 gap-4">
           <div className="space-y-1">
-            <p className="text-sm font-medium text-gray-500">Current Balance</p>
-            <p className="text-2xl font-bold text-indigo-600">{formatCurrency(financialData.balance)}</p>
+            <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Current Balance</p>
+            <p className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">{formatCurrency(financialData.balance)}</p>
           </div>
           <div className="space-y-1">
-            <p className="text-sm font-medium text-gray-500">Monthly Income</p>
-            <p className="text-2xl font-bold text-green-600">{formatCurrency(financialData.monthlyIncome)}</p>
+            <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Monthly Income</p>
+            <p className="text-2xl font-bold text-green-600 dark:text-green-400">{formatCurrency(financialData.monthlyIncome)}</p>
           </div>
           <div className="space-y-1">
-            <p className="text-sm font-medium text-gray-500">Monthly Expense</p>
-            <p className="text-2xl font-bold text-red-600">{formatCurrency(financialData.monthlyExpense)}</p>
+            <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Monthly Expense</p>
+            <p className="text-2xl font-bold text-red-600 dark:text-red-400">{formatCurrency(financialData.monthlyExpense)}</p>
           </div>
         </div>
 
-        <div className="mt-6 text-xs text-gray-500">
-          Net this month: <span className="font-medium text-green-600">
+        <div className="mt-6 text-xs text-gray-500 dark:text-gray-400">
+          Net this month: <span className="font-medium text-green-600 dark:text-green-400">
             {formatCurrency(financialData.monthlyIncome - financialData.monthlyExpense)}
           </span>
         </div>

@@ -158,38 +158,38 @@ function EditAgentContent() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-gray-200 border-t-indigo-600 rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading agent details...</p>
+          <div className="w-16 h-16 border-4 border-gray-200 dark:border-gray-700 border-t-indigo-600 dark:border-t-indigo-400 rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600 dark:text-gray-300">Loading agent details...</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 py-12">
-      <div className="mx-auto max-w-3xl rounded-lg bg-white p-8 shadow-md">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 py-12">
+      <div className="mx-auto max-w-3xl rounded-lg bg-white dark:bg-slate-800 p-8 shadow-md">
         <div className="mb-6 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-gray-800">
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
             {isNew ? 'Complete Your Agent Profile' : 'Edit Agent'}
           </h1>
           <div className="flex space-x-4">
             <Link
               href="/customize-face"
-              className="text-sm flex items-center text-indigo-600 hover:text-indigo-800"
+              className="text-sm flex items-center text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300"
             >
               <span className="mr-2">Customize Face</span>
               <span className="text-lg">😊</span>
             </Link>
-            <Link href="/" className="text-sm text-indigo-600 hover:text-indigo-800">
+            <Link href="/" className="text-sm text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300">
               Back to Home
             </Link>
           </div>
         </div>
 
         {/* Privacy notice */}
-        <div className="mb-6 rounded-md bg-amber-50 p-4 text-sm text-amber-700 border border-amber-200">
+        <div className="mb-6 rounded-md bg-amber-50 dark:bg-amber-900/20 p-4 text-sm text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800">
           <p className="font-medium mb-1">Important: Privacy Information</p>
           <p className="mb-2">
             Fill this form as if introducing someone at a social gathering. You can use real information if you wish, but it is not required.
@@ -201,14 +201,14 @@ function EditAgentContent() {
         </div>
 
         {error && (
-          <div className="mb-6 rounded-md bg-red-50 p-4 text-sm text-red-700">
+          <div className="mb-6 rounded-md bg-red-50 dark:bg-red-900/20 p-4 text-sm text-red-700 dark:text-red-400">
             {error.message}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label htmlFor="name" className="mb-2 block text-sm font-medium text-gray-700">
+            <label htmlFor="name" className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
               Agent Name
             </label>
             <Input
@@ -221,13 +221,13 @@ function EditAgentContent() {
               placeholder="Enter a name for your agent"
               className="w-full"
             />
-            <p className="mt-1 text-xs text-gray-500">
-              Choose a name for your agent. <span className="text-amber-600">This will be publicly visible.</span>
+            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+              Choose a name for your agent. <span className="text-amber-600 dark:text-amber-500">This will be publicly visible.</span>
             </p>
           </div>
 
           <div>
-            <label htmlFor="appearance" className="mb-2 block text-sm font-medium text-gray-700">
+            <label htmlFor="appearance" className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
               Appearance & First Impression
             </label>
             <textarea
@@ -237,9 +237,9 @@ function EditAgentContent() {
               value={formData.appearance}
               onChange={handleChange}
               placeholder="What would someone notice first about them? How do they present themselves?"
-              className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
+              className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-slate-700 px-3 py-2 text-gray-900 dark:text-gray-100 shadow-sm focus:border-indigo-500 dark:focus:border-indigo-400 focus:outline-none focus:ring-indigo-500 dark:focus:ring-indigo-400"
             />
-            <p className="mt-1 text-xs text-gray-500">This information will remain private and will not be shared with other users.</p>
+            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">This information will remain private and will not be shared with other users.</p>
           </div>
 
           <div>
@@ -365,10 +365,10 @@ function EditAgentContent() {
 // Loading fallback for Suspense
 function EditAgentLoading() {
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
       <div className="text-center">
-        <div className="w-16 h-16 border-4 border-gray-200 border-t-indigo-600 rounded-full animate-spin mx-auto mb-4"></div>
-        <p className="text-gray-600">Loading agent editor...</p>
+        <div className="w-16 h-16 border-4 border-gray-200 dark:border-gray-700 border-t-indigo-600 dark:border-t-indigo-400 rounded-full animate-spin mx-auto mb-4"></div>
+        <p className="text-gray-600 dark:text-gray-300">Loading agent editor...</p>
       </div>
     </div>
   )

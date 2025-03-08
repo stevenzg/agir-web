@@ -110,7 +110,7 @@ export function LoginForm({ onLoginSuccess }: LoginFormProps) {
           </div>
 
           {error && (
-            <div className="text-red-500 text-sm">{getErrorMessage()}</div>
+            <div className="text-red-500 dark:text-red-400 text-sm">{getErrorMessage()}</div>
           )}
 
           <Button type="submit" className="w-full" disabled={isLoading}>
@@ -132,7 +132,7 @@ export function LoginForm({ onLoginSuccess }: LoginFormProps) {
           </div>
 
           {error && (
-            <div className="text-red-500 text-sm">{getErrorMessage()}</div>
+            <div className="text-red-500 dark:text-red-400 text-sm">{getErrorMessage()}</div>
           )}
 
           <Button type="submit" className="w-full" disabled={isLoading}>

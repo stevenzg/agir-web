@@ -122,12 +122,12 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50">
-      <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-md">
-        <h1 className="mb-6 text-center text-2xl font-bold text-gray-800">Login</h1>
+    <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50 dark:bg-slate-900">
+      <div className="w-full max-w-md rounded-lg bg-white dark:bg-slate-800 p-8 shadow-md">
+        <h1 className="mb-6 text-center text-2xl font-bold text-gray-800 dark:text-gray-100">Login</h1>
 
         {error && (
-          <div className="mb-4 rounded-md bg-red-50 p-4 text-sm text-red-700">
+          <div className="mb-4 rounded-md bg-red-50 dark:bg-red-900/20 p-4 text-sm text-red-700 dark:text-red-400">
             {getErrorMessage()}
           </div>
         )}
