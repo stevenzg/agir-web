@@ -135,62 +135,53 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
             {/* Agent Card 1 */}
-            <div className="bg-white dark:bg-zinc-800 rounded-xl overflow-hidden shadow-lg transition-transform hover:scale-105">
-              <div className="h-48 bg-gradient-to-r from-blue-500 to-zinc-600 relative">
-                <div className="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-black/60 to-transparent">
-                  <h3 className="text-xl font-bold text-white">Sophie</h3>
-                  <p className="text-white/80">Data Analysis Specialist</p>
+            <div className="bg-white dark:bg-zinc-800 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all">
+              <div className="p-6 flex flex-col items-center text-center">
+                <div className="w-24 h-24 rounded-full bg-zinc-100 dark:bg-zinc-700 mb-4 flex items-center justify-center overflow-hidden">
+                  <span className="text-2xl font-medium text-zinc-500 dark:text-zinc-300">S</span>
                 </div>
-              </div>
-              <div className="p-6">
-                <p className="text-zinc-600 dark:text-zinc-300 mb-4">
+                <h3 className="text-xl font-bold text-zinc-900 dark:text-white mb-1">Sophie</h3>
+                <p className="text-zinc-500 dark:text-zinc-400 mb-4">Data Analysis Specialist</p>
+                <p className="text-zinc-600 dark:text-zinc-300 mb-6">
                   Sophie loves numbers and can help you analyze complex datasets. She spends her free time learning new statistical methods.
                 </p>
-                <div className="flex justify-end">
-                  <button className="text-zinc-800 dark:text-zinc-200 font-medium hover:text-zinc-900 dark:hover:text-zinc-100">
-                    View Profile →
-                  </button>
-                </div>
+                <button className="text-zinc-800 dark:text-zinc-200 font-medium hover:text-zinc-900 dark:hover:text-zinc-100">
+                  View Profile →
+                </button>
               </div>
             </div>
 
             {/* Agent Card 2 */}
-            <div className="bg-white dark:bg-zinc-800 rounded-xl overflow-hidden shadow-lg transition-transform hover:scale-105">
-              <div className="h-48 bg-gradient-to-r from-emerald-500 to-teal-600 relative">
-                <div className="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-black/60 to-transparent">
-                  <h3 className="text-xl font-bold text-white">Marcus</h3>
-                  <p className="text-white/80">Creative Writer</p>
+            <div className="bg-white dark:bg-zinc-800 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all">
+              <div className="p-6 flex flex-col items-center text-center">
+                <div className="w-24 h-24 rounded-full bg-zinc-100 dark:bg-zinc-700 mb-4 flex items-center justify-center overflow-hidden">
+                  <span className="text-2xl font-medium text-zinc-500 dark:text-zinc-300">M</span>
                 </div>
-              </div>
-              <div className="p-6">
-                <p className="text-zinc-600 dark:text-zinc-300 mb-4">
+                <h3 className="text-xl font-bold text-zinc-900 dark:text-white mb-1">Marcus</h3>
+                <p className="text-zinc-500 dark:text-zinc-400 mb-4">Creative Writer</p>
+                <p className="text-zinc-600 dark:text-zinc-300 mb-6">
                   Marcus has a passion for storytelling. He writes poetry in his spare time and can help craft compelling narratives.
                 </p>
-                <div className="flex justify-end">
-                  <button className="text-zinc-800 dark:text-zinc-200 font-medium hover:text-zinc-900 dark:hover:text-zinc-100">
-                    View Profile →
-                  </button>
-                </div>
+                <button className="text-zinc-800 dark:text-zinc-200 font-medium hover:text-zinc-900 dark:hover:text-zinc-100">
+                  View Profile →
+                </button>
               </div>
             </div>
 
             {/* Agent Card 3 */}
-            <div className="bg-white dark:bg-zinc-800 rounded-xl overflow-hidden shadow-lg transition-transform hover:scale-105">
-              <div className="h-48 bg-gradient-to-r from-purple-500 to-pink-600 relative">
-                <div className="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-black/60 to-transparent">
-                  <h3 className="text-xl font-bold text-white">Elena</h3>
-                  <p className="text-white/80">Design Consultant</p>
+            <div className="bg-white dark:bg-zinc-800 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all">
+              <div className="p-6 flex flex-col items-center text-center">
+                <div className="w-24 h-24 rounded-full bg-zinc-100 dark:bg-zinc-700 mb-4 flex items-center justify-center overflow-hidden">
+                  <span className="text-2xl font-medium text-zinc-500 dark:text-zinc-300">E</span>
                 </div>
-              </div>
-              <div className="p-6">
-                <p className="text-zinc-600 dark:text-zinc-300 mb-4">
+                <h3 className="text-xl font-bold text-zinc-900 dark:text-white mb-1">Elena</h3>
+                <p className="text-zinc-500 dark:text-zinc-400 mb-4">Design Consultant</p>
+                <p className="text-zinc-600 dark:text-zinc-300 mb-6">
                   Elena has an eye for aesthetics and can help with design projects. She enjoys exploring art galleries in her free time.
                 </p>
-                <div className="flex justify-end">
-                  <button className="text-zinc-800 dark:text-zinc-200 font-medium hover:text-zinc-900 dark:hover:text-zinc-100">
-                    View Profile →
-                  </button>
-                </div>
+                <button className="text-zinc-800 dark:text-zinc-200 font-medium hover:text-zinc-900 dark:hover:text-zinc-100">
+                  View Profile →
+                </button>
               </div>
             </div>
           </div>
