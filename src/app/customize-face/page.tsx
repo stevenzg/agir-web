@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
-import { ProtectedRoute } from '@/components/ProtectedRoute'
 import { useAuth } from '@/context/AuthContext'
 
 // Define types for options
@@ -184,8 +183,7 @@ export default function CustomizeFacePage() {
   // Get the active category data
   const activeCategoryData = featureCategories.find(c => c.id === activeCategory)
 
-  // Create the content separately to avoid nesting <a> tags inside ProtectedRoute
-  const pageContent = (
+  return (
     <div className="min-h-screen bg-slate-50 pb-12">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-6 flex items-center justify-between">
@@ -196,9 +194,7 @@ export default function CustomizeFacePage() {
         </div>
 
         <div className="bg-white rounded-lg shadow-md overflow-hidden">
-          {/* Rest of the face customization UI */}
           <div className="flex flex-col md:flex-row">
-            {/* Sidebar with feature categories */}
             <div className="w-full md:w-64 bg-gray-50 border-r border-gray-200">
               <div className="p-4 border-b border-gray-200">
                 <h2 className="font-semibold text-gray-700">Features</h2>
@@ -219,9 +215,7 @@ export default function CustomizeFacePage() {
               </ul>
             </div>
 
-            {/* Main content area with options grid and preview */}
             <div className="flex-1 p-6 flex flex-col md:flex-row">
-              {/* Options grid */}
               <div className="w-full md:w-2/3 pr-0 md:pr-6 mb-6 md:mb-0">
                 <h2 className="text-lg font-medium text-gray-700 mb-4">{activeCategoryData?.name}</h2>
                 <div className="grid grid-cols-3 gap-4">
@@ -242,16 +236,12 @@ export default function CustomizeFacePage() {
                 </div>
               </div>
 
-              {/* Preview area */}
               <div className="w-full md:w-1/3">
                 <h2 className="text-lg font-medium text-gray-700 mb-4">Preview</h2>
                 <div className="bg-white border border-gray-200 rounded-full aspect-square w-full max-w-xs mx-auto flex items-center justify-center">
                   <div className="relative w-4/5 h-4/5 flex flex-col items-center justify-center">
-                    {/* Face preview will go here */}
-                    {/* This is a simplified representation; in a real implementation, you'd render SVG components */}
                     <div className="w-full h-full flex flex-col items-center justify-center">
                       <div className="face-container relative">
-                        {/* Skin tone as background */}
                         <div className="face-skin w-40 h-40 rounded-full mb-4"
                           style={{
                             backgroundColor:
@@ -265,7 +255,6 @@ export default function CustomizeFacePage() {
                           }}>
                         </div>
 
-                        {/* Eyes */}
                         <div className="face-eyes absolute top-1/3 left-1/2 transform -translate-x-1/2 flex space-x-4 text-2xl">
                           {featureCategories[1].options.find(o => o.id === selectedFeatures['eyes']) &&
                             isFeatureOption(featureCategories[1].options[0])
@@ -273,7 +262,6 @@ export default function CustomizeFacePage() {
                             : null}
                         </div>
 
-                        {/* Brows */}
                         <div className="face-brows absolute top-1/4 left-1/2 transform -translate-x-1/2 flex space-x-4 text-xl">
                           {featureCategories[2].options.find(o => o.id === selectedFeatures['brows']) &&
                             isFeatureOption(featureCategories[2].options[0])
@@ -281,7 +269,6 @@ export default function CustomizeFacePage() {
                             : null}
                         </div>
 
-                        {/* Nose */}
                         <div className="face-nose absolute top-1/2 left-1/2 transform -translate-x-1/2 text-xl">
                           {featureCategories[3].options.find(o => o.id === selectedFeatures['nose']) &&
                             isFeatureOption(featureCategories[3].options[0])
@@ -289,7 +276,6 @@ export default function CustomizeFacePage() {
                             : null}
                         </div>
 
-                        {/* Mouth */}
                         <div className="face-mouth absolute top-2/3 left-1/2 transform -translate-x-1/2 text-xl">
                           {featureCategories[4].options.find(o => o.id === selectedFeatures['mouth']) &&
                             isFeatureOption(featureCategories[4].options[0])
@@ -297,7 +283,6 @@ export default function CustomizeFacePage() {
                             : null}
                         </div>
 
-                        {/* Hair */}
                         <div className="face-hair absolute top-0 left-1/2 transform -translate-x-1/2 text-4xl">
                           {featureCategories[5].options.find(o => o.id === selectedFeatures['hair']) &&
                             isFeatureOption(featureCategories[5].options[0])
@@ -305,7 +290,6 @@ export default function CustomizeFacePage() {
                             : null}
                         </div>
 
-                        {/* Accessories */}
                         <div className="face-accessories absolute bottom-1/4 right-1/4 text-xl">
                           {featureCategories[6].options.find(o => o.id === selectedFeatures['accessories']) &&
                             isFeatureOption(featureCategories[6].options[0])
@@ -320,7 +304,6 @@ export default function CustomizeFacePage() {
             </div>
           </div>
 
-          {/* Bottom actions */}
           <div className="border-t border-gray-200 p-4 flex justify-end space-x-4">
             <Button
               variant="outline"
@@ -340,16 +323,6 @@ export default function CustomizeFacePage() {
           </div>
         </div>
       </div>
-    </div>
-  )
-
-  // Use the ProtectedRoute component without nesting <a> tags inside it
-  return (
-    <div>
-      <ProtectedRoute href="/customize-face">
-        <span className="sr-only">Authentication Check</span>
-      </ProtectedRoute>
-      {isAuthenticated && pageContent}
     </div>
   )
 } 
