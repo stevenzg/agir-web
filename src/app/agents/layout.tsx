@@ -26,8 +26,7 @@ export default function AgentsLayout({ children }: AgentsLayoutProps) {
     { name: 'Dashboard', href: '/agents', icon: '📊' },
     { name: 'My Agents', href: '/agents/my', icon: '🤖' },
     { name: 'Community', href: '/agents/community', icon: '🌐' },
-    { name: 'Notes', href: '/agents/notes', icon: '📝' },
-    { name: 'Profile', href: '/profile', icon: '👤' },
+    { name: 'Notes', href: '/agents/notes', icon: '📝' }
   ]
 
   // 判断链接是否激活
@@ -72,42 +71,59 @@ export default function AgentsLayout({ children }: AgentsLayoutProps) {
       <div className="flex flex-1 overflow-hidden">
         {/* 侧边栏 - 固定高度和独立滚动 */}
         <aside className="w-64 bg-white flex-shrink-0 h-[calc(100vh-4rem)] overflow-y-auto">
-          <nav className="py-4">
-            <ul className="space-y-1.5"> {/* 调整菜单项间距 */}
-              {sidebarNavLinks.map((link) => (
-                <li key={link.href}>
+          <nav className="py-4 flex flex-col h-full justify-between">
+            <div>
+              <ul className="space-y-1.5"> {/* 调整菜单项间距 */}
+                {sidebarNavLinks.map((link) => (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      className={cn(
+                        "flex items-center mx-2 px-4 py-2.5 text-sm font-medium rounded-md relative", // 调整内边距和外边距
+                        isActive(link.href)
+                          ? "bg-green-100 text-green-600" // 更淡的激活背景色
+                          : "text-gray-700 hover:bg-gray-50"
+                      )}
+                    >
+                      {isActive(link.href) && (
+                        <span className="absolute left-0 inset-y-0 w-1 bg-green-500 rounded-r-md" />
+                      )}
+                      <span className="text-xl mr-4 inline-flex items-center justify-center">{link.icon}</span>
+                      {link.name}
+                      {isActive(link.href) && (
+                        <span className="w-5 h-5 rounded-full bg-green-400 flex items-center justify-center text-white text-xs absolute right-3">
+                          ✓
+                        </span>
+                      )}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+
+            </div>
+
+            {/* 底部菜单 */}
+            <div className="mt-auto pt-4 border-gray-100">
+              <ul className="space-y-1">
+                <li>
                   <Link
-                    href={link.href}
-                    className={cn(
-                      "flex items-center mx-2 px-4 py-2.5 text-sm font-medium rounded-md relative", // 调整内边距和外边距
-                      isActive(link.href)
-                        ? "bg-green-100 text-green-600" // 更淡的激活背景色
-                        : "text-gray-700 hover:bg-gray-50"
-                    )}
+                    href="/feedback"
+                    className="flex items-center mx-2 px-4 py-2.5 text-sm font-medium rounded-md text-gray-600 hover:bg-gray-50"
                   >
-                    {isActive(link.href) && (
-                      <span className="absolute left-0 inset-y-0 w-1 bg-green-500 rounded-r-md" />
-                    )}
-                    <span className="text-xl mr-4 inline-flex items-center justify-center">{link.icon}</span>
-                    {link.name}
-                    {isActive(link.href) && (
-                      <span className="w-5 h-5 rounded-full bg-green-400 flex items-center justify-center text-white text-xs absolute right-3">
-                        ✓
-                      </span>
-                    )}
+                    <span className="text-xl mr-4 inline-flex items-center justify-center">💬</span>
+                    Feedback
                   </Link>
                 </li>
-              ))}
-            </ul>
-
-            {/* 推荐区域 */}
-            <div className="mt-8 mx-4 p-4 bg-green-50 rounded-lg">
-              <h3 className="flex items-center font-medium text-sm">
-                <span className="mr-2">🎁</span> Refer & Earn
-              </h3>
-              <p className="mt-2 text-xs text-gray-600">
-                Invite friends to Agir and earn extra agent credits!
-              </p>
+                <li>
+                  <Link
+                    href="/settings"
+                    className="flex items-center mx-2 px-4 py-2.5 text-sm font-medium rounded-md text-gray-600 hover:bg-gray-50"
+                  >
+                    <span className="text-xl mr-4 inline-flex items-center justify-center">⚙️</span>
+                    Settings
+                  </Link>
+                </li>
+              </ul>
             </div>
           </nav>
         </aside>
