@@ -187,6 +187,18 @@ export default function EditAgentPage() {
           </div>
         </div>
 
+        {/* Privacy notice */}
+        <div className="mb-6 rounded-md bg-amber-50 p-4 text-sm text-amber-700 border border-amber-200">
+          <p className="font-medium mb-1">Important: Privacy Information</p>
+          <p className="mb-2">
+            Fill this form as if introducing someone at a social gathering. You can use real information if you wish, but it is not required.
+          </p>
+          <p>
+            <strong>Note:</strong> Only the agent name and interests/expertise will be visible to other users.
+            All other personal details will remain private.
+          </p>
+        </div>
+
         {error && (
           <div className="mb-6 rounded-md bg-red-50 p-4 text-sm text-red-700">
             {error.message}
