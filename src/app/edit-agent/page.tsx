@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
@@ -13,7 +13,8 @@ interface ApiError {
   details?: Record<string, string[]>
 }
 
-export default function EditAgentPage() {
+// Main component content that uses useSearchParams
+function EditAgentContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
 
@@ -35,34 +36,8 @@ export default function EditAgentPage() {
     background: ''
   })
 
-  // 获取URL参数并初始化表单
-  useEffect(() => {
-    const id = searchParams.get('id')
-    const name = searchParams.get('name')
-    const newAgent = searchParams.get('isNew') === 'true'
-
-    setIsNew(newAgent)
-
-    if (id) {
-      // 如果是新创建的Agent，使用URL中的信息
-      if (newAgent && name) {
-        setFormData(prev => ({
-          ...prev,
-          id,
-          name: decodeURIComponent(name)
-        }))
-      } else {
-        // 否则，从API获取已有Agent的信息
-        fetchAgentDetails(id)
-      }
-    } else {
-      // 没有ID参数，返回到首页
-      router.push('/')
-    }
-  }, [searchParams, router])
-
   // 获取Agent详情
-  const fetchAgentDetails = async (id: string) => {
+  const fetchAgentDetails = useCallback(async (id: string) => {
     setIsLoading(true)
     setError(null)
 
@@ -91,7 +66,33 @@ export default function EditAgentPage() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [])
+
+  // 获取URL参数并初始化表单
+  useEffect(() => {
+    const id = searchParams.get('id')
+    const name = searchParams.get('name')
+    const newAgent = searchParams.get('isNew') === 'true'
+
+    setIsNew(newAgent)
+
+    if (id) {
+      // 如果是新创建的Agent，使用URL中的信息
+      if (newAgent && name) {
+        setFormData(prev => ({
+          ...prev,
+          id,
+          name: decodeURIComponent(name)
+        }))
+      } else {
+        // 否则，从API获取已有Agent的信息
+        fetchAgentDetails(id)
+      }
+    } else {
+      // 没有ID参数，返回到首页
+      router.push('/')
+    }
+  }, [searchParams, router, fetchAgentDetails])
 
   // 处理表单字段变化
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -358,5 +359,26 @@ export default function EditAgentPage() {
         </form>
       </div>
     </div>
+  )
+}
+
+// Loading fallback for Suspense
+function EditAgentLoading() {
+  return (
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+      <div className="text-center">
+        <div className="w-16 h-16 border-4 border-gray-200 border-t-indigo-600 rounded-full animate-spin mx-auto mb-4"></div>
+        <p className="text-gray-600">Loading agent editor...</p>
+      </div>
+    </div>
+  )
+}
+
+// Wrapper component with Suspense
+export default function EditAgentPage() {
+  return (
+    <Suspense fallback={<EditAgentLoading />}>
+      <EditAgentContent />
+    </Suspense>
   )
 } 

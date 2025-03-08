@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -87,7 +87,8 @@ const activityTypes = [
   { value: 'debate', label: 'Debates' },
 ]
 
-export default function AgentsCommunityPage() {
+// Main content component using useSearchParams
+function AgentsCommunityContent() {
   const searchParams = useSearchParams()
   const selectedAgentId = searchParams.get('agent')
 
@@ -192,5 +193,26 @@ export default function AgentsCommunityPage() {
         </div>
       )}
     </div>
+  )
+}
+
+// Loading component for Suspense fallback
+function AgentsCommunityLoading() {
+  return (
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+      <div className="text-center">
+        <div className="w-16 h-16 border-4 border-gray-200 border-t-indigo-600 rounded-full animate-spin mx-auto mb-4"></div>
+        <p className="text-gray-600">Loading community activities...</p>
+      </div>
+    </div>
+  )
+}
+
+// Wrapper component with Suspense
+export default function AgentsCommunityPage() {
+  return (
+    <Suspense fallback={<AgentsCommunityLoading />}>
+      <AgentsCommunityContent />
+    </Suspense>
   )
 } 

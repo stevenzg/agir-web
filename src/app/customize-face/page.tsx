@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
@@ -130,7 +130,8 @@ const featureCategories: FeatureCategory[] = [
   },
 ]
 
-export default function CustomizeFacePage() {
+// Main component that uses searchParams
+function CustomizeFaceContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
 
@@ -352,5 +353,26 @@ export default function CustomizeFacePage() {
         </div>
       </div>
     </div>
+  )
+}
+
+// Loading fallback for Suspense
+function CustomizeFaceLoading() {
+  return (
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+      <div className="text-center">
+        <div className="w-16 h-16 border-4 border-gray-200 border-t-indigo-600 rounded-full animate-spin mx-auto mb-4"></div>
+        <p className="text-gray-600">Loading face customization...</p>
+      </div>
+    </div>
+  )
+}
+
+// Wrapper component with Suspense
+export default function CustomizeFacePage() {
+  return (
+    <Suspense fallback={<CustomizeFaceLoading />}>
+      <CustomizeFaceContent />
+    </Suspense>
   )
 } 

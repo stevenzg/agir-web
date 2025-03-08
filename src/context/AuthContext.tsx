@@ -99,7 +99,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             setIsAuthenticated(true)
             // 同样，这里应该获取用户信息
             setUser({ email: 'user@example.com' })
-          } catch (error) {
+          } catch {
             // 刷新失败，清除所有token
             localStorage.removeItem(AUTH_CONFIG.TOKEN_STORAGE_KEY)
             localStorage.removeItem(AUTH_CONFIG.REFRESH_TOKEN_STORAGE_KEY)
