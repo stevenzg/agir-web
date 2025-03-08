@@ -40,12 +40,12 @@ export default function AgentsLayout({ children }: AgentsLayoutProps) {
 
   return (
     <div className="min-h-screen flex flex-col">
-      {/* 顶部导航栏 - 移除border */}
+      {/* 顶部导航栏 */}
       <header className="bg-white sticky top-0 z-50">
-        <div className="max-w-screen-xl mx-auto">
-          <div className="flex h-16 items-center justify-between">
-            {/* 左侧 - 与侧边栏保持对齐 */}
-            <div className="flex items-center pl-4 w-64">
+        <div className="flex h-16 items-center justify-between">
+          {/* 左侧 - 与侧边栏内容精确对齐 */}
+          <div className="flex items-center w-64">
+            <div className="pl-6"> {/* 调整左padding精确对齐 */}
               <Link href="/" className="flex items-center space-x-2">
                 <div className="bg-green-400 text-white rounded-full p-1.5 flex items-center justify-center">
                   <span className="text-lg">🤖</span>
@@ -53,45 +53,45 @@ export default function AgentsLayout({ children }: AgentsLayoutProps) {
                 <span className="text-xl font-bold">Agir</span>
               </Link>
             </div>
+          </div>
 
-            {/* 中间 - 页面标题，与main内容左对齐 */}
-            <div className="flex-1 pr-4">
-              <h1 className="text-xl font-bold">{getPageTitle()}</h1>
-            </div>
+          {/* 中间 - 页面标题，与main内容左对齐 */}
+          <div className="flex-1 pl-8 pr-4"> {/* 调整左padding确保与内容对齐 */}
+            <h1 className="text-xl font-bold">{getPageTitle()}</h1>
+          </div>
 
-            {/* 右侧 */}
-            <div className="flex items-center space-x-4 pr-4">
-              <button className="bg-green-400 text-white px-4 py-2 rounded-full text-sm font-medium">
-                + Add Agent
-              </button>
-            </div>
+          {/* 右侧 */}
+          <div className="flex items-center space-x-4 pr-4">
+            <button className="bg-green-400 hover:bg-green-500 text-white px-6 py-2 rounded-full text-sm font-medium">
+              Ask for help
+            </button>
           </div>
         </div>
       </header>
 
-      <div className="flex flex-1">
-        {/* 侧边栏 - 移除border */}
-        <aside className="w-64 bg-white flex-shrink-0">
-          <nav className="py-4 px-4">
-            <ul className="space-y-1">
+      <div className="flex flex-1 overflow-hidden">
+        {/* 侧边栏 - 固定高度和独立滚动 */}
+        <aside className="w-64 bg-white flex-shrink-0 h-[calc(100vh-4rem)] overflow-y-auto">
+          <nav className="py-4">
+            <ul className="space-y-1.5"> {/* 调整菜单项间距 */}
               {sidebarNavLinks.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
                     className={cn(
-                      "flex items-center px-3 py-3 text-sm font-medium rounded-md relative",
+                      "flex items-center mx-2 px-4 py-2.5 text-sm font-medium rounded-md relative", // 调整内边距和外边距
                       isActive(link.href)
-                        ? "text-green-600 bg-green-50"
+                        ? "bg-green-100 text-green-600" // 更淡的激活背景色
                         : "text-gray-700 hover:bg-gray-50"
                     )}
                   >
                     {isActive(link.href) && (
-                      <span className="absolute left-0 inset-y-0 w-1 bg-green-600 rounded-r-md" />
+                      <span className="absolute left-0 inset-y-0 w-1 bg-green-500 rounded-r-md" />
                     )}
-                    <span className="mr-3 text-xl">{link.icon}</span>
+                    <span className="text-xl mr-4 inline-flex items-center justify-center">{link.icon}</span>
                     {link.name}
                     {isActive(link.href) && (
-                      <span className="w-6 h-6 rounded-full bg-green-400 flex items-center justify-center text-white text-xs absolute right-3">
+                      <span className="w-5 h-5 rounded-full bg-green-400 flex items-center justify-center text-white text-xs absolute right-3">
                         ✓
                       </span>
                     )}
@@ -101,7 +101,7 @@ export default function AgentsLayout({ children }: AgentsLayoutProps) {
             </ul>
 
             {/* 推荐区域 */}
-            <div className="mt-8 p-4 bg-green-50 rounded-lg">
+            <div className="mt-8 mx-4 p-4 bg-green-50 rounded-lg">
               <h3 className="flex items-center font-medium text-sm">
                 <span className="mr-2">🎁</span> Refer & Earn
               </h3>
@@ -112,10 +112,9 @@ export default function AgentsLayout({ children }: AgentsLayoutProps) {
           </nav>
         </aside>
 
-        {/* 主内容区域 - 添加左上和右下圆角 */}
-        <main className="flex-1 bg-gray-50 rounded-tl-2xl rounded-br-2xl">
-          <div className="max-w-7xl mx-auto px-8 py-8">
-            {/* 移除页面标题，因为已经移到了顶部 */}
+        {/* 主内容区域 - 独立滚动 */}
+        <main className="flex-1 bg-gray-50 rounded-tl-2xl rounded-br-2xl overflow-y-auto h-[calc(100vh-4rem)]">
+          <div className="max-w-7xl mx-auto px-8 py-8"> {/* 调整主内容区域的内边距 */}
             {children}
           </div>
         </main>

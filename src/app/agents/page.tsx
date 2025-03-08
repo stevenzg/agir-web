@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 export default function AgentsOverviewPage() {
   // 这里可以添加实际的数据获取和状态
@@ -12,24 +12,22 @@ export default function AgentsOverviewPage() {
   ]
 
   return (
-    <div className="space-y-6">
-      <div>
-        <p className="text-lg text-gray-600">
-          Explore your agents, community, and agent-generated content.
-        </p>
-      </div>
+    <div className="space-y-8">
+      <p className="text-base text-gray-600">
+        Explore your agents, community, and agent-generated content.
+      </p>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {stats.map((stat) => (
           <Link key={stat.name} href={stat.href}>
-            <Card className="hover:shadow-md transition-shadow cursor-pointer h-full">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-lg">{stat.name}</CardTitle>
+            <Card className="hover:shadow-sm transition-shadow cursor-pointer h-full border border-gray-100">
+              <CardHeader className="pb-0">
+                <CardTitle className="text-base font-medium">{stat.name}</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-3xl font-bold text-indigo-600">{stat.value}</p>
-                <CardDescription>Click to view details</CardDescription>
+                <p className="text-4xl font-bold text-indigo-600">{stat.value}</p>
+                <p className="text-xs text-gray-500 mt-1">Click to view details</p>
               </CardContent>
             </Card>
           </Link>
@@ -38,56 +36,48 @@ export default function AgentsOverviewPage() {
 
       {/* Quick Actions */}
       <div className="mt-8">
-        <h2 className="text-xl font-semibold text-gray-800 mb-4">Quick Actions</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <h2 className="text-lg font-medium text-gray-800 mb-4">Quick Actions</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           <Link href="/create">
-            <Card className="hover:shadow-md transition-shadow cursor-pointer h-full">
-              <CardContent className="pt-6">
-                <div className="flex flex-col items-center">
-                  <div className="h-12 w-12 rounded-full bg-indigo-100 flex items-center justify-center mb-3">
-                    <span className="text-xl">➕</span>
-                  </div>
-                  <p className="font-medium">Create New Agent</p>
+            <Card className="hover:shadow-sm transition-shadow cursor-pointer h-full border border-gray-100">
+              <CardContent className="flex flex-col items-center justify-center py-8">
+                <div className="h-12 w-12 rounded-full bg-gray-100 flex items-center justify-center mb-4">
+                  <span className="text-xl">➕</span>
                 </div>
+                <p className="font-medium text-sm">Create New Agent</p>
               </CardContent>
             </Card>
           </Link>
 
           <Link href="/agents/community">
-            <Card className="hover:shadow-md transition-shadow cursor-pointer h-full">
-              <CardContent className="pt-6">
-                <div className="flex flex-col items-center">
-                  <div className="h-12 w-12 rounded-full bg-emerald-100 flex items-center justify-center mb-3">
-                    <span className="text-xl">🌐</span>
-                  </div>
-                  <p className="font-medium">Browse Community</p>
+            <Card className="hover:shadow-sm transition-shadow cursor-pointer h-full border border-gray-100">
+              <CardContent className="flex flex-col items-center justify-center py-8">
+                <div className="h-12 w-12 rounded-full bg-gray-100 flex items-center justify-center mb-4">
+                  <span className="text-xl">🌐</span>
                 </div>
+                <p className="font-medium text-sm">Browse Community</p>
               </CardContent>
             </Card>
           </Link>
 
           <Link href="/customize-face">
-            <Card className="hover:shadow-md transition-shadow cursor-pointer h-full">
-              <CardContent className="pt-6">
-                <div className="flex flex-col items-center">
-                  <div className="h-12 w-12 rounded-full bg-purple-100 flex items-center justify-center mb-3">
-                    <span className="text-xl">😊</span>
-                  </div>
-                  <p className="font-medium">Customize Appearance</p>
+            <Card className="hover:shadow-sm transition-shadow cursor-pointer h-full border border-gray-100">
+              <CardContent className="flex flex-col items-center justify-center py-8">
+                <div className="h-12 w-12 rounded-full bg-gray-100 flex items-center justify-center mb-4">
+                  <span className="text-xl">😊</span>
                 </div>
+                <p className="font-medium text-sm">Customize Appearance</p>
               </CardContent>
             </Card>
           </Link>
 
           <Link href="/agents/notes">
-            <Card className="hover:shadow-md transition-shadow cursor-pointer h-full">
-              <CardContent className="pt-6">
-                <div className="flex flex-col items-center">
-                  <div className="h-12 w-12 rounded-full bg-amber-100 flex items-center justify-center mb-3">
-                    <span className="text-xl">📝</span>
-                  </div>
-                  <p className="font-medium">View Agent Notes</p>
+            <Card className="hover:shadow-sm transition-shadow cursor-pointer h-full border border-gray-100">
+              <CardContent className="flex flex-col items-center justify-center py-8">
+                <div className="h-12 w-12 rounded-full bg-gray-100 flex items-center justify-center mb-4">
+                  <span className="text-xl">📝</span>
                 </div>
+                <p className="font-medium text-sm">View Agent Notes</p>
               </CardContent>
             </Card>
           </Link>
@@ -96,8 +86,8 @@ export default function AgentsOverviewPage() {
 
       {/* Recent Activity */}
       <div className="mt-8">
-        <h2 className="text-xl font-semibold text-gray-800 mb-4">Recent Activity</h2>
-        <Card>
+        <h2 className="text-lg font-medium text-gray-800 mb-4">Recent Activity</h2>
+        <Card className="border border-gray-100">
           <CardContent className="pt-6 pb-2">
             <ul className="divide-y divide-gray-200">
               <li className="py-3">
