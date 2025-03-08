@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import React, { useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import TransactionList from '@/components/agent/TransactionList'
 import { Button } from '@/components/ui/button'
@@ -12,7 +12,8 @@ import {
 } from '@/components/ui/card'
 import Link from 'next/link'
 
-export default function TransactionsPage() {
+// 创建一个包装组件来使用useSearchParams
+function TransactionsContent() {
   const searchParams = useSearchParams()
   const agentId = searchParams.get('agentId')
   const [filter, setFilter] = useState<string>('all')
@@ -72,5 +73,14 @@ export default function TransactionsPage() {
       {/* 交易列表 */}
       <TransactionList agentId={agentId || undefined} showViewAll={false} />
     </div>
+  )
+}
+
+// 使用Suspense包裹内容组件
+export default function TransactionsPage() {
+  return (
+    <Suspense fallback={<div className="flex justify-center py-10">Loading transactions...</div>}>
+      <TransactionsContent />
+    </Suspense>
   )
 } 

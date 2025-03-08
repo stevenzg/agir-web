@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import React, { useState } from 'react'
 import {
   Card,
   CardContent,
@@ -100,7 +100,7 @@ export default function TransactionList({
   }
 
   // 格式化金额和类型
-  const formatAmount = (amount: number, type: TransactionType): JSX.Element => {
+  const formatAmount = (amount: number, type: TransactionType): React.ReactElement => {
     const formattedAmount = `$${amount.toFixed(2)}`
     return type === 'income'
       ? <span className="text-green-600">+{formattedAmount}</span>

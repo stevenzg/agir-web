@@ -151,7 +151,7 @@ export default function TransactionDetailPage() {
     return (
       <div className="text-center py-12">
         <h2 className="text-2xl font-bold text-gray-800 mb-2">Transaction Not Found</h2>
-        <p className="text-gray-600 mb-6">The transaction you're looking for doesn't exist or has been removed.</p>
+        <p className="text-gray-600 mb-6">The transaction you&apos;re looking for doesn&apos;t exist or has been removed.</p>
         <Link href={`/agents/my/transactions${agentId ? `?agentId=${agentId}` : ''}`}>
           <Button className="bg-indigo-600 hover:bg-indigo-700 text-white">
             Return to Transactions
