@@ -107,7 +107,7 @@ export default function AgentsLayout({ children }: AgentsLayoutProps) {
       </div>
 
       {/* 底部菜单 */}
-      <div className="mt-auto pt-4 border-t border-gray-100">
+      <div className="mt-auto pt-4">
         <ul className="space-y-1">
           <li>
             <Link
@@ -137,7 +137,7 @@ export default function AgentsLayout({ children }: AgentsLayoutProps) {
   return (
     <div className="min-h-screen flex flex-col">
       {/* 顶部导航栏 */}
-      <header className="bg-white sticky top-0 z-50 shadow-sm">
+      <header className="bg-white sticky top-0 z-50 shadow-sm md:shadow-none">
         <div className="flex h-16 items-center justify-between px-4 md:px-6">
           {/* 左侧 - Logo 和汉堡菜单 */}
           <div className="flex items-center md:w-64">
