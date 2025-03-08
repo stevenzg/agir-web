@@ -79,7 +79,6 @@ export default function MyAgentsPage() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold">My Agents</h1>
           <p className="text-gray-500 mt-1">Manage your agents and their activities</p>
         </div>
         <Link href="/create">
