@@ -4,6 +4,8 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import FinancialSummary from '@/components/agent/FinancialSummary'
+import TransactionList from '@/components/agent/TransactionList'
 
 // 模拟数据 - 实际应用中应从API获取
 const mockAgents = [
@@ -47,6 +49,7 @@ const mockAgents = [
 
 export default function MyAgentsPage() {
   const [agents] = useState(mockAgents)
+  const [selectedAgent, setSelectedAgent] = useState<string | null>(null)
 
   // 获取状态标签的样式
   const getStatusBadge = (status: string) => {
@@ -74,7 +77,11 @@ export default function MyAgentsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-end">
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-2xl font-bold">My Agents</h1>
+          <p className="text-gray-500 mt-1">Manage your agents and their activities</p>
+        </div>
         <Link href="/create">
           <Button className="bg-indigo-600 hover:bg-indigo-700 text-white">
             Create New Agent
@@ -82,44 +89,54 @@ export default function MyAgentsPage() {
         </Link>
       </div>
 
+      {/* Financial Summary */}
+      <FinancialSummary agentId={selectedAgent || undefined} />
+
       {/* Agents Grid */}
       {agents.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {agents.map((agent) => (
-            <Card key={agent.id} className="overflow-hidden">
-              <CardHeader className={`${agent.backgroundColor} pb-2`}>
-                <div className="flex justify-between items-start">
-                  <div className="flex items-center space-x-3">
-                    <span className="text-2xl">{agent.avatar}</span>
-                    <CardTitle className="text-lg">{agent.name}</CardTitle>
+        <div>
+          <h2 className="text-xl font-medium mb-4">Your Agents</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {agents.map((agent) => (
+              <Card
+                key={agent.id}
+                className={`overflow-hidden ${selectedAgent === agent.id ? 'ring-2 ring-indigo-600' : ''}`}
+                onClick={() => setSelectedAgent(agent.id)}
+              >
+                <CardHeader className={`${agent.backgroundColor} pb-2`}>
+                  <div className="flex justify-between items-start">
+                    <div className="flex items-center space-x-3">
+                      <span className="text-2xl">{agent.avatar}</span>
+                      <CardTitle className="text-lg">{agent.name}</CardTitle>
+                    </div>
+                    {getStatusBadge(agent.status)}
                   </div>
-                  {getStatusBadge(agent.status)}
-                </div>
-                <CardDescription className="line-clamp-2 text-gray-700">
-                  {agent.description}
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="pt-4 pb-2">
-                <div className="text-sm text-gray-500">
-                  Created: {new Date(agent.createdAt).toLocaleDateString()}
-                </div>
-              </CardContent>
-              <CardFooter className="border-t flex justify-between gap-2 p-3">
-                <Link href={`/edit-agent?id=${agent.id}`} className="flex-1">
-                  <Button variant="outline" className="w-full text-sm">
-                    Edit
-                  </Button>
-                </Link>
-                <Link href={`/agents/community?agent=${agent.id}`} className="flex-1">
-                  <Button
-                    className="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-sm"
-                  >
-                    Activities
-                  </Button>
-                </Link>
-              </CardFooter>
-            </Card>
-          ))}
+                  <CardDescription className="line-clamp-2 text-gray-700">
+                    {agent.description}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="pt-4 pb-2">
+                  <div className="text-sm text-gray-500">
+                    Created: {new Date(agent.createdAt).toLocaleDateString()}
+                  </div>
+                </CardContent>
+                <CardFooter className="border-t flex justify-between gap-2 p-3">
+                  <Link href={`/edit-agent?id=${agent.id}`} className="flex-1">
+                    <Button variant="outline" className="w-full text-sm">
+                      Edit
+                    </Button>
+                  </Link>
+                  <Link href={`/agents/community?agent=${agent.id}`} className="flex-1">
+                    <Button
+                      className="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-sm"
+                    >
+                      Activities
+                    </Button>
+                  </Link>
+                </CardFooter>
+              </Card>
+            ))}
+          </div>
         </div>
       ) : (
         <div className="text-center py-10">
@@ -131,6 +148,13 @@ export default function MyAgentsPage() {
               Create New Agent
             </Button>
           </Link>
+        </div>
+      )}
+
+      {/* Recent Transactions */}
+      {agents.length > 0 && (
+        <div className="mt-6">
+          <TransactionList limit={5} agentId={selectedAgent || undefined} />
         </div>
       )}
     </div>

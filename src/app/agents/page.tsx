@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import FinancialSummary from '@/components/agent/FinancialSummary'
 
 export default function AgentsOverviewPage() {
   // 这里可以添加实际的数据获取和状态
@@ -17,25 +18,34 @@ export default function AgentsOverviewPage() {
         Explore your agents, community, and agent-generated content.
       </p>
 
+      {/* 财务摘要卡片 */}
+      <div>
+        <h2 className="text-lg font-medium text-gray-800 mb-4">Financial Overview</h2>
+        <FinancialSummary />
+      </div>
+
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {stats.map((stat) => (
-          <Link key={stat.name} href={stat.href}>
-            <Card className="hover:shadow-sm transition-shadow cursor-pointer h-full border border-gray-100">
-              <CardHeader className="pb-0">
-                <CardTitle className="text-base font-medium">{stat.name}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-4xl font-bold text-indigo-600">{stat.value}</p>
-                <p className="text-xs text-gray-500 mt-1">Click to view details</p>
-              </CardContent>
-            </Card>
-          </Link>
-        ))}
+      <div>
+        <h2 className="text-lg font-medium text-gray-800 mb-4">Agent Stats</h2>
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {stats.map((stat) => (
+            <Link key={stat.name} href={stat.href}>
+              <Card className="hover:shadow-sm transition-shadow cursor-pointer h-full border border-gray-100">
+                <CardHeader className="pb-0">
+                  <CardTitle className="text-base font-medium">{stat.name}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-4xl font-bold text-indigo-600">{stat.value}</p>
+                  <p className="text-xs text-gray-500 mt-1">Click to view details</p>
+                </CardContent>
+              </Card>
+            </Link>
+          ))}
+        </div>
       </div>
 
       {/* Quick Actions */}
-      <div className="mt-8">
+      <div>
         <h2 className="text-lg font-medium text-gray-800 mb-4">Quick Actions</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           <Link href="/create">
@@ -60,13 +70,13 @@ export default function AgentsOverviewPage() {
             </Card>
           </Link>
 
-          <Link href="/customize-face">
+          <Link href="/agents/my/transactions">
             <Card className="hover:shadow-sm transition-shadow cursor-pointer h-full border border-gray-100">
               <CardContent className="flex flex-col items-center justify-center py-8">
                 <div className="h-12 w-12 rounded-full bg-gray-100 flex items-center justify-center mb-4">
-                  <span className="text-xl">😊</span>
+                  <span className="text-xl">💰</span>
                 </div>
-                <p className="font-medium text-sm">Customize Appearance</p>
+                <p className="font-medium text-sm">View Transactions</p>
               </CardContent>
             </Card>
           </Link>
@@ -85,7 +95,7 @@ export default function AgentsOverviewPage() {
       </div>
 
       {/* Recent Activity */}
-      <div className="mt-8">
+      <div>
         <h2 className="text-lg font-medium text-gray-800 mb-4">Recent Activity</h2>
         <Card className="border border-gray-100">
           <CardContent className="pt-6 pb-2">
@@ -124,7 +134,7 @@ export default function AgentsOverviewPage() {
                     </div>
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium text-gray-900">Agent Charlie updated their appearance</p>
+                    <p className="text-sm font-medium text-gray-900">Agent Charlie earned $250 from completed task</p>
                     <p className="text-sm text-gray-500">Yesterday</p>
                   </div>
                 </div>
