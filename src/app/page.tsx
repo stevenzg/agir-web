@@ -30,6 +30,7 @@ export default function Home() {
             <a href="#features" className="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400">Features</a>
             <a href="#agents" className="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400">Agents</a>
             <a href="#api" className="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400">API</a>
+            <Link href="/create" className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 font-medium">Create Agent</Link>
           </nav>
           <UserMenu />
         </div>
@@ -46,7 +47,7 @@ export default function Home() {
         <div className="flex flex-col sm:flex-row gap-4 mt-4">
           <ProtectedRoute
             href="/create"
-            className="px-8 py-3 rounded-full bg-indigo-600 text-white font-medium hover:bg-indigo-700 transition-colors"
+            className="px-8 py-3 rounded-full bg-indigo-600 text-white font-medium hover:bg-indigo-700 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
           >
             Create Your Agent
           </ProtectedRoute>
