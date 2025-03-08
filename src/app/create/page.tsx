@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ProtectedRoute } from '@/components/ProtectedRoute'
+import { useAuth } from '@/context/AuthContext'
 
 // Define error type
 interface ApiError {
@@ -16,6 +17,7 @@ interface ApiError {
 
 export default function CreateAgentPage() {
   const router = useRouter()
+  const { isAuthenticated } = useAuth()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<ApiError | null>(null)
 
@@ -275,8 +277,11 @@ export default function CreateAgentPage() {
   )
 
   return (
-    <ProtectedRoute href="/create">
-      {renderAgentForm()}
-    </ProtectedRoute>
+    <div>
+      <ProtectedRoute href="/create">
+        <span>Authentication Check</span>
+      </ProtectedRoute>
+      {isAuthenticated && renderAgentForm()}
+    </div>
   )
 } 
