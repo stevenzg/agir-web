@@ -4,6 +4,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { ProtectedRoute } from "@/components/ProtectedRoute"
 import { useAuth } from "@/context/AuthContext"
+import { useTheme } from "next-themes"
 import {
   Avatar,
   AvatarFallback
@@ -15,7 +16,13 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
 } from "@/components/ui/dropdown-menu"
+import { SunIcon, MoonIcon, MonitorIcon } from "lucide-react"
 
 export default function Home() {
   return (
@@ -275,6 +282,7 @@ console.log(response);  // Agent's personalized response`}
 
 function UserMenu() {
   const { user, logout, isAuthenticated } = useAuth()
+  const { theme, setTheme } = useTheme()
 
   // If not logged in, show login button
   if (!isAuthenticated) {
@@ -319,6 +327,36 @@ function UserMenu() {
             Settings
           </Link>
         </DropdownMenuItem>
+        <DropdownMenuSeparator />
+
+        {/* Theme Switcher */}
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger className="cursor-pointer">
+            <span className="flex items-center">
+              {theme === 'light' && <SunIcon className="mr-2 h-4 w-4" />}
+              {theme === 'dark' && <MoonIcon className="mr-2 h-4 w-4" />}
+              {theme === 'system' && <MonitorIcon className="mr-2 h-4 w-4" />}
+              <span>Theme</span>
+            </span>
+          </DropdownMenuSubTrigger>
+          <DropdownMenuSubContent>
+            <DropdownMenuRadioGroup value={theme || "system"} onValueChange={setTheme}>
+              <DropdownMenuRadioItem value="light" className="cursor-pointer">
+                <SunIcon className="mr-2 h-4 w-4" />
+                <span>Light</span>
+              </DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value="dark" className="cursor-pointer">
+                <MoonIcon className="mr-2 h-4 w-4" />
+                <span>Dark</span>
+              </DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value="system" className="cursor-pointer">
+                <MonitorIcon className="mr-2 h-4 w-4" />
+                <span>System</span>
+              </DropdownMenuRadioItem>
+            </DropdownMenuRadioGroup>
+          </DropdownMenuSubContent>
+        </DropdownMenuSub>
+
         <DropdownMenuSeparator />
         <DropdownMenuItem
           className="text-red-500 cursor-pointer focus:text-red-500"
