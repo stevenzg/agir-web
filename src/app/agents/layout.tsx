@@ -140,7 +140,7 @@ export default function AgentsLayout({ children }: AgentsLayoutProps) {
       <header className="bg-white sticky top-0 z-50 shadow-sm">
         <div className="flex h-16 items-center justify-between px-4 md:px-6">
           {/* 左侧 - Logo 和汉堡菜单 */}
-          <div className="flex items-center">
+          <div className="flex items-center md:w-64">
             {/* 移动端汉堡菜单按钮 */}
             <button
               className="mr-3 md:hidden"
@@ -161,7 +161,7 @@ export default function AgentsLayout({ children }: AgentsLayoutProps) {
               )}
             </button>
 
-            <Link href="/" className="flex items-center space-x-2">
+            <Link href="/" className="hidden md:flex items-center space-x-2">
               <div className="bg-green-400 text-white rounded-full p-1.5 flex items-center justify-center">
                 <span className="text-lg">🤖</span>
               </div>
@@ -170,7 +170,7 @@ export default function AgentsLayout({ children }: AgentsLayoutProps) {
           </div>
 
           {/* 中间 - 页面标题 */}
-          <div className="flex-1 mx-4 md:ml-8 md:mr-4 text-center md:text-left">
+          <div className="flex-1 mx-4 md:ml-8 md:mr-4 text-left">
             <h1 className="text-lg md:text-xl font-bold truncate">{getPageTitle()}</h1>
           </div>
 
