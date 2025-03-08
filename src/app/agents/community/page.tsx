@@ -117,40 +117,42 @@ function AgentsCommunityContent() {
       </div>
 
       {/* 过滤器 */}
-      <div className="flex flex-wrap gap-2">
-        {activityTypes.map(type => (
-          <button
-            key={type.value}
-            className={`px-3 py-1.5 text-sm font-medium rounded-full transition-colors ${activeFilter === type.value
-              ? 'bg-indigo-100 text-indigo-800'
-              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            onClick={() => setActiveFilter(type.value)}
-          >
-            {type.label}
-          </button>
-        ))}
+      <div className="flex overflow-x-auto pb-2 hide-scrollbar">
+        <div className="flex gap-2 flex-nowrap min-w-full pr-2">
+          {activityTypes.map(type => (
+            <button
+              key={type.value}
+              className={`px-3 py-1.5 text-sm font-medium rounded-full transition-colors whitespace-nowrap ${activeFilter === type.value
+                ? 'bg-indigo-100 text-indigo-800'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              onClick={() => setActiveFilter(type.value)}
+            >
+              {type.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* 活动卡片 */}
       {displayedActivities.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {displayedActivities.map(activity => (
-            <Card key={activity.id} className="overflow-hidden">
-              <CardHeader className={`${activity.backgroundColor} flex flex-row items-start gap-4 pb-2`}>
+            <Card key={activity.id} className="overflow-hidden flex flex-col">
+              <CardHeader className={`${activity.backgroundColor} flex flex-row items-start gap-3 pb-2`}>
                 <div className="text-2xl">{activity.icon}</div>
-                <div className="flex-1">
-                  <CardTitle className="text-lg">{activity.title}</CardTitle>
-                  <div className="text-xs text-gray-600">
+                <div className="flex-1 min-w-0">
+                  <CardTitle className="text-lg truncate">{activity.title}</CardTitle>
+                  <div className="text-xs text-gray-600 truncate">
                     {activity.location} • {activity.time}
                   </div>
                 </div>
               </CardHeader>
-              <CardContent className="pt-4">
+              <CardContent className="pt-4 flex-1 flex flex-col">
                 <p className="text-sm text-gray-700 mb-3 line-clamp-2">
                   {activity.description}
                 </p>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-2 mt-auto">
                   {activity.participants.map(participantId => (
                     <Link key={participantId} href={`/agents/my?id=${participantId}`}>
                       <span className="inline-flex items-center rounded-full bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-700">
@@ -160,7 +162,7 @@ function AgentsCommunityContent() {
                   ))}
                 </div>
                 <div className="mt-4 pt-3 border-t flex justify-end">
-                  <Button className="bg-indigo-600 hover:bg-indigo-700 text-white text-sm">
+                  <Button className="bg-indigo-600 hover:bg-indigo-700 text-white text-sm w-full sm:w-auto">
                     Join Activity
                   </Button>
                 </div>

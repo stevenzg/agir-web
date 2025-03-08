@@ -137,14 +137,25 @@ export default function AgentsLayout({ children }: AgentsLayoutProps) {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <style jsx global>{`
+        .hide-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        
+        .hide-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      `}</style>
+
       {/* 顶部导航栏 */}
       <header className="bg-white dark:bg-slate-800 sticky top-0 z-50 shadow-sm md:shadow-none">
-        <div className="flex h-16 items-center justify-between px-4 md:px-6">
+        <div className="flex h-16 items-center justify-between px-3 md:px-6">
           {/* 左侧 - Logo 和汉堡菜单 */}
           <div className="flex items-center md:w-64">
             {/* 移动端汉堡菜单按钮 */}
             <button
-              className="mr-3 md:hidden"
+              className="mr-2 md:hidden"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
             >
@@ -205,8 +216,8 @@ export default function AgentsLayout({ children }: AgentsLayoutProps) {
         </aside>
 
         {/* 主内容区域 - 独立滚动，响应式宽度 */}
-        <main className="flex-1 bg-zinc-50 dark:bg-slate-900 rounded-tl-2xl md:rounded-tl-2xl rounded-br-2xl overflow-y-auto h-[calc(100vh-4rem)]">
-          <div className="max-w-7xl mt-4 mx-auto px-4 sm:px-6 md:px-8 py-4 md:py-8 bg-white dark:bg-slate-800 rounded-3xl">
+        <main className="flex-1 bg-zinc-50 dark:bg-slate-900 rounded-none md:rounded-tl-2xl md:rounded-br-2xl overflow-y-auto h-[calc(100vh-4rem)]">
+          <div className="max-w-7xl mt-0 md:mt-4 mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-3 md:py-6 lg:py-8 bg-white dark:bg-slate-800 rounded-none md:rounded-3xl">
             {children}
           </div>
         </main>
