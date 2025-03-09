@@ -80,7 +80,7 @@ export function ProtectedRoute({
       </Element>
 
       <Dialog open={showLoginDialog} onOpenChange={setShowLoginDialog}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-[425px] bg-white dark:bg-zinc-900">
           <DialogHeader>
             <DialogTitle>Login to continue</DialogTitle>
           </DialogHeader>
