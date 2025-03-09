@@ -15,10 +15,10 @@ export default function AgentsLayout({ children }: AgentsLayoutProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
 
-  // 监听窗口大小变化，更新是否为移动设备
+  // Monitor window size changes and update mobile device status
   useEffect(() => {
     const checkIfMobile = () => {
-      setIsMobile(window.innerWidth < 768) // 768px是常用的移动设备断点
+      setIsMobile(window.innerWidth < 768) // 768px is a common breakpoint for mobile devices
     }
 
     checkIfMobile()
@@ -29,7 +29,7 @@ export default function AgentsLayout({ children }: AgentsLayoutProps) {
     }
   }, [])
 
-  // 在移动设备上打开菜单时禁止背景滚动
+  // Prevent background scrolling when menu is open on mobile
   useEffect(() => {
     if (isMobile && isMobileMenuOpen) {
       document.body.style.overflow = 'hidden'
@@ -42,7 +42,7 @@ export default function AgentsLayout({ children }: AgentsLayoutProps) {
     }
   }, [isMobile, isMobileMenuOpen])
 
-  // 基于当前路径获取页面标题
+  // Get page title based on current path
   const getPageTitle = () => {
     if (pathname === '/agents') return 'Dashboard'
     if (pathname === '/agents/my') return 'My Agents'
@@ -52,7 +52,7 @@ export default function AgentsLayout({ children }: AgentsLayoutProps) {
     return 'Agents'
   }
 
-  // 侧边栏导航链接
+  // Sidebar navigation links
   const sidebarNavLinks = [
     { name: 'Dashboard', href: '/agents', icon: '📊' },
     { name: 'My Agents', href: '/agents/my', icon: '🤖' },
@@ -61,7 +61,7 @@ export default function AgentsLayout({ children }: AgentsLayoutProps) {
     { name: 'Notes', href: '/agents/notes', icon: '📝' }
   ]
 
-  // 判断链接是否激活
+  // Check if link is active
   const isActive = (href: string) => {
     if (href === '/agents') {
       return pathname === '/agents'
@@ -69,14 +69,14 @@ export default function AgentsLayout({ children }: AgentsLayoutProps) {
     return pathname.startsWith(href)
   }
 
-  // 处理移动端菜单项点击
+  // Handle mobile menu item click
   const handleNavLinkClick = () => {
     if (isMobile) {
       setIsMobileMenuOpen(false)
     }
   }
 
-  // 侧边栏内容（桌面版和移动版共用）
+  // Sidebar content (shared between desktop and mobile versions)
   const SidebarContent = () => (
     <nav className="py-4 flex flex-col h-full justify-between">
       <div>
@@ -109,7 +109,7 @@ export default function AgentsLayout({ children }: AgentsLayoutProps) {
         </ul>
       </div>
 
-      {/* 底部菜单 */}
+      {/* Bottom menu */}
       <div className="mt-auto pt-4">
         <ul className="space-y-1">
           <li>
@@ -150,12 +150,12 @@ export default function AgentsLayout({ children }: AgentsLayoutProps) {
         }
       `}</style>
 
-      {/* 顶部导航栏 */}
+      {/* Top navigation bar */}
       <header className="bg-white dark:bg-slate-800 sticky top-0 z-50 shadow-sm md:shadow-none">
         <div className="flex h-16 items-center justify-between px-3 md:px-6">
-          {/* 左侧 - Logo 和汉堡菜单 */}
+          {/* Left - Logo and hamburger menu */}
           <div className="flex items-center md:w-64">
-            {/* 移动端汉堡菜单按钮 */}
+            {/* Mobile hamburger menu button */}
             <button
               className="mr-2 md:hidden"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -180,19 +180,19 @@ export default function AgentsLayout({ children }: AgentsLayoutProps) {
             </Link>
           </div>
 
-          {/* 中间 - 页面标题 */}
+          {/* Middle - Page title */}
           <div className="flex-1 mx-4 md:ml-8 md:mr-4 text-left">
             <h1 className="text-lg md:text-xl font-bold truncate dark:text-white">{getPageTitle()}</h1>
           </div>
 
-          {/* 右侧 */}
+          {/* Right */}
           <div>
             <UserMenu />
           </div>
         </div>
       </header>
 
-      {/* 移动端背景遮罩 */}
+      {/* Mobile background overlay */}
       {isMobile && isMobileMenuOpen && (
         <div
           className="fixed inset-0 bg-zinc-800 bg-opacity-50 z-40"
@@ -202,12 +202,12 @@ export default function AgentsLayout({ children }: AgentsLayoutProps) {
       )}
 
       <div className="flex flex-1 overflow-hidden relative">
-        {/* 桌面侧边栏 - 只在非移动设备显示 */}
+        {/* Desktop sidebar - only show on non-mobile devices */}
         <aside className="hidden md:block w-64 bg-white dark:bg-slate-800 flex-shrink-0 h-[calc(100vh-4rem)] overflow-y-auto">
           <SidebarContent />
         </aside>
 
-        {/* 移动端侧边抽屉菜单 */}
+        {/* Mobile drawer menu */}
         <aside
           className={cn(
             "fixed md:hidden top-16 left-0 h-[calc(100vh-4rem)] w-64 bg-white dark:bg-slate-800 z-50 transition-transform duration-300 ease-in-out overflow-y-auto",
@@ -217,7 +217,7 @@ export default function AgentsLayout({ children }: AgentsLayoutProps) {
           <SidebarContent />
         </aside>
 
-        {/* 主内容区域 - 独立滚动，响应式宽度 */}
+        {/* Main content area - independent scroll, responsive width */}
         <main className="flex-1 bg-zinc-50 dark:bg-slate-900 rounded-none md:rounded-tl-2xl md:rounded-br-2xl overflow-y-auto h-[calc(100vh-4rem)]">
           <div className="max-w-7xl mt-0 md:mt-4 mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-3 md:py-6 lg:py-8 bg-white dark:bg-slate-800 rounded-none md:rounded-3xl">
             {children}
