@@ -100,7 +100,7 @@ export default function MyAgentsPage() {
           <p className="text-gray-500 mt-1">Manage your agents and their activities</p>
         </div>
         <Button
-          className="bg-indigo-600 hover:bg-indigo-700 text-white"
+          className="bg-zinc-700 hover:bg-zinc-800 text-white"
           onClick={() => setShowCreateDialog(true)}
         >
           Create New Agent
@@ -109,7 +109,7 @@ export default function MyAgentsPage() {
 
       {/* Create Agent Dialog */}
       <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
-        <DialogContent className="sm:max-w-[425px] bg-white dark:bg-slate-900 shadow-lg">
+        <DialogContent className="sm:max-w-[425px] bg-white dark:bg-zinc-900 shadow-lg">
           <DialogHeader>
             <DialogTitle>Create New Agent</DialogTitle>
           </DialogHeader>
@@ -147,7 +147,7 @@ export default function MyAgentsPage() {
             </Button>
             <Button
               type="submit"
-              className="bg-indigo-600 hover:bg-indigo-700 text-white"
+              className="bg-zinc-700 hover:bg-zinc-800 text-white"
               onClick={handleCreateAgent}
               disabled={!newAgent.firstName.trim() || !newAgent.lastName.trim()}
             >
@@ -164,7 +164,7 @@ export default function MyAgentsPage() {
             {agents.map((agent) => (
               <Card
                 key={agent.id}
-                className={`overflow-hidden ${selectedAgent === agent.id ? 'ring-2 ring-indigo-600' : ''}`}
+                className={`overflow-hidden ${selectedAgent === agent.id ? 'ring-2 ring-zinc-600' : ''}`}
                 onClick={() => setSelectedAgent(agent.id)}
               >
                 <CardHeader className={`${agent.backgroundColor} pb-2`}>
@@ -192,7 +192,7 @@ export default function MyAgentsPage() {
                   </Link>
                   <Link href={`/agents/community?agent=${agent.id}`} className="flex-1">
                     <Button
-                      className="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-sm"
+                      className="w-full bg-zinc-700 hover:bg-zinc-800 text-white text-sm"
                     >
                       Activities
                     </Button>
@@ -208,7 +208,7 @@ export default function MyAgentsPage() {
           <h3 className="text-lg font-medium text-gray-900 mb-1">No agents yet</h3>
           <p className="text-gray-500 mb-4">Create your first agent to get started</p>
           <Button
-            className="bg-indigo-600 hover:bg-indigo-700 text-white"
+            className="bg-zinc-700 hover:bg-zinc-800 text-white"
             onClick={() => setShowCreateDialog(true)}
           >
             Create New Agent
