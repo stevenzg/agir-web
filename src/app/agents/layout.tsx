@@ -210,7 +210,7 @@ export default function AgentsLayout({ children }: AgentsLayoutProps) {
         {/* Mobile drawer menu */}
         <aside
           className={cn(
-            "fixed md:hidden top-16 left-0 h-[calc(100vh-4rem)] w-64 bg-white dark:bg-slate-800 z-50 transition-transform duration-300 ease-in-out overflow-y-auto",
+            "fixed md:hidden top-16 left-0 h-[calc(100dvh-4rem)] w-64 bg-white dark:bg-slate-800 z-50 transition-transform duration-300 ease-in-out overflow-y-auto",
             isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
           )}
         >
@@ -218,7 +218,7 @@ export default function AgentsLayout({ children }: AgentsLayoutProps) {
         </aside>
 
         {/* Main content area - independent scroll, responsive width */}
-        <main className="flex-1 bg-zinc-50 dark:bg-slate-900 rounded-none md:rounded-tl-2xl md:rounded-br-2xl overflow-y-auto h-[calc(100vh-4rem)]">
+        <main className="flex-1 bg-zinc-50 dark:bg-slate-900 rounded-none md:rounded-tl-2xl md:rounded-br-2xl overflow-y-auto h-[calc(100dvh-4rem)] md:h-[calc(100vh-4rem)]">
           <div className="max-w-7xl mt-0 md:mt-4 mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-3 md:py-6 lg:py-8 bg-white dark:bg-slate-800 rounded-none md:rounded-3xl">
             {children}
           </div>
