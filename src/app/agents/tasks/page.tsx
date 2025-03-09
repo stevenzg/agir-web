@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { ResponsiveDataView } from '@/components/ui/responsive-data-view'
+import { ResponsiveDataView, Column } from '@/components/ui/responsive-data-view'
 
 // Mock task data
 const MOCK_TASKS = [
@@ -35,6 +35,9 @@ const MOCK_TASKS = [
   },
 ]
 
+// 定义Task类型
+type Task = typeof MOCK_TASKS[0]
+
 export default function TasksPage() {
   const router = useRouter()
   const [tasks] = useState(MOCK_TASKS)
@@ -58,32 +61,32 @@ export default function TasksPage() {
   }
 
   // 定义表格/卡片列配置
-  const columns = [
+  const columns: Column<Task>[] = [
     {
       accessorKey: 'title',
       header: 'Task Title',
-      cell: (value: string) => <span className="font-medium">{value}</span>,
+      cell: (value: unknown) => <span className="font-medium">{value as string}</span>,
     },
     {
       accessorKey: 'status',
       header: 'Status',
-      cell: (value: string) => (
-        <span className={`px-2 py-1 rounded-full text-xs ${statusColorMap[value]}`}>
-          {value}
+      cell: (value: unknown) => (
+        <span className={`px-2 py-1 rounded-full text-xs ${statusColorMap[value as string]}`}>
+          {value as string}
         </span>
       ),
     },
     {
       accessorKey: 'assignedAgents',
       header: 'Assigned Agents',
-      cell: (value: number) => `${value} agents`,
+      cell: (value: unknown) => `${value as number} agents`,
     },
     {
       accessorKey: 'priority',
       header: 'Priority',
-      cell: (value: string) => (
-        <span className={`px-2 py-1 rounded-full text-xs ${priorityColorMap[value]}`}>
-          {value}
+      cell: (value: unknown) => (
+        <span className={`px-2 py-1 rounded-full text-xs ${priorityColorMap[value as string]}`}>
+          {value as string}
         </span>
       ),
     },
@@ -94,9 +97,9 @@ export default function TasksPage() {
     {
       accessorKey: 'id',
       header: 'Actions',
-      cell: (value: string) => (
+      cell: (value: unknown) => (
         <Link
-          href={`/agents/tasks/${value}`}
+          href={`/agents/tasks/${value as string}`}
           className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
         >
           View Details
@@ -109,7 +112,6 @@ export default function TasksPage() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Task Management</h1>
           <p className="text-gray-600 dark:text-gray-300 mt-1">
             Create and manage your tasks for AI assistants to help complete
           </p>

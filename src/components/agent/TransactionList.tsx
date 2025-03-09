@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card'
-import { ResponsiveDataView } from '@/components/ui/responsive-data-view'
+import { ResponsiveDataView, Column } from '@/components/ui/responsive-data-view'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 
@@ -101,18 +101,18 @@ export default function TransactionList({
   }
 
   // 定义列
-  const columns = [
+  const columns: Column<Transaction>[] = [
     {
       accessorKey: 'date',
       header: 'Date',
-      cell: (value: string) => formatDate(value)
+      cell: (value: unknown) => formatDate(value as string)
     },
     {
       accessorKey: 'description',
       header: 'Description',
-      cell: (value: string, row: Transaction) => (
+      cell: (value: unknown, row: Transaction) => (
         <Link href={`/agents/my/transactions/${row.id}${agentId ? `?agentId=${agentId}` : ''}`} className="hover:text-indigo-600 dark:hover:text-indigo-400">
-          {value}
+          {value as string}
         </Link>
       )
     },
@@ -123,7 +123,7 @@ export default function TransactionList({
     {
       accessorKey: 'amount',
       header: 'Amount',
-      cell: (value: number, row: Transaction) => formatAmount(value, row.type)
+      cell: (value: unknown, row: Transaction) => formatAmount(value as number, row.type)
     }
   ]
 
