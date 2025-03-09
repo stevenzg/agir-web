@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { formatDate } from '@/lib/utils'
 
 // 模拟笔记数据
 const mockNotes = [
@@ -73,14 +74,6 @@ const categories = [
   { value: 'writing', label: 'Writing' },
   { value: 'technology', label: 'Technology' },
 ]
-
-function formatDate(dateString: string) {
-  const date = new Date(dateString)
-  const day = date.getDate()
-  const month = date.getMonth() + 1
-  const year = date.getFullYear()
-  return `${month}/${day}/${year}`
-}
 
 export default function AgentsNotesPage() {
   const [activeCategory, setActiveCategory] = useState('all')

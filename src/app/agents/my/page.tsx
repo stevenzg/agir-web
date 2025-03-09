@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import FinancialSummary from '@/components/agent/FinancialSummary'
 import TransactionList from '@/components/agent/TransactionList'
+import { formatDate } from '@/lib/utils'
 
 // 模拟数据 - 实际应用中应从API获取
 const mockAgents = [
@@ -116,7 +117,7 @@ export default function MyAgentsPage() {
                 </CardHeader>
                 <CardContent className="pt-4 pb-2">
                   <div className="text-sm text-gray-500">
-                    Created: {new Date(agent.createdAt).toLocaleDateString()}
+                    Created: {formatDate(agent.createdAt)}
                   </div>
                 </CardContent>
                 <CardFooter className="border-t flex justify-between gap-2 p-3">
