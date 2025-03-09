@@ -8,14 +8,7 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow
-} from '@/components/ui/table'
+import { ResponsiveDataView } from '@/components/ui/responsive-data-view'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 
@@ -107,6 +100,33 @@ export default function TransactionList({
       : <span className="text-red-600 dark:text-red-400">-{formattedAmount}</span>
   }
 
+  // 定义列
+  const columns = [
+    {
+      accessorKey: 'date',
+      header: 'Date',
+      cell: (value: string) => formatDate(value)
+    },
+    {
+      accessorKey: 'description',
+      header: 'Description',
+      cell: (value: string, row: Transaction) => (
+        <Link href={`/agents/my/transactions/${row.id}${agentId ? `?agentId=${agentId}` : ''}`} className="hover:text-indigo-600 dark:hover:text-indigo-400">
+          {value}
+        </Link>
+      )
+    },
+    {
+      accessorKey: 'category',
+      header: 'Category'
+    },
+    {
+      accessorKey: 'amount',
+      header: 'Amount',
+      cell: (value: number, row: Transaction) => formatAmount(value, row.type)
+    }
+  ]
+
   return (
     <Card className="border border-gray-100 dark:border-gray-700">
       <CardHeader className="pb-2">
@@ -125,40 +145,18 @@ export default function TransactionList({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Date</TableHead>
-              <TableHead>Description</TableHead>
-              <TableHead>Category</TableHead>
-              <TableHead className="text-right">Amount</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {transactions.length > 0 ? (
-              transactions.map((transaction) => (
-                <TableRow key={transaction.id}>
-                  <TableCell className="font-medium">{formatDate(transaction.date)}</TableCell>
-                  <TableCell>
-                    <Link href={`/agents/my/transactions/${transaction.id}${agentId ? `?agentId=${agentId}` : ''}`} className="hover:text-indigo-600 dark:hover:text-indigo-400">
-                      {transaction.description}
-                    </Link>
-                  </TableCell>
-                  <TableCell>{transaction.category}</TableCell>
-                  <TableCell className="text-right">
-                    {formatAmount(transaction.amount, transaction.type)}
-                  </TableCell>
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={4} className="text-center py-6 text-gray-500 dark:text-gray-400">
-                  No transactions found
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+        {transactions.length > 0 ? (
+          <ResponsiveDataView
+            data={transactions}
+            columns={columns}
+            cardTitleKey="description"
+            cardDescriptionKey="date"
+          />
+        ) : (
+          <div className="text-center py-6 text-gray-500 dark:text-gray-400">
+            No transactions found
+          </div>
+        )}
       </CardContent>
     </Card>
   )

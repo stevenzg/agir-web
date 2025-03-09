@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { ResponsiveDataView } from '@/components/ui/responsive-data-view'
 
 // Mock task data
 const MOCK_TASKS = [
@@ -57,6 +57,54 @@ export default function TasksPage() {
     'Low': 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300',
   }
 
+  // 定义表格/卡片列配置
+  const columns = [
+    {
+      accessorKey: 'title',
+      header: 'Task Title',
+      cell: (value: string) => <span className="font-medium">{value}</span>,
+    },
+    {
+      accessorKey: 'status',
+      header: 'Status',
+      cell: (value: string) => (
+        <span className={`px-2 py-1 rounded-full text-xs ${statusColorMap[value]}`}>
+          {value}
+        </span>
+      ),
+    },
+    {
+      accessorKey: 'assignedAgents',
+      header: 'Assigned Agents',
+      cell: (value: number) => `${value} agents`,
+    },
+    {
+      accessorKey: 'priority',
+      header: 'Priority',
+      cell: (value: string) => (
+        <span className={`px-2 py-1 rounded-full text-xs ${priorityColorMap[value]}`}>
+          {value}
+        </span>
+      ),
+    },
+    {
+      accessorKey: 'createdAt',
+      header: 'Created Date',
+    },
+    {
+      accessorKey: 'id',
+      header: 'Actions',
+      cell: (value: string) => (
+        <Link
+          href={`/agents/tasks/${value}`}
+          className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+        >
+          View Details
+        </Link>
+      ),
+    },
+  ]
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -74,45 +122,12 @@ export default function TasksPage() {
           <CardTitle>Task List</CardTitle>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Task Title</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Assigned Agents</TableHead>
-                <TableHead>Priority</TableHead>
-                <TableHead>Created Date</TableHead>
-                <TableHead className="w-[100px]">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {tasks.map((task) => (
-                <TableRow key={task.id}>
-                  <TableCell className="font-medium">{task.title}</TableCell>
-                  <TableCell>
-                    <span className={`px-2 py-1 rounded-full text-xs ${statusColorMap[task.status]}`}>
-                      {task.status}
-                    </span>
-                  </TableCell>
-                  <TableCell>{task.assignedAgents} agents</TableCell>
-                  <TableCell>
-                    <span className={`px-2 py-1 rounded-full text-xs ${priorityColorMap[task.priority]}`}>
-                      {task.priority}
-                    </span>
-                  </TableCell>
-                  <TableCell>{task.createdAt}</TableCell>
-                  <TableCell>
-                    <Link
-                      href={`/agents/tasks/${task.id}`}
-                      className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
-                    >
-                      View Details
-                    </Link>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          <ResponsiveDataView
+            data={tasks}
+            columns={columns}
+            cardTitleKey="title"
+            cardDescriptionKey="status"
+          />
         </CardContent>
       </Card>
 
