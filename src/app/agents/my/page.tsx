@@ -4,9 +4,10 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import FinancialSummary from '@/components/agent/FinancialSummary'
-import TransactionList from '@/components/agent/TransactionList'
 import { formatDate } from '@/lib/utils'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 
 // 模拟数据 - 实际应用中应从API获取
 const mockAgents = [
@@ -51,6 +52,8 @@ const mockAgents = [
 export default function MyAgentsPage() {
   const [agents] = useState(mockAgents)
   const [selectedAgent, setSelectedAgent] = useState<string | null>(null)
+  const [showCreateDialog, setShowCreateDialog] = useState(false)
+  const [newAgent, setNewAgent] = useState({ firstName: '', lastName: '' })
 
   // 获取状态标签的样式
   const getStatusBadge = (status: string) => {
@@ -76,26 +79,87 @@ export default function MyAgentsPage() {
     }
   }
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
+    setNewAgent(prev => ({ ...prev, [name]: value }))
+  }
+
+  const handleCreateAgent = () => {
+    // Here you would normally submit the form data to your API
+    console.log('Creating agent with data:', newAgent)
+    // For now, just close the dialog
+    setShowCreateDialog(false)
+    // Reset the form
+    setNewAgent({ firstName: '', lastName: '' })
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
           <p className="text-gray-500 mt-1">Manage your agents and their activities</p>
         </div>
-        <Link href="/create">
-          <Button className="bg-indigo-600 hover:bg-indigo-700 text-white">
-            Create New Agent
-          </Button>
-        </Link>
+        <Button
+          className="bg-indigo-600 hover:bg-indigo-700 text-white"
+          onClick={() => setShowCreateDialog(true)}
+        >
+          Create New Agent
+        </Button>
       </div>
 
-      {/* Financial Summary */}
-      <FinancialSummary agentId={selectedAgent || undefined} />
+      {/* Create Agent Dialog */}
+      <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Create New Agent</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="firstName" className="text-right">
+                First Name
+              </Label>
+              <Input
+                id="firstName"
+                name="firstName"
+                value={newAgent.firstName}
+                onChange={handleInputChange}
+                className="col-span-3"
+                placeholder="Enter first name"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="lastName" className="text-right">
+                Last Name
+              </Label>
+              <Input
+                id="lastName"
+                name="lastName"
+                value={newAgent.lastName}
+                onChange={handleInputChange}
+                className="col-span-3"
+                placeholder="Enter last name"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => setShowCreateDialog(false)}>
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              className="bg-indigo-600 hover:bg-indigo-700 text-white"
+              onClick={handleCreateAgent}
+              disabled={!newAgent.firstName.trim() || !newAgent.lastName.trim()}
+            >
+              Create
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Agents Grid */}
       {agents.length > 0 ? (
         <div>
-          <h2 className="text-xl font-medium mb-4">Your Agents</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {agents.map((agent) => (
               <Card
@@ -143,18 +207,12 @@ export default function MyAgentsPage() {
           <div className="text-4xl mb-4">🤖</div>
           <h3 className="text-lg font-medium text-gray-900 mb-1">No agents yet</h3>
           <p className="text-gray-500 mb-4">Create your first agent to get started</p>
-          <Link href="/create">
-            <Button className="bg-indigo-600 hover:bg-indigo-700 text-white">
-              Create New Agent
-            </Button>
-          </Link>
-        </div>
-      )}
-
-      {/* Recent Transactions */}
-      {agents.length > 0 && (
-        <div className="mt-6">
-          <TransactionList limit={5} agentId={selectedAgent || undefined} />
+          <Button
+            className="bg-indigo-600 hover:bg-indigo-700 text-white"
+            onClick={() => setShowCreateDialog(true)}
+          >
+            Create New Agent
+          </Button>
         </div>
       )}
     </div>
