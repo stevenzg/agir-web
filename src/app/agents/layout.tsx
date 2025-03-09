@@ -138,7 +138,7 @@ export default function AgentsLayout({ children }: AgentsLayoutProps) {
   )
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-dvh md:min-h-screen flex flex-col">
       <style jsx global>{`
         .hide-scrollbar::-webkit-scrollbar {
           display: none;
