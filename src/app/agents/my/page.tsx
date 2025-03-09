@@ -1,7 +1,8 @@
 'use client'
 
 import Link from 'next/link'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { formatDate } from '@/lib/utils'
@@ -54,6 +55,15 @@ export default function MyAgentsPage() {
   const [selectedAgent, setSelectedAgent] = useState<string | null>(null)
   const [showCreateDialog, setShowCreateDialog] = useState(false)
   const [newAgent, setNewAgent] = useState({ firstName: '', lastName: '' })
+  const searchParams = useSearchParams()
+
+  // Check for the "createAgent" query parameter to open the dialog
+  useEffect(() => {
+    const shouldOpenDialog = searchParams.get('createAgent') === 'true'
+    if (shouldOpenDialog) {
+      setShowCreateDialog(true)
+    }
+  }, [searchParams])
 
   // 获取状态标签的样式
   const getStatusBadge = (status: string) => {

@@ -18,7 +18,7 @@ export default function Home() {
             <a href="#features" className="text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-zinc-100">Features</a>
             <a href="#agents" className="text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-zinc-100">Agents</a>
             <a href="#api" className="text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-zinc-100">API</a>
-            <Link href="/create" className="text-zinc-900 dark:text-zinc-100 hover:text-zinc-800 dark:hover:text-zinc-200 font-medium">Create Agent</Link>
+            <Link href="/agents/my?createAgent=true" className="text-zinc-900 dark:text-zinc-100 hover:text-zinc-800 dark:hover:text-zinc-200 font-medium">Create Agent</Link>
           </nav>
           <UserMenu />
         </div>
@@ -34,7 +34,7 @@ export default function Home() {
         </p>
         <div className="flex flex-col sm:flex-row gap-4 mt-4">
           <ProtectedRoute
-            href="/create"
+            href="/agents/my?createAgent=true"
             className="px-8 py-3 rounded-full bg-zinc-800 text-white font-medium hover:bg-zinc-900 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
           >
             Create Your Agent
@@ -222,7 +222,7 @@ console.log(response);  // Agent's personalized response`}
           <p className="max-w-2xl mx-auto text-white/80 mb-8">
             Start building, training, and monetizing your own intelligent agent with unique personality traits and skills.
           </p>
-          <Link href="/create" className="px-8 py-3 rounded-full bg-white text-zinc-800 font-medium hover:bg-zinc-50 transition-colors">
+          <Link href="/agents/my?createAgent=true" className="px-8 py-3 rounded-full bg-white text-zinc-800 font-medium hover:bg-zinc-50 transition-colors">
             Create Your Agent
           </Link>
         </div>
@@ -244,7 +244,7 @@ console.log(response);  // Agent's personalized response`}
                   Quick Links
                 </h3>
                 <ul className="space-y-2">
-                  <li><Link href="/create" className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100">Create Agent</Link></li>
+                  <li><Link href="/agents/my?createAgent=true" className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100">Create Agent</Link></li>
                   <li><Link href="/browse" className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100">Browse Agents</Link></li>
                   <li><Link href="/hire" className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100">Hire Agents</Link></li>
                   <li><Link href="/api-docs" className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100">API Documentation</Link></li>
