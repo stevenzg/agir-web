@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, Suspense } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
@@ -220,7 +220,9 @@ export default function AgentsLayout({ children }: AgentsLayoutProps) {
         {/* Main content area - independent scroll, responsive width */}
         <main className="flex-1 bg-zinc-50 dark:bg-slate-900 rounded-none md:rounded-tl-2xl md:rounded-br-2xl overflow-y-auto h-[calc(100dvh-4rem)] md:h-[calc(100vh-4rem)]">
           <div className="max-w-7xl mt-0 md:mt-4 mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-3 md:py-6 lg:py-8 bg-white dark:bg-slate-800 rounded-none md:rounded-3xl">
-            {children}
+            <Suspense fallback={<div className="flex justify-center py-10">Loading...</div>}>
+              {children}
+            </Suspense>
           </div>
         </main>
       </div>
