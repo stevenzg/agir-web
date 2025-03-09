@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Avatar } from '@/components/ui/avatar'
@@ -102,15 +102,11 @@ const priorityColorMap: Record<string, string> = {
   'Low': 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300',
 }
 
-interface TaskDetailProps {
-  params: {
-    id: string
-  }
-}
-
-export default function TaskDetailPage({ params }: TaskDetailProps) {
+export default function TaskDetailPage() {
   const router = useRouter()
-  const { id } = params
+  const params = useParams()
+  const id = params.id as string
+
   const [task, setTask] = useState<Task | null>(null)
   const [loading, setLoading] = useState(true)
 

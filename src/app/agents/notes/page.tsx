@@ -74,7 +74,7 @@ const categories = [
   { value: 'technology', label: 'Technology' },
 ]
 
-function formatDate(dateString) {
+function formatDate(dateString: string) {
   const date = new Date(dateString)
   const day = date.getDate()
   const month = date.getMonth() + 1
