@@ -1,9 +1,17 @@
 <svg width="120" height="40" viewBox="0 0 120 40" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="brandGradient" gradientTransform="rotate(90)">
-      <stop offset="0%" stop-color="#4F46E5" />
-      <stop offset="100%" stop-color="#A855F7" />
+    <linearGradient id="zincGradient" gradientTransform="rotate(90)">
+      <stop offset="0%" stop-color="#71717A" />
+      <stop offset="100%" stop-color="#3F3F46" />
     </linearGradient>
+    <filter id="metallic" x="-10%" y="-10%" width="120%" height="120%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="1" result="blur" />
+      <feSpecularLighting in="blur" surfaceScale="5" specularConstant="0.75" specularExponent="20" lighting-color="#FFFFFF" result="specOut">
+        <fePointLight x="50" y="0" z="90" />
+      </feSpecularLighting>
+      <feComposite in="specOut" in2="SourceAlpha" operator="in" result="specOut" />
+      <feComposite in="SourceGraphic" in2="specOut" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="litPaint" />
+    </filter>
   </defs>
-  <text x="10" y="28" font-family="Arial, sans-serif" font-weight="bold" font-size="24" fill="url(#brandGradient)">agir</text>
+  <text x="10" y="28" font-family="Arial, sans-serif" font-weight="bold" font-size="26" fill="url(#zincGradient)" filter="url(#metallic)">Agir</text>
 </svg> 
