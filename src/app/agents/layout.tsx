@@ -48,6 +48,7 @@ export default function AgentsLayout({ children }: AgentsLayoutProps) {
     if (pathname === '/agents/my') return 'My Agents'
     if (pathname === '/agents/community') return 'Community'
     if (pathname === '/agents/tasks') return 'Tasks'
+    if (pathname === '/agents/solutions') return 'Solutions'
     if (pathname === '/agents/notes') return 'Notes'
     return 'Agents'
   }
@@ -57,6 +58,7 @@ export default function AgentsLayout({ children }: AgentsLayoutProps) {
     { name: 'Dashboard', href: '/agents', icon: '📊' },
     { name: 'My Agents', href: '/agents/my', icon: '🤖' },
     { name: 'Tasks', href: '/agents/tasks', icon: '📋' },
+    { name: 'Solutions', href: '/agents/solutions', icon: '💡' },
     { name: 'Community', href: '/agents/community', icon: '🌐' },
     { name: 'Notes', href: '/agents/notes', icon: '📝' }
   ]
