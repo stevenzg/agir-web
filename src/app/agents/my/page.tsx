@@ -9,53 +9,35 @@ import { formatDate } from '@/lib/utils'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-
-// 模拟数据 - 实际应用中应从API获取
-const mockAgents = [
-  {
-    id: 'agent1',
-    name: 'Assistant Alice',
-    description: 'Helpful virtual assistant with expertise in organization and planning.',
-    createdAt: '2023-12-15',
-    avatar: '👩‍💼',
-    backgroundColor: 'bg-blue-100',
-    status: 'active',
-  },
-  {
-    id: 'agent2',
-    name: 'Researcher Bob',
-    description: 'Academic-minded agent focused on research and data analysis.',
-    createdAt: '2023-11-20',
-    avatar: '🧑‍🔬',
-    backgroundColor: 'bg-green-100',
-    status: 'idle',
-  },
-  {
-    id: 'agent3',
-    name: 'Creative Charlie',
-    description: 'Creative agent specializing in storytelling and content creation.',
-    createdAt: '2024-01-05',
-    avatar: '🧑‍🎨',
-    backgroundColor: 'bg-purple-100',
-    status: 'active',
-  },
-  {
-    id: 'agent4',
-    name: 'Developer Dana',
-    description: 'Technical agent with knowledge of programming and software development.',
-    createdAt: '2023-12-28',
-    avatar: '👩‍💻',
-    backgroundColor: 'bg-amber-100',
-    status: 'idle',
-  },
-]
+import { createUser, getUsers, User } from '@/services/users'
+import { toast } from 'sonner'
 
 export default function MyAgentsPage() {
-  const [agents] = useState(mockAgents)
+  const [agents, setAgents] = useState<User[]>([])
+  const [loading, setLoading] = useState(true)
   const [selectedAgent, setSelectedAgent] = useState<string | null>(null)
   const [showCreateDialog, setShowCreateDialog] = useState(false)
   const [newAgent, setNewAgent] = useState({ firstName: '', lastName: '' })
+  const [creating, setCreating] = useState(false)
   const searchParams = useSearchParams()
+
+  // Load agents when the component mounts
+  useEffect(() => {
+    async function loadAgents() {
+      try {
+        setLoading(true)
+        const users = await getUsers()
+        setAgents(users)
+      } catch (error) {
+        console.error('Failed to load agents:', error)
+        toast.error('Failed to load agents. Please try again later.')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadAgents()
+  }, [])
 
   // Check for the "createAgent" query parameter to open the dialog
   useEffect(() => {
@@ -66,26 +48,19 @@ export default function MyAgentsPage() {
   }, [searchParams])
 
   // 获取状态标签的样式
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'active':
-        return (
-          <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
-            Active
-          </span>
-        )
-      case 'idle':
-        return (
-          <span className="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800">
-            Idle
-          </span>
-        )
-      default:
-        return (
-          <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800">
-            {status}
-          </span>
-        )
+  const getStatusBadge = (status: boolean) => {
+    if (status) {
+      return (
+        <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+          Active
+        </span>
+      )
+    } else {
+      return (
+        <span className="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800">
+          Inactive
+        </span>
+      )
     }
   }
 
@@ -94,26 +69,44 @@ export default function MyAgentsPage() {
     setNewAgent(prev => ({ ...prev, [name]: value }))
   }
 
-  const handleCreateAgent = () => {
-    // Here you would normally submit the form data to your API
-    console.log('Creating agent with data:', newAgent)
-    // For now, just close the dialog
-    setShowCreateDialog(false)
-    // Reset the form
-    setNewAgent({ firstName: '', lastName: '' })
+  const handleCreateAgent = async () => {
+    try {
+      setCreating(true)
+
+      const userData = {
+        first_name: newAgent.firstName,
+        last_name: newAgent.lastName
+      }
+
+      const createdUser = await createUser(userData)
+
+      // Add the new user to the list
+      setAgents(prev => [...prev, createdUser])
+
+      // Close the dialog and reset the form
+      setShowCreateDialog(false)
+      setNewAgent({ firstName: '', lastName: '' })
+
+      toast.success('Human agent created successfully!')
+    } catch (error) {
+      console.error('Error creating agent:', error)
+      toast.error('Failed to create human agent. Please try again.')
+    } finally {
+      setCreating(false)
+    }
   }
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <p className="text-gray-500 mt-1">Manage your agents and their activities</p>
+          <p className="text-gray-500 mt-1">Manage your human agents and their activities</p>
         </div>
         <Button
           className="bg-zinc-700 hover:bg-zinc-800 text-white"
           onClick={() => setShowCreateDialog(true)}
         >
-          Create New Agent
+          New Human Agent
         </Button>
       </div>
 
@@ -121,7 +114,7 @@ export default function MyAgentsPage() {
       <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
         <DialogContent className="sm:max-w-[425px] bg-white dark:bg-zinc-900 shadow-lg">
           <DialogHeader>
-            <DialogTitle>Create New Agent</DialogTitle>
+            <DialogTitle>Create New Human Agent</DialogTitle>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
@@ -159,16 +152,44 @@ export default function MyAgentsPage() {
               type="submit"
               className="bg-zinc-700 hover:bg-zinc-800 text-white"
               onClick={handleCreateAgent}
-              disabled={!newAgent.firstName.trim() || !newAgent.lastName.trim()}
+              disabled={!newAgent.firstName.trim() || !newAgent.lastName.trim() || creating}
             >
-              Create
+              {creating ? 'Creating...' : 'Create'}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
+      {/* Loading state */}
+      {loading && (
+        <div className="flex justify-center items-center py-20">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-zinc-700"></div>
+        </div>
+      )}
+
+      {/* Empty state */}
+      {!loading && agents.length === 0 && (
+        <div className="flex flex-col items-center justify-center py-20 text-center">
+          <div className="flex justify-center items-center w-16 h-16 rounded-full bg-zinc-100 dark:bg-zinc-800 mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+          </div>
+          <h3 className="text-lg font-semibold text-zinc-800 dark:text-zinc-100 mb-2">No Human Agents Yet</h3>
+          <p className="text-zinc-500 dark:text-zinc-400 max-w-md mb-6">
+            Create your first human agent to start managing activities and interactions.
+          </p>
+          <Button
+            className="bg-zinc-700 hover:bg-zinc-800 text-white"
+            onClick={() => setShowCreateDialog(true)}
+          >
+            Create Human Agent
+          </Button>
+        </div>
+      )}
+
       {/* Agents Grid */}
-      {agents.length > 0 ? (
+      {!loading && agents.length > 0 && (
         <div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {agents.map((agent) => (
@@ -180,7 +201,7 @@ export default function MyAgentsPage() {
               >
                 {/* Status indicator */}
                 <div className="absolute top-4 right-4">
-                  {getStatusBadge(agent.status)}
+                  {getStatusBadge(agent.is_active)}
                 </div>
 
                 <div className="flex flex-col h-full">
@@ -188,11 +209,11 @@ export default function MyAgentsPage() {
                   <div className={`bg-gradient-to-r from-zinc-50 to-zinc-100 dark:from-zinc-800 dark:to-zinc-900 p-6 pb-4`}>
                     <div className="flex items-center gap-3 mb-4">
                       <div className="flex items-center justify-center w-12 h-12 rounded-full bg-zinc-200 dark:bg-zinc-700 text-2xl select-none">
-                        {agent.avatar}
+                        {agent.avatar || '👤'}
                       </div>
                       <div>
-                        <h3 className="text-lg font-semibold text-zinc-800 dark:text-zinc-100">{agent.name}</h3>
-                        <p className="text-xs text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">AI Agent</p>
+                        <h3 className="text-lg font-semibold text-zinc-800 dark:text-zinc-100">{agent.first_name} {agent.last_name}</h3>
+                        <p className="text-xs text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Human Agent</p>
                       </div>
                     </div>
 
@@ -201,7 +222,7 @@ export default function MyAgentsPage() {
 
                     {/* Description */}
                     <p className="text-sm text-zinc-600 dark:text-zinc-300 line-clamp-2 italic">
-                      &ldquo;{agent.description}&rdquo;
+                      &ldquo;{agent.description || 'No description provided.'}&rdquo;
                     </p>
                   </div>
 
@@ -212,13 +233,13 @@ export default function MyAgentsPage() {
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
-                        <span>Created: {formatDate(agent.createdAt)}</span>
+                        <span>Created: {formatDate(agent.created_at)}</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                         </svg>
-                        <span>{agent.id}@agir.ai</span>
+                        <span>{agent.email}</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -248,18 +269,6 @@ export default function MyAgentsPage() {
               </Card>
             ))}
           </div>
-        </div>
-      ) : (
-        <div className="text-center py-10">
-          <div className="text-4xl mb-4">🤖</div>
-          <h3 className="text-lg font-medium text-gray-900 mb-1">No agents yet</h3>
-          <p className="text-gray-500 mb-4">Create your first agent to get started</p>
-          <Button
-            className="bg-zinc-700 hover:bg-zinc-800 text-white"
-            onClick={() => setShowCreateDialog(true)}
-          >
-            Create New Agent
-          </Button>
         </div>
       )}
     </div>
