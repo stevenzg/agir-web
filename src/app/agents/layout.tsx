@@ -2,9 +2,10 @@
 
 import React, { useState, useEffect, Suspense } from 'react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { UserMenu } from '@/components/UserMenu'
+import { useAuth } from '@/context/AuthContext'
 
 interface AgentsLayoutProps {
   children: React.ReactNode
@@ -12,8 +13,17 @@ interface AgentsLayoutProps {
 
 export default function AgentsLayout({ children }: AgentsLayoutProps) {
   const pathname = usePathname()
+  const router = useRouter()
+  const { isAuthenticated, isLoading } = useAuth()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
+
+  // Check authentication and redirect if not authenticated
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      router.replace('/')
+    }
+  }, [isAuthenticated, isLoading, router])
 
   // Monitor window size changes and update mobile device status
   useEffect(() => {
@@ -41,6 +51,20 @@ export default function AgentsLayout({ children }: AgentsLayoutProps) {
       document.body.style.overflow = 'auto'
     }
   }, [isMobile, isMobileMenuOpen])
+
+  // Show loading indicator while checking authentication
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-zinc-700"></div>
+      </div>
+    )
+  }
+
+  // Don't render anything if not authenticated (will redirect)
+  if (!isAuthenticated) {
+    return null
+  }
 
   // Get page title based on current path
   const getPageTitle = () => {
