@@ -14,7 +14,6 @@ import {
   MessageSquareIcon,
   UsersIcon,
   PlusIcon,
-  AlertTriangleIcon,
   AlertCircleIcon
 } from 'lucide-react'
 
@@ -38,7 +37,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 
-import { TaskDetail, TaskComment, TaskAttachment, TaskAssignment } from '@/services/tasks'
+import { TaskDetail, TaskStatus } from '@/services/tasks'
 import taskService from '@/services/tasks'
 import TaskStatusBadge from '../components/TaskStatusBadge'
 import TaskPriorityBadge from '../components/TaskPriorityBadge'
@@ -659,13 +658,13 @@ export default function TaskDetailPage() {
                   <Progress
                     value={
                       task.subtasks.length > 0
-                        ? task.subtasks.filter(t => t.status === 'done').length / task.subtasks.length * 100
+                        ? task.subtasks.filter(t => t.status === TaskStatus.DONE).length / task.subtasks.length * 100
                         : 0
                     }
                     className="h-2"
                   />
                   <div className="flex justify-between text-xs mt-1">
-                    <span>Completed: {task.subtasks.filter(t => t.status === 'done').length}</span>
+                    <span>Completed: {task.subtasks.filter(t => t.status === TaskStatus.DONE).length}</span>
                     <span>Total: {task.subtasks.length}</span>
                   </div>
                 </div>

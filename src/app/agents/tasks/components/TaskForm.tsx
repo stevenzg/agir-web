@@ -94,10 +94,12 @@ const TaskForm = ({
       setIsSubmitting(true)
       setSubmitError(null)
 
-      // Convert empty parent_id to null
+      // Convert null values to undefined to match Task interface
       const submissionData = {
         ...values,
-        parent_id: values.parent_id || null
+        parent_id: values.parent_id || undefined,
+        due_date: values.due_date ? values.due_date.toISOString() : undefined,
+        estimated_hours: values.estimated_hours === null ? undefined : values.estimated_hours
       }
 
       let task
