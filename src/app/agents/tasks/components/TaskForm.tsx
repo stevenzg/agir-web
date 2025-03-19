@@ -2,8 +2,7 @@ import React, { useState, useCallback, useMemo } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
-import { format } from 'date-fns'
-import { CalendarIcon, InfoIcon } from 'lucide-react'
+import { InfoIcon } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -24,12 +23,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
-import { Calendar } from '@/components/ui/calendar'
 import { Card, CardContent } from '@/components/ui/card'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 
@@ -42,7 +35,6 @@ const formSchema = z.object({
   description: z.string().optional(),
   status: z.nativeEnum(TaskStatus),
   priority: z.nativeEnum(TaskPriority),
-  due_date: z.date().optional().nullable(),
   estimated_hours: z.coerce.number().min(0).optional().nullable(),
   completion_percentage: z.coerce.number().min(0).max(100),
   parent_id: z.string().optional(),
@@ -76,7 +68,6 @@ const TaskForm = ({
     description: initialData?.description || '',
     status: initialData?.status || TaskStatus.TODO,
     priority: initialData?.priority || TaskPriority.MEDIUM,
-    due_date: initialData?.due_date ? new Date(initialData.due_date) : null,
     estimated_hours: initialData?.estimated_hours || null,
     completion_percentage: initialData?.completion_percentage || 0,
     parent_id: initialData?.parent_id || parentTaskId || '',
@@ -98,7 +89,6 @@ const TaskForm = ({
       const submissionData = {
         ...values,
         parent_id: values.parent_id || undefined,
-        due_date: values.due_date ? values.due_date.toISOString() : undefined,
         estimated_hours: values.estimated_hours === null ? undefined : values.estimated_hours
       }
 
@@ -239,46 +229,6 @@ const TaskForm = ({
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="due_date"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col">
-                    <FormLabel>Due Date</FormLabel>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant="outline"
-                            className={`w-full pl-3 text-left font-normal transition-all duration-200 ${!field.value && 'text-muted-foreground'
-                              }`}
-                          >
-                            {field.value ? (
-                              format(field.value, 'PPP')
-                            ) : (
-                              <span>Pick a date</span>
-                            )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={field.value || undefined}
-                          onSelect={field.onChange}
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
-                    <FormDescription>
-                      Set a deadline for this task
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
               <FormField
                 control={form.control}
                 name="estimated_hours"
