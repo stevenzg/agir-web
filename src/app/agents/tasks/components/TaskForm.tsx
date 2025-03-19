@@ -94,14 +94,20 @@ const TaskForm = ({
       setIsSubmitting(true)
       setSubmitError(null)
 
+      // Convert empty parent_id to null
+      const submissionData = {
+        ...values,
+        parent_id: values.parent_id || null
+      }
+
       let task
 
       if (isEditing && initialData) {
         // Update existing task
-        task = await taskService.updateTask(initialData.id, values)
+        task = await taskService.updateTask(initialData.id, submissionData)
       } else {
         // Create new task
-        task = await taskService.createTask(values)
+        task = await taskService.createTask(submissionData)
       }
 
       onSuccess(task)
