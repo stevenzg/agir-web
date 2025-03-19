@@ -9,28 +9,20 @@ export enum TaskStatus {
   ARCHIVED = 'ARCHIVED'
 }
 
-export enum TaskPriority {
-  LOW = 'LOW',
-  MEDIUM = 'MEDIUM',
-  HIGH = 'HIGH',
-  URGENT = 'URGENT'
-}
-
 export interface Task {
   id: string;
   title: string;
   description?: string;
   status: TaskStatus;
-  priority: TaskPriority;
-  created_by: string;
   created_at: string;
   updated_at: string;
-  due_date?: string;
-  estimated_hours?: number;
-  spent_hours?: number;
-  completion_percentage: number;
+  created_by: string;
   parent_id?: string;
-  assignees: { id: string; user_id: string }[];
+  parent?: Task;
+  subtasks?: Task[];
+  assignees?: TaskAssignment[];
+  comments?: TaskComment[];
+  attachments?: TaskAttachment[];
 }
 
 export interface TaskComment {
@@ -39,7 +31,8 @@ export interface TaskComment {
   user_id: string;
   content: string;
   created_at: string;
-  updated_at: string;
+  updated_at?: string;
+  user: User;
 }
 
 export interface TaskAttachment {
@@ -47,17 +40,21 @@ export interface TaskAttachment {
   task_id: string;
   user_id: string;
   file_name: string;
-  file_url: string;
+  file_path: string;
   file_size: number;
-  file_type: string;
-  created_at: string;
+  mime_type: string;
+  uploaded_at: string;
+  user: User;
 }
 
 export interface TaskAssignment {
   id: string;
   task_id: string;
   user_id: string;
-  created_at: string;
+  assigned_at: string;
+  assigned_by: string;
+  user: User;
+  assigner: User;
 }
 
 export interface TaskParent {
@@ -70,15 +67,43 @@ export interface TaskSubtask {
   id: string;
   title: string;
   status: TaskStatus;
-  priority: TaskPriority;
-  completion_percentage: number;
 }
 
 export interface TaskDetail extends Task {
+  owner: User;
+  parent?: TaskDetail;
+  subtasks?: TaskDetail[];
+  assignees: TaskAssignment[];
   comments: TaskComment[];
   attachments: TaskAttachment[];
-  subtasks: TaskSubtask[];
-  parent?: TaskParent;
+}
+
+export interface TaskCreate {
+  title: string;
+  description?: string;
+  status?: TaskStatus;
+  parent_id?: string;
+}
+
+export interface TaskUpdate {
+  title?: string;
+  description?: string;
+  status?: TaskStatus;
+  parent_id?: string;
+}
+
+export interface TaskQueryParams {
+  status?: TaskStatus;
+  parent_id?: string;
+  created_by?: string;
+  assigned_to?: string;
+}
+
+export interface User {
+  id: string;
+  email: string;
+  full_name: string;
+  avatar_url?: string;
 }
 
 export interface TasksResponse {
@@ -94,7 +119,6 @@ const taskService = {
     limit?: number;
     search?: string;
     status?: TaskStatus;
-    priority?: TaskPriority;
     user_id?: string;
     parent_id?: string;
   }): Promise<TasksResponse> => {
@@ -105,7 +129,6 @@ const taskService = {
     if (params.limit !== undefined) queryParams.append('limit', params.limit.toString());
     if (params.search) queryParams.append('search', params.search);
     if (params.status) queryParams.append('status', params.status);
-    if (params.priority) queryParams.append('priority', params.priority);
     if (params.user_id) queryParams.append('user_id', params.user_id);
     if (params.parent_id) queryParams.append('parent_id', params.parent_id);
     

@@ -1,12 +1,11 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useRouter, useParams } from 'next/navigation'
+import React from 'react'
+import { useState, useEffect, use } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import {
   ArrowLeftIcon,
-  CalendarIcon,
-  ClockIcon,
   FileIcon,
   PencilIcon,
   TrashIcon,
@@ -40,14 +39,17 @@ import {
 import { TaskDetail, TaskStatus } from '@/services/tasks'
 import taskService from '@/services/tasks'
 import TaskStatusBadge from '../components/TaskStatusBadge'
-import TaskPriorityBadge from '../components/TaskPriorityBadge'
 import { formatDistanceToNow, format } from 'date-fns'
 
-export default function TaskDetailPage() {
-  const router = useRouter()
-  const params = useParams()
-  const taskId = params.id as string
+interface TaskPageProps {
+  params: Promise<{
+    id: string
+  }>
+}
 
+export default function TaskPage({ params }: TaskPageProps) {
+  const id = use(params).id
+  const router = useRouter()
   const [task, setTask] = useState<TaskDetail | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -66,7 +68,7 @@ export default function TaskDetailPage() {
       try {
         setLoading(true)
         setError(null)
-        const data = await taskService.getTask(taskId)
+        const data = await taskService.getTask(id)
         setTask(data)
       } catch (err) {
         console.error('Failed to fetch task:', err)
@@ -77,11 +79,11 @@ export default function TaskDetailPage() {
     }
 
     fetchTask()
-  }, [taskId])
+  }, [id])
 
   // Handle edit task
   const handleEditTask = () => {
-    router.push(`/agents/tasks/${taskId}/edit`)
+    router.push(`/agents/tasks/${id}/edit`)
   }
 
   // Handle delete task
@@ -90,7 +92,7 @@ export default function TaskDetailPage() {
 
     if (window.confirm('Are you sure you want to delete this task?')) {
       try {
-        await taskService.deleteTask(task.id)
+        await taskService.deleteTask(id)
         router.push('/agents/tasks')
       } catch (err) {
         console.error('Failed to delete task:', err)
@@ -105,7 +107,7 @@ export default function TaskDetailPage() {
 
     try {
       setSubmittingComment(true)
-      const comment = await taskService.addComment(task.id, newComment)
+      const comment = await taskService.addComment(id, newComment)
 
       // Update local state with new comment
       setTask(prevTask => {
@@ -132,7 +134,7 @@ export default function TaskDetailPage() {
 
     if (window.confirm('Are you sure you want to delete this comment?')) {
       try {
-        await taskService.deleteComment(task.id, commentId)
+        await taskService.deleteComment(id, commentId)
 
         // Update local state by removing deleted comment
         setTask(prevTask => {
@@ -163,7 +165,7 @@ export default function TaskDetailPage() {
 
     try {
       setUploading(true)
-      const attachment = await taskService.uploadAttachment(task.id, file)
+      const attachment = await taskService.uploadAttachment(id, file)
 
       // Update local state with new attachment
       setTask(prevTask => {
@@ -191,7 +193,7 @@ export default function TaskDetailPage() {
 
     if (window.confirm('Are you sure you want to delete this attachment?')) {
       try {
-        await taskService.deleteAttachment(task.id, attachmentId)
+        await taskService.deleteAttachment(id, attachmentId)
 
         // Update local state by removing deleted attachment
         setTask(prevTask => {
@@ -212,7 +214,7 @@ export default function TaskDetailPage() {
   // Download attachment
   const handleDownloadAttachment = (attachmentId: string) => {
     if (!task) return
-    taskService.downloadAttachment(task.id, attachmentId)
+    taskService.downloadAttachment(id, attachmentId)
   }
 
   if (loading) {
@@ -246,7 +248,14 @@ export default function TaskDetailPage() {
 
   const createdAt = new Date(task.created_at)
   const updatedAt = new Date(task.updated_at)
-  const dueDate = task.due_date ? new Date(task.due_date) : null
+
+  const statusColors = {
+    [TaskStatus.TODO]: 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200',
+    [TaskStatus.IN_PROGRESS]: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100',
+    [TaskStatus.REVIEW]: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100',
+    [TaskStatus.DONE]: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100',
+    [TaskStatus.ARCHIVED]: 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
+  }
 
   return (
     <div className="space-y-6">
@@ -266,7 +275,6 @@ export default function TaskDetailPage() {
 
           <div className="flex flex-wrap gap-2 mt-2">
             <TaskStatusBadge status={task.status} />
-            <TaskPriorityBadge priority={task.priority} />
             {task.parent && (
               <Badge variant="outline" className="gap-1">
                 <ChevronUpIcon className="h-3 w-3" />
@@ -312,29 +320,11 @@ export default function TaskDetailPage() {
               </div>
 
               <div>
-                <h3 className="font-medium mb-2">Progress</h3>
-                <div className="mb-1 text-sm flex justify-between">
-                  <span>Completion</span>
-                  <span>{task.completion_percentage}%</span>
-                </div>
-                <Progress value={task.completion_percentage} className="h-2" />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <h3 className="font-medium mb-1">Estimated Hours</h3>
-                  <p className="text-sm flex items-center gap-1">
-                    <ClockIcon className="h-4 w-4 text-gray-400" />
-                    {task.estimated_hours !== null ? task.estimated_hours : 'Not set'}
-                  </p>
-                </div>
-
-                <div>
-                  <h3 className="font-medium mb-1">Hours Spent</h3>
-                  <p className="text-sm flex items-center gap-1">
-                    <ClockIcon className="h-4 w-4 text-gray-400" />
-                    {task.spent_hours !== null ? task.spent_hours : 'Not set'}
-                  </p>
+                <h3 className="font-medium mb-2">Status</h3>
+                <div className="mt-1">
+                  <Badge className={statusColors[task.status]}>
+                    {task.status}
+                  </Badge>
                 </div>
               </div>
             </CardContent>
@@ -353,7 +343,7 @@ export default function TaskDetailPage() {
               </TabsTrigger>
               <TabsTrigger value="subtasks" className="flex gap-1">
                 <UsersIcon className="h-4 w-4" />
-                Subtasks ({task.subtasks.length})
+                Subtasks ({task.subtasks?.length || 0})
               </TabsTrigger>
             </TabsList>
 
@@ -532,7 +522,7 @@ export default function TaskDetailPage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  {task.subtasks.length === 0 ? (
+                  {(!task.subtasks || task.subtasks.length === 0) ? (
                     <div className="text-center text-sm text-gray-500 dark:text-gray-400 py-8">
                       <UsersIcon className="h-8 w-8 mx-auto mb-2 text-gray-400" />
                       <p>No subtasks yet</p>
@@ -553,12 +543,6 @@ export default function TaskDetailPage() {
                               {subtask.title}
                             </Link>
                             <TaskStatusBadge status={subtask.status} />
-                          </div>
-                          <div className="mt-2 flex justify-between items-center">
-                            <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
-                              <TaskPriorityBadge priority={subtask.priority} />
-                              <span>Progress: {subtask.completion_percentage}%</span>
-                            </div>
                           </div>
                         </div>
                       ))}
@@ -615,14 +599,6 @@ export default function TaskDetailPage() {
 
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm font-medium">Due Date</span>
-                  <span className="text-sm flex items-center gap-1">
-                    <CalendarIcon className="h-4 w-4 text-gray-400" />
-                    {dueDate ? format(dueDate, 'MMM d, yyyy') : 'Not set'}
-                  </span>
-                </div>
-
-                <div className="flex justify-between items-center">
                   <span className="text-sm font-medium">Created</span>
                   <span className="text-sm">
                     {format(createdAt, 'MMM d, yyyy')}
@@ -647,7 +623,7 @@ export default function TaskDetailPage() {
           </Card>
 
           {/* Related Tasks Card */}
-          {task.subtasks.length > 0 && (
+          {task.subtasks && task.subtasks.length > 0 && (
             <Card>
               <CardHeader>
                 <CardTitle>Subtasks Summary</CardTitle>

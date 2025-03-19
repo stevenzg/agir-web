@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { Task, TaskDetail, TaskStatus, TaskPriority } from '@/services/tasks';
+import { Task, TaskDetail, TaskStatus } from '@/services/tasks';
 import taskService from '@/services/tasks';
 
 // Interface for task count summary
@@ -19,7 +19,6 @@ export interface TasksRequestParams {
   limit?: number;
   search?: string;
   status?: TaskStatus;
-  priority?: TaskPriority;
   user_id?: string;
   parent_id?: string;
 }

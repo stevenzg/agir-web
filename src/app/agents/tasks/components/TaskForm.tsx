@@ -10,7 +10,6 @@ import { Textarea } from '@/components/ui/textarea'
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -26,7 +25,7 @@ import {
 import { Card, CardContent } from '@/components/ui/card'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 
-import { TaskDetail, TaskStatus, TaskPriority, Task } from '@/services/tasks'
+import { TaskDetail, TaskStatus, Task } from '@/services/tasks'
 import taskService from '@/services/tasks'
 
 // Form validation schema
@@ -34,9 +33,6 @@ const formSchema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters'),
   description: z.string().optional(),
   status: z.nativeEnum(TaskStatus),
-  priority: z.nativeEnum(TaskPriority),
-  estimated_hours: z.coerce.number().min(0).optional().nullable(),
-  completion_percentage: z.coerce.number().min(0).max(100),
   parent_id: z.string().optional(),
 })
 
@@ -67,9 +63,6 @@ const TaskForm = ({
     title: initialData?.title || '',
     description: initialData?.description || '',
     status: initialData?.status || TaskStatus.TODO,
-    priority: initialData?.priority || TaskPriority.MEDIUM,
-    estimated_hours: initialData?.estimated_hours || null,
-    completion_percentage: initialData?.completion_percentage || 0,
     parent_id: initialData?.parent_id || parentTaskId || '',
   }), [initialData, parentTaskId])
 
@@ -89,7 +82,6 @@ const TaskForm = ({
       const submissionData = {
         ...values,
         parent_id: values.parent_id || undefined,
-        estimated_hours: values.estimated_hours === null ? undefined : values.estimated_hours
       }
 
       let task
@@ -199,87 +191,7 @@ const TaskForm = ({
                   </FormItem>
                 )}
               />
-
-              <FormField
-                control={form.control}
-                name="priority"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Priority <span className="text-red-500">*</span></FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select priority" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value={TaskPriority.LOW}>Low</SelectItem>
-                        <SelectItem value={TaskPriority.MEDIUM}>Medium</SelectItem>
-                        <SelectItem value={TaskPriority.HIGH}>High</SelectItem>
-                        <SelectItem value={TaskPriority.URGENT}>Urgent</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="estimated_hours"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Estimated Hours</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        placeholder="Enter estimated hours"
-                        className="transition-all duration-200 focus:ring-2"
-                        {...field}
-                        value={field.value === null ? '' : field.value}
-                        onChange={(e) => {
-                          const value = e.target.value === '' ? null : parseFloat(e.target.value)
-                          field.onChange(value)
-                        }}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      Estimated time to complete
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <FormField
-              control={form.control}
-              name="completion_percentage"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Completion Percentage <span className="text-red-500">*</span></FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      placeholder="Enter completion percentage"
-                      min={0}
-                      max={100}
-                      className="transition-all duration-200 focus:ring-2"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Task progress (0-100%)
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
 
             <div className="flex justify-end gap-2">
               <Button

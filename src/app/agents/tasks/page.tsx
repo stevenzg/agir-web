@@ -1,5 +1,6 @@
 'use client'
 
+import React from 'react'
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -13,11 +14,10 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { ResponsiveDataView, Column } from '@/components/ui/responsive-data-view'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 
-import { Task, TaskStatus, TaskPriority } from '@/services/tasks'
+import { Task, TaskStatus } from '@/services/tasks'
 import taskService from '@/services/tasks'
 import TaskCard from './components/TaskCard'
 import TaskStatusBadge from './components/TaskStatusBadge'
-import TaskPriorityBadge from './components/TaskPriorityBadge'
 
 // Interface for task count summary
 interface TaskCountSummary {
@@ -107,7 +107,7 @@ export default function TasksPage() {
   }, [currentPage, pageSize, search, statusFilter, viewMode])
 
   const handleCreateTask = useCallback(() => {
-    router.push('/agents/tasks/create')
+    router.push('/agents/tasks/new')
   }, [router])
 
   const handleEditTask = useCallback((id: string) => {
@@ -164,24 +164,9 @@ export default function TasksPage() {
       cell: (value) => <TaskStatusBadge status={value as TaskStatus} />,
     },
     {
-      accessorKey: 'priority',
-      header: 'Priority',
-      cell: (value) => <TaskPriorityBadge priority={value as TaskPriority} />,
-    },
-    {
-      accessorKey: 'completion_percentage',
-      header: 'Progress',
-      cell: (value) => `${value}%`,
-    },
-    {
       accessorKey: 'assignees',
       header: 'Assignees',
       cell: (value) => (value as { id: string; user_id: string }[]).length,
-    },
-    {
-      accessorKey: 'due_date',
-      header: 'Due Date',
-      cell: (value) => value ? new Date(value as string).toLocaleDateString() : '-',
     },
     {
       accessorKey: 'id',
