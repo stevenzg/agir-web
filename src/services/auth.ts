@@ -202,4 +202,11 @@ export async function logout(): Promise<void> {
     
     // Don't throw error here to ensure user can always logout
   }
+}
+
+/**
+ * Get the current access token, refreshing it if necessary
+ */
+export function getToken(): string | null {
+  return localStorage.getItem('accessToken')
 } 

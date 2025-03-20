@@ -69,7 +69,7 @@ export default function AgentsLayout({ children }: AgentsLayoutProps) {
   // Get page title based on current path
   const getPageTitle = () => {
     if (pathname === '/agents') return 'Dashboard'
-    if (pathname === '/agents/my') return 'My Agents'
+    if (pathname === '/agents/my') return 'Human Agents'
     if (pathname === '/agents/community') return 'Community'
     if (pathname === '/agents/tasks') return 'Tasks'
     if (pathname === '/agents/solutions') return 'Solutions'
@@ -80,7 +80,7 @@ export default function AgentsLayout({ children }: AgentsLayoutProps) {
   // Sidebar navigation links
   const sidebarNavLinks = [
     { name: 'Dashboard', href: '/agents', icon: '📊' },
-    { name: 'My Agents', href: '/agents/my', icon: '🤖' },
+    { name: 'Human Agents', href: '/agents/my', icon: '🤖' },
     { name: 'Tasks', href: '/agents/tasks', icon: '📋' },
     { name: 'Solutions', href: '/agents/solutions', icon: '💡' },
     { name: 'Community', href: '/agents/community', icon: '🌐' },

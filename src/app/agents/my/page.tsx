@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams, useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { formatDate } from '@/lib/utils'
@@ -15,11 +15,11 @@ import { toast } from 'sonner'
 export default function MyAgentsPage() {
   const [agents, setAgents] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
-  const [selectedAgent, setSelectedAgent] = useState<string | null>(null)
   const [showCreateDialog, setShowCreateDialog] = useState(false)
   const [newAgent, setNewAgent] = useState({ firstName: '', lastName: '' })
   const [creating, setCreating] = useState(false)
   const searchParams = useSearchParams()
+  const router = useRouter()
 
   // Load agents when the component mounts
   useEffect(() => {
@@ -94,6 +94,10 @@ export default function MyAgentsPage() {
     } finally {
       setCreating(false)
     }
+  }
+
+  const handleAgentClick = (agentId: string) => {
+    router.push(`/agents/my/${agentId}`)
   }
 
   return (
@@ -195,9 +199,8 @@ export default function MyAgentsPage() {
             {agents.map((agent) => (
               <Card
                 key={agent.id}
-                className={`py-0 overflow-hidden relative border border-zinc-200 dark:border-zinc-700 shadow-md hover:shadow-lg transition-shadow duration-200 ${selectedAgent === agent.id ? 'ring-1 ring-zinc-400' : ''
-                  }`}
-                onClick={() => setSelectedAgent(agent.id)}
+                className={`py-0 overflow-hidden relative border border-zinc-200 dark:border-zinc-700 shadow-md hover:shadow-lg transition-shadow duration-200 cursor-pointer`}
+                onClick={() => handleAgentClick(agent.id)}
               >
                 {/* Status indicator */}
                 <div className="absolute top-4 right-4">
