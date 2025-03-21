@@ -32,7 +32,7 @@ import {
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Command, CommandEmpty, CommandGroup, CommandItem } from '@/components/ui/command'
 
-import { TaskDetail, TaskStatus, Task, TaskAttachment } from '@/services/tasks'
+import { TaskDetail, TaskStatus, Task, TaskAttachment, TaskCreate } from '@/services/tasks'
 import taskService from '@/services/tasks'
 import { searchUsers, User } from '@/services/users'
 
@@ -49,6 +49,7 @@ type CreateFormValues = {
   description?: string
   parent_id?: string
   assignee_email?: string
+  assignee_id?: string
 }
 
 interface TaskFormProps {
@@ -112,6 +113,7 @@ const TaskForm = ({
     description: z.string().optional(),
     parent_id: z.string().optional(),
     assignee_email: z.string().email('Please enter a valid email').optional(),
+    assignee_id: z.string().optional(),
   })
 
   // Memoize default values to prevent unnecessary re-renders
@@ -121,6 +123,7 @@ const TaskForm = ({
     status: initialData?.status || TaskStatus.TODO,
     parent_id: initialData?.parent_id || parentTaskId || '',
     assignee_email: '',
+    assignee_id: '',
   }), [initialData, parentTaskId])
 
   // 使用两个单独的表单实例，避免条件类型带来的复杂性
@@ -141,6 +144,7 @@ const TaskForm = ({
       description: defaultValues.description,
       parent_id: defaultValues.parent_id,
       assignee_email: defaultValues.assignee_email,
+      assignee_id: defaultValues.assignee_id,
     },
   })
 
@@ -205,6 +209,7 @@ const TaskForm = ({
   const handleSelectUser = useCallback((user: User) => {
     setSelectedUser(user)
     createForm.setValue('assignee_email', user.email)
+    createForm.setValue('assignee_id', user.id)
     setSearchOpen(false)
   }, [createForm])
 
@@ -212,6 +217,7 @@ const TaskForm = ({
   const handleClearUser = useCallback(() => {
     setSelectedUser(null)
     createForm.setValue('assignee_email', '')
+    createForm.setValue('assignee_id', '')
   }, [createForm])
 
   // Handle file selection for attachments
@@ -311,7 +317,7 @@ const TaskForm = ({
       }
 
       // Build task submission data
-      const submissionData: Partial<Task> = {
+      const submissionData: TaskCreate = {
         title: values.title,
         description: values.description,
         parent_id: values.parent_id || undefined,
@@ -323,18 +329,13 @@ const TaskForm = ({
         submissionData.attachments = filePaths as unknown as TaskAttachment[]
       }
 
+      // If a user was selected, include the assignee_id in the submission data
+      if (selectedUser) {
+        submissionData.assignee_id = selectedUser.id
+      }
+
       // Create new task
       const task = await taskService.createTask(submissionData)
-
-      // If a user was selected, assign the user to the task
-      if (selectedUser) {
-        try {
-          await taskService.assignUser(task.id, selectedUser.id)
-        } catch (error) {
-          console.error('Failed to assign user to task:', error)
-          // Don't fail the whole operation if assignment fails
-        }
-      }
 
       onSuccess(task)
     } catch (error) {
@@ -499,7 +500,12 @@ const TaskForm = ({
                                       {selectedUser.last_name && selectedUser.last_name[0] || ''}
                                     </AvatarFallback>
                                   </Avatar>
-                                  <span>{selectedUser.email}</span>
+                                  <div className="flex flex-col">
+                                    <span>{selectedUser.email}</span>
+                                    <span className="text-xs text-muted-foreground">
+                                      {selectedUser.first_name} {selectedUser.last_name}
+                                    </span>
+                                  </div>
                                 </div>
                                 <Button
                                   type="button"
@@ -554,7 +560,6 @@ const TaskForm = ({
                               searchResults
                                 .filter(user => user && typeof user === 'object')
                                 .map((user) => {
-                                  console.log({ user })
                                   return (
                                     <CommandItem
                                       key={user?.id || Math.random().toString()}

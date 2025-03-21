@@ -23,6 +23,7 @@ export interface Task {
   assignees?: TaskAssignment[];
   comments?: TaskComment[];
   attachments?: TaskAttachment[];
+  assignee_id?: string;
 }
 
 export interface TaskComment {
@@ -83,6 +84,8 @@ export interface TaskCreate {
   description?: string;
   status?: TaskStatus;
   parent_id?: string;
+  assignee_id?: string;
+  attachments?: TaskAttachment[];
 }
 
 export interface TaskUpdate {
