@@ -1,5 +1,6 @@
 import { fetchWithAuth } from '@/lib/fetch';
 import { API_BASE_URL } from '@/config';
+import { FileUploadResponse } from './files';
 
 export enum TaskStatus {
   TODO = 'TODO',
@@ -85,7 +86,7 @@ export interface TaskCreate {
   status?: TaskStatus;
   parent_id?: string;
   assignee_id?: string;
-  attachments?: TaskAttachment[];
+  attachments?: FileUploadResponse[];
 }
 
 export interface TaskUpdate {
@@ -155,7 +156,7 @@ const taskService = {
     return await response.json();
   },
   
-  createTask: async (data: Partial<Task>): Promise<Task> => {
+  createTask: async (data: TaskCreate): Promise<Task> => {
     const response = await fetchWithAuth(API_URL, {
       method: 'POST',
       headers: {
@@ -239,24 +240,6 @@ const taskService = {
     }
     
     return await response.json();
-  },
-  
-  // For uploading attachments during task creation
-  uploadNewTaskAttachment: async (file: File): Promise<string> => {
-    const formData = new FormData();
-    formData.append('file', file);
-    
-    const response = await fetchWithAuth(`${API_BASE_URL}/attachments/upload`, {
-      method: 'POST',
-      body: formData,
-    });
-    
-    if (!response.ok) {
-      throw new Error('Failed to upload attachment');
-    }
-    
-    const result = await response.json();
-    return result.file_path; // Return the file path to be included in task creation
   },
   
   deleteAttachment: async (taskId: string, attachmentId: string): Promise<void> => {

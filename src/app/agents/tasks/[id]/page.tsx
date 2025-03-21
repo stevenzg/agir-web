@@ -39,6 +39,7 @@ import {
 import { TaskDetail, TaskStatus } from '@/services/tasks'
 import taskService from '@/services/tasks'
 import TaskStatusBadge from '../components/TaskStatusBadge'
+import TaskAttachments from '../components/TaskAttachments'
 import { formatDistanceToNow, format } from 'date-fns'
 
 interface TaskPageProps {
@@ -327,6 +328,9 @@ export default function TaskPage({ params }: TaskPageProps) {
                   </Badge>
                 </div>
               </div>
+
+              {/* Display task attachments */}
+              <TaskAttachments attachments={task.attachments} taskId={task.id} />
             </CardContent>
           </Card>
 

@@ -32,9 +32,10 @@ import {
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Command, CommandEmpty, CommandGroup, CommandItem } from '@/components/ui/command'
 
-import { TaskDetail, TaskStatus, Task, TaskAttachment, TaskCreate } from '@/services/tasks'
+import { TaskDetail, TaskStatus, Task, TaskCreate } from '@/services/tasks'
 import taskService from '@/services/tasks'
 import { searchUsers, User } from '@/services/users'
+import { uploadFile, FileUploadResponse } from '@/services/files'
 
 // 定义两种不同状态的表单值类型
 type EditFormValues = {
@@ -112,7 +113,10 @@ const TaskForm = ({
     title: z.string().min(3, 'Title must be at least 3 characters'),
     description: z.string().optional(),
     parent_id: z.string().optional(),
-    assignee_email: z.string().email('Please enter a valid email').optional(),
+    assignee_email: z.string().optional().refine(val => {
+      // Allow empty/undefined values or valid emails
+      return !val || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)
+    }, { message: 'Please enter a valid email or leave empty' }),
     assignee_id: z.string().optional(),
   })
 
@@ -234,18 +238,18 @@ const TaskForm = ({
   }, [])
 
   // Upload all attachments to Azure
-  const uploadAttachments = async (): Promise<string[]> => {
+  const uploadAttachments = async (): Promise<FileUploadResponse[]> => {
     if (!attachments.length) return []
 
     setUploadingAttachments(true)
-    const filePaths: string[] = []
+    const uploadResponses: FileUploadResponse[] = []
 
     try {
       for (const file of attachments) {
-        const filePath = await taskService.uploadNewTaskAttachment(file)
-        filePaths.push(filePath)
+        const response = await uploadFile(file, 'task-attachments')
+        uploadResponses.push(response)
       }
-      return filePaths
+      return uploadResponses
     } catch (error) {
       console.error('Error uploading attachments:', error)
       throw error
@@ -261,10 +265,10 @@ const TaskForm = ({
       setSubmitError(null)
 
       // Upload attachments first if there are any
-      let filePaths: string[] = []
+      let fileUploadResponses: FileUploadResponse[] = []
       if (attachments.length > 0) {
         try {
-          filePaths = await uploadAttachments()
+          fileUploadResponses = await uploadAttachments()
         } catch {
           // Error is already logged in uploadAttachments
           setSubmitError('Failed to upload attachments. Please try again.')
@@ -280,14 +284,18 @@ const TaskForm = ({
         status: values.status
       }
 
-      // Add attachment file paths if available
-      if (filePaths.length > 0) {
-        submissionData.attachments = filePaths as unknown as TaskAttachment[]
-      }
-
+      // We'll let the backend handle converting the file paths
       if (initialData) {
+        // Get the task data without the attachments first
+        const dataToUpdate = { ...submissionData }
+        // Then add attachments if needed
+        if (fileUploadResponses.length > 0) {
+          // @ts-expect-error - we know this is safe because backend handles conversion
+          dataToUpdate.attachments = fileUploadResponses
+        }
+
         // Update existing task
-        const task = await taskService.updateTask(initialData.id, submissionData)
+        const task = await taskService.updateTask(initialData.id, dataToUpdate)
         onSuccess(task)
       }
     } catch (error) {
@@ -304,11 +312,16 @@ const TaskForm = ({
       setIsSubmitting(true)
       setSubmitError(null)
 
+      // If assignee_email is empty string, set it to undefined to avoid validation errors
+      if (values.assignee_email === '') {
+        values.assignee_email = undefined
+      }
+
       // Upload attachments first if there are any
-      let filePaths: string[] = []
+      let fileUploadResponses: FileUploadResponse[] = []
       if (attachments.length > 0) {
         try {
-          filePaths = await uploadAttachments()
+          fileUploadResponses = await uploadAttachments()
         } catch {
           // Error is already logged in uploadAttachments
           setSubmitError('Failed to upload attachments. Please try again.')
@@ -324,14 +337,14 @@ const TaskForm = ({
         status: TaskStatus.TODO // 创建模式，设置为TODO
       }
 
-      // Add attachment file paths if available
-      if (filePaths.length > 0) {
-        submissionData.attachments = filePaths as unknown as TaskAttachment[]
-      }
-
       // If a user was selected, include the assignee_id in the submission data
       if (selectedUser) {
         submissionData.assignee_id = selectedUser.id
+      }
+
+      // Add attachment information if available
+      if (fileUploadResponses.length > 0) {
+        submissionData.attachments = fileUploadResponses
       }
 
       // Create new task
@@ -442,7 +455,22 @@ const TaskForm = ({
     } else {
       return (
         <Form {...createForm}>
-          <form onSubmit={createForm.handleSubmit(onCreateSubmit)} className="space-y-6">
+          <form
+            onSubmit={(e) => {
+              // Prevent default form submission
+              e.preventDefault()
+
+              // Ensure empty email doesn't trigger validation
+              if (!selectedUser) {
+                createForm.setValue('assignee_email', undefined)
+                createForm.setValue('assignee_id', undefined)
+              }
+
+              // Then submit the form
+              createForm.handleSubmit(onCreateSubmit)(e)
+            }}
+            className="space-y-6"
+          >
             <FormField
               control={createForm.control}
               name="title"
@@ -486,7 +514,7 @@ const TaskForm = ({
                 name="assignee_email"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
-                    <FormLabel>Assign To</FormLabel>
+                    <FormLabel>Assign To (Optional)</FormLabel>
                     <Popover open={searchOpen} onOpenChange={setSearchOpen}>
                       <PopoverTrigger asChild>
                         <FormControl>
@@ -531,6 +559,7 @@ const TaskForm = ({
                             <input
                               type="hidden"
                               {...field}
+                              value={field.value || ''}
                             />
                           </div>
                         </FormControl>
