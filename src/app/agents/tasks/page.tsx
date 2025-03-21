@@ -107,7 +107,7 @@ export default function TasksPage() {
   }, [currentPage, pageSize, search, statusFilter, viewMode])
 
   const handleCreateTask = useCallback(() => {
-    router.push('/agents/tasks/new')
+    router.push('/agents/tasks/create')
   }, [router])
 
   const handleEditTask = useCallback((id: string) => {

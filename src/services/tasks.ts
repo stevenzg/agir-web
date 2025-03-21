@@ -238,6 +238,24 @@ const taskService = {
     return await response.json();
   },
   
+  // For uploading attachments during task creation
+  uploadNewTaskAttachment: async (file: File): Promise<string> => {
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    const response = await fetchWithAuth(`${API_BASE_URL}/attachments/upload`, {
+      method: 'POST',
+      body: formData,
+    });
+    
+    if (!response.ok) {
+      throw new Error('Failed to upload attachment');
+    }
+    
+    const result = await response.json();
+    return result.file_path; // Return the file path to be included in task creation
+  },
+  
   deleteAttachment: async (taskId: string, attachmentId: string): Promise<void> => {
     const response = await fetchWithAuth(`${API_URL}/${taskId}/attachments/${attachmentId}`, {
       method: 'DELETE',

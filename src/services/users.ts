@@ -148,4 +148,53 @@ export async function getUsers(): Promise<User[]> {
     
     throw new ApiError('Failed to fetch users', 'fetch_users_failed');
   }
+}
+
+/**
+ * Search users by email or name
+ * @param query The search query (email or name)
+ * @returns List of matching users
+ */
+export async function searchUsers(query: string): Promise<User[]> {
+  const accessToken = localStorage.getItem('accessToken');
+  
+  if (!accessToken) {
+    return [];
+  }
+
+  try {
+    const url = new URL(`${API_BASE_URL}/users/`);
+    url.searchParams.append('search', query);
+    
+    const response = await fetchWithTimeout(url.toString(), {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      console.error('Error searching users:', response.statusText);
+      return [];
+    }
+
+    let data;
+    try {
+      data = await response.json();
+    } catch (error) {
+      console.error('Error parsing user search response:', error);
+      return [];
+    }
+    
+    // 确保返回的是数组格式
+    if (!data) return [];
+    if (Array.isArray(data)) return data;
+    if (typeof data === 'object' && data !== null) return [data]; 
+    
+    return [];
+  } catch (error) {
+    console.error('Error searching users:', error);
+    return [];
+  }
 } 
