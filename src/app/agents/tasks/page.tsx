@@ -9,7 +9,6 @@ import { PlusIcon, SearchIcon, AlertTriangleIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { ResponsiveDataView, Column } from '@/components/ui/responsive-data-view'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 
@@ -42,7 +41,6 @@ export default function TasksPage() {
   // Filters
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<TaskStatus | 'all'>('all')
-  const [viewMode, setViewMode] = useState<'all' | 'mine'>('all')
 
   // Load tasks
   useEffect(() => {
@@ -60,7 +58,6 @@ export default function TasksPage() {
 
         if (search) params.search = search
         if (statusFilter && statusFilter !== 'all') params.status = statusFilter
-        if (viewMode === 'mine') params.user_id = 'current' // API should handle 'current' as current user
 
         const response = await taskService.getTasks(params)
         setTasks(response.items)
@@ -75,7 +72,7 @@ export default function TasksPage() {
     }
 
     fetchTasks()
-  }, [currentPage, pageSize, search, statusFilter, viewMode])
+  }, [currentPage, pageSize, search, statusFilter])
 
   const handleCreateTask = useCallback(() => {
     router.push('/agents/tasks/create')
@@ -111,11 +108,6 @@ export default function TasksPage() {
   const handleStatusFilterChange = useCallback((value: string) => {
     setStatusFilter(value as TaskStatus | 'all')
     setCurrentPage(1) // Reset to first page when filter changes
-  }, [])
-
-  const handleViewModeChange = useCallback((value: string) => {
-    setViewMode(value as 'all' | 'mine')
-    setCurrentPage(1) // Reset to first page when view mode changes
   }, [])
 
   // Define columns for table view - memoized to prevent unnecessary re-renders
@@ -200,13 +192,6 @@ export default function TasksPage() {
             <SelectItem value={TaskStatus.ARCHIVED}>Archived</SelectItem>
           </SelectContent>
         </Select>
-
-        <Tabs value={viewMode} onValueChange={handleViewModeChange} className="w-full">
-          <TabsList className="w-full">
-            <TabsTrigger value="all" className="flex-1">All Tasks</TabsTrigger>
-            <TabsTrigger value="mine" className="flex-1">My Tasks</TabsTrigger>
-          </TabsList>
-        </Tabs>
       </div>
 
       {/* Error Alert */}
