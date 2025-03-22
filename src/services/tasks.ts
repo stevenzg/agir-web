@@ -68,6 +68,19 @@ export interface TaskSubtask {
   status: TaskStatus;
 }
 
+export interface User {
+  id: string;
+  email: string;
+  first_name: string | null;
+  last_name: string | null;
+  avatar: string | null;
+  description: string | null;
+  is_active: boolean;
+  created_at: string;
+  created_by: string | null;
+  last_login_at: string | null;
+}
+
 export interface TaskDetail extends Task {
   owner: User;
   parent?: TaskDetail;
@@ -99,13 +112,6 @@ export interface TaskQueryParams {
   parent_id?: string;
   created_by?: string;
   assigned_to?: string;
-}
-
-export interface User {
-  id: string;
-  email: string;
-  full_name: string;
-  avatar_url?: string;
 }
 
 export interface TasksResponse {

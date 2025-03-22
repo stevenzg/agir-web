@@ -627,14 +627,21 @@ export default function TaskPage({ params }: TaskPageProps) {
                     <div className="flex items-center gap-2">
                       <Avatar>
                         <AvatarFallback>
-                          {task.assigned_to_user?.full_name?.substring(0, 2).toUpperCase() ||
+                          {task.assigned_to_user?.first_name?.substring(0, 2).toUpperCase() ||
+                            task.assigned_to_user?.last_name?.substring(0, 2).toUpperCase() ||
                             task.assigned_to.substring(0, 2).toUpperCase()}
                         </AvatarFallback>
                         <AvatarImage src={`/api/avatars/${task.assigned_to}`} />
                       </Avatar>
                       <div>
                         <p className="text-sm font-medium">
-                          {task.assigned_to_user?.full_name || task.assigned_to}
+                          {task.assigned_to_user ?
+                            `${task.assigned_to_user.first_name || ''} ${task.assigned_to_user.last_name || ''}`.trim() ||
+                            task.assigned_to_user.email :
+                            "User"}
+                        </p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                          {task.assigned_to_user?.email || "ID: " + task.assigned_to}
                         </p>
                         {task.assigned_at && (
                           <p className="text-xs text-gray-500 dark:text-gray-400">
@@ -680,7 +687,10 @@ export default function TaskPage({ params }: TaskPageProps) {
                 <div className="flex justify-between items-center">
                   <span className="text-sm font-medium">Created By</span>
                   <span className="text-sm">
-                    {task.created_by.substring(0, 8)}...
+                    {task.owner ?
+                      `${task.owner.first_name || ''} ${task.owner.last_name || ''}`.trim() ||
+                      task.owner.email :
+                      `ID: ${task.created_by.substring(0, 8)}...`}
                   </span>
                 </div>
               </div>
