@@ -46,10 +46,10 @@ const TaskAttachments = ({ attachments, taskId }: TaskAttachmentsProps) => {
                 {formatDate(attachment.uploaded_at)}
               </p>
             </div>
-            {attachment.file_path && (
+            {attachment.file_url && (
               <>
                 <a
-                  href={attachment.file_path}
+                  href={attachment.file_url}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="p-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity"
@@ -61,7 +61,43 @@ const TaskAttachments = ({ attachments, taskId }: TaskAttachmentsProps) => {
                   href={`${API_BASE_URL}/tasks/${taskId}/attachments/${attachment.id}/download`}
                   className="p-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity ml-1"
                   title="Download"
-                  download
+                  onClick={async (e) => {
+                    e.preventDefault()
+
+                    try {
+                      // Fetch the download endpoint
+                      const response = await fetch(`${API_BASE_URL}/tasks/${taskId}/attachments/${attachment.id}/download`, {
+                        headers: {
+                          'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        }
+                      })
+
+                      if (!response.ok) {
+                        throw new Error('Failed to download attachment')
+                      }
+
+                      // Check if the response is JSON (Azure URL) or a file
+                      const contentType = response.headers.get('content-type')
+                      if (contentType && contentType.includes('application/json')) {
+                        // It's an Azure URL, so get the URL and redirect
+                        const data = await response.json()
+                        window.open(data.url, '_blank')
+                      } else {
+                        // It's a direct file download, trigger browser download
+                        const blob = await response.blob()
+                        const url = window.URL.createObjectURL(blob)
+                        const a = document.createElement('a')
+                        a.href = url
+                        a.download = attachment.file_name
+                        document.body.appendChild(a)
+                        a.click()
+                        window.URL.revokeObjectURL(url)
+                        a.remove()
+                      }
+                    } catch (error) {
+                      console.error('Error downloading attachment:', error)
+                    }
+                  }}
                 >
                   <DownloadIcon className="h-4 w-4" />
                 </a>
