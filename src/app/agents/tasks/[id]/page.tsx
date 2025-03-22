@@ -19,12 +19,10 @@ import {
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Separator } from '@/components/ui/separator'
 import { Badge } from '@/components/ui/badge'
 import { Textarea } from '@/components/ui/textarea'
-import { ScrollArea } from '@/components/ui/scroll-area'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import {
   Dialog,
@@ -39,7 +37,6 @@ import {
 import { TaskDetail, TaskStatus } from '@/services/tasks'
 import taskService from '@/services/tasks'
 import TaskStatusBadge from '../components/TaskStatusBadge'
-import TaskAttachments from '../components/TaskAttachments'
 import { formatDistanceToNow, format } from 'date-fns'
 
 interface TaskPageProps {
@@ -324,367 +321,249 @@ export default function TaskPage({ params }: TaskPageProps) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 space-y-6">
-          {/* Task Details */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Task Details</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <h3 className="font-medium mb-2">Description</h3>
-                {task.description ? (
-                  <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-line">
-                    {task.description}
-                  </p>
-                ) : (
-                  <p className="text-sm text-gray-500 dark:text-gray-400 italic">
-                    No description provided
-                  </p>
-                )}
-              </div>
+      <div className="space-y-6">
+        {/* Task Details with Information and Attachments */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Task Details</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {/* Description */}
+            <div>
+              <h3 className="font-medium mb-2">Description</h3>
+              {task.description ? (
+                <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-line">
+                  {task.description}
+                </p>
+              ) : (
+                <p className="text-sm text-gray-500 dark:text-gray-400 italic">
+                  No description provided
+                </p>
+              )}
+            </div>
 
-              <div>
-                <h3 className="font-medium mb-2">Status</h3>
-                <div className="mt-1">
-                  <Badge className={statusColors[task.status]}>
-                    {task.status}
-                  </Badge>
+            {/* Status */}
+            <div>
+              <h3 className="font-medium mb-2">Status</h3>
+              <div className="mt-1">
+                <Badge className={statusColors[task.status]}>
+                  {task.status}
+                </Badge>
+              </div>
+            </div>
+
+            {/* Display task attachments */}
+            <div>
+              <h3 className="font-medium mb-2">Attachments</h3>
+              {task.attachments.length === 0 ? (
+                <div className="text-center text-sm text-gray-500 dark:text-gray-400 py-4">
+                  <FileIcon className="h-8 w-8 mx-auto mb-2 text-gray-400" />
+                  <p>No attachments yet</p>
+                  <p className="text-xs mt-1">Upload files to share with the team working on this task</p>
                 </div>
-              </div>
-
-              {/* Display task attachments */}
-              <TaskAttachments attachments={task.attachments} taskId={task.id} />
-            </CardContent>
-          </Card>
-
-          {/* Tabs for Comments, Attachments, Subtasks */}
-          <Tabs defaultValue="comments">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="comments" className="flex gap-1">
-                <MessageSquareIcon className="h-4 w-4" />
-                Comments ({task.comments.length})
-              </TabsTrigger>
-              <TabsTrigger value="attachments" className="flex gap-1">
-                <FileIcon className="h-4 w-4" />
-                Attachments ({task.attachments.length})
-              </TabsTrigger>
-              <TabsTrigger value="subtasks" className="flex gap-1">
-                <UsersIcon className="h-4 w-4" />
-                Subtasks ({task.subtasks?.length || 0})
-              </TabsTrigger>
-            </TabsList>
-
-            {/* Comments Tab */}
-            <TabsContent value="comments" className="space-y-4 pt-4">
-              <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle>Comments</CardTitle>
-                  <CardDescription>
-                    Discuss this task with your team
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {task.comments.length === 0 ? (
-                      <div className="text-center text-sm text-gray-500 dark:text-gray-400 py-8">
-                        <MessageSquareIcon className="h-8 w-8 mx-auto mb-2 text-gray-400" />
-                        <p>No comments yet. Be the first to comment!</p>
-                        <p className="text-xs mt-1">Comments help track progress and discussions about this task.</p>
-                      </div>
-                    ) : (
-                      <ScrollArea className="h-[300px] pr-4">
-                        <div className="space-y-4">
-                          {task.comments.map((comment) => (
-                            <div key={comment.id} className="flex gap-4">
-                              <Avatar>
-                                <AvatarFallback>
-                                  {comment.user_id.substring(0, 2).toUpperCase()}
-                                </AvatarFallback>
-                              </Avatar>
-                              <div className="flex-1 space-y-1">
-                                <div className="flex justify-between items-start">
-                                  <div>
-                                    <span className="font-medium">{comment.user_id}</span>
-                                    <span className="text-xs text-gray-500 dark:text-gray-400 ml-2">
-                                      {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true })}
-                                    </span>
-                                  </div>
-                                  <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="h-6 w-6"
-                                    onClick={() => handleDeleteComment(comment.id)}
-                                  >
-                                    <TrashIcon className="h-4 w-4" />
-                                  </Button>
-                                </div>
-                                <p className="text-sm whitespace-pre-line">{comment.content}</p>
-                              </div>
-                            </div>
-                          ))}
+              ) : (
+                <div className="space-y-2">
+                  {task.attachments.map((attachment) => (
+                    <div
+                      key={attachment.id}
+                      className="flex items-center justify-between p-2 rounded border dark:border-gray-700"
+                    >
+                      <div className="flex items-center gap-2">
+                        <FileIcon className="h-5 w-5 text-blue-500" />
+                        <div>
+                          <p className="font-medium text-sm">{attachment.file_name}</p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                            {(attachment.file_size / 1024).toFixed(1)} KB • Uploaded by {attachment.user_id.substring(0, 8)}
+                          </p>
                         </div>
-                      </ScrollArea>
+                      </div>
+                      <div className="flex gap-1">
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => handleDownloadAttachment(attachment.id)}
+                        >
+                          Download
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="text-red-500 hover:text-red-700 hover:bg-red-100"
+                          onClick={() => handleDeleteAttachment(attachment.id)}
+                        >
+                          <TrashIcon className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <div className="mt-4">
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button>
+                      <PlusIcon className="h-4 w-4 mr-2" />
+                      Add Attachment
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                      <DialogTitle>Upload Attachment</DialogTitle>
+                      <DialogDescription>
+                        Upload a file to attach to this task
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="py-4">
+                      <input
+                        type="file"
+                        className="w-full"
+                        onChange={handleFileChange}
+                      />
+                    </div>
+                    <DialogFooter>
+                      <Button
+                        type="submit"
+                        onClick={handleUploadAttachment}
+                        disabled={!file || uploading}
+                      >
+                        {uploading ? 'Uploading...' : 'Upload'}
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+              </div>
+            </div>
+
+            <Separator />
+
+            {/* Task Information (moved from sidebar) */}
+            <div>
+              <h3 className="font-medium mb-4">Task Information</h3>
+
+              <div className="space-y-4">
+                {/* Assignee Information */}
+                <div>
+                  <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400">Assignee</h4>
+                  {!task.assigned_to ? (
+                    <div className="flex items-center gap-2 mt-2">
+                      <p className="text-sm text-gray-500 dark:text-gray-400 italic">
+                        Not assigned
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      <div className="flex items-center gap-2">
+                        <Avatar>
+                          <AvatarFallback>
+                            {task.assigned_to_user?.first_name?.substring(0, 2).toUpperCase() ||
+                              task.assigned_to_user?.last_name?.substring(0, 2).toUpperCase() ||
+                              task.assigned_to.substring(0, 2).toUpperCase()}
+                          </AvatarFallback>
+                          <AvatarImage src={`/api/avatars/${task.assigned_to}`} />
+                        </Avatar>
+                        <div>
+                          <p className="text-sm font-medium">
+                            {task.assigned_to_user ?
+                              `${task.assigned_to_user.first_name || ''} ${task.assigned_to_user.last_name || ''}`.trim() ||
+                              task.assigned_to_user.email :
+                              "User"}
+                          </p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                            {task.assigned_to_user?.email || "ID: " + task.assigned_to}
+                          </p>
+                          {task.assigned_at && (
+                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                              Assigned {formatDistanceToNow(new Date(task.assigned_at), { addSuffix: true })}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  <div className="mt-2">
+                    {!task.assigned_to ? (
+                      <Button variant="outline" size="sm" onClick={handleAssignTask}>
+                        <PlusIcon className="h-4 w-4 mr-2" />
+                        Assign User
+                      </Button>
+                    ) : (
+                      null
                     )}
                   </div>
-                </CardContent>
-                <CardFooter className="flex flex-col items-start pt-0">
-                  <div className="w-full space-y-2">
-                    <Textarea
-                      placeholder="Add a comment..."
-                      value={newComment}
-                      onChange={(e) => setNewComment(e.target.value)}
-                      className="min-h-[100px]"
-                    />
-                    <div className="flex justify-end">
-                      <Button
-                        onClick={handleAddComment}
-                        disabled={!newComment.trim() || submittingComment}
-                      >
-                        {submittingComment ? 'Posting...' : 'Post Comment'}
-                      </Button>
-                    </div>
-                  </div>
-                </CardFooter>
-              </Card>
-            </TabsContent>
+                </div>
 
-            {/* Attachments Tab */}
-            <TabsContent value="attachments" className="space-y-4 pt-4">
-              <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle>Attachments</CardTitle>
-                  <CardDescription>
-                    Files and documents for this task
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {task.attachments.length === 0 ? (
-                    <div className="text-center text-sm text-gray-500 dark:text-gray-400 py-8">
-                      <FileIcon className="h-8 w-8 mx-auto mb-2 text-gray-400" />
-                      <p>No attachments yet</p>
-                      <p className="text-xs mt-1">Upload files to share with the team working on this task</p>
-                    </div>
-                  ) : (
-                    <div className="space-y-2">
-                      {task.attachments.map((attachment) => (
-                        <div
-                          key={attachment.id}
-                          className="flex items-center justify-between p-2 rounded border dark:border-gray-700"
-                        >
-                          <div className="flex items-center gap-2">
-                            <FileIcon className="h-5 w-5 text-blue-500" />
-                            <div>
-                              <p className="font-medium text-sm">{attachment.file_name}</p>
-                              <p className="text-xs text-gray-500 dark:text-gray-400">
-                                {(attachment.file_size / 1024).toFixed(1)} KB • Uploaded by {attachment.user_id.substring(0, 8)}
-                              </p>
-                            </div>
-                          </div>
-                          <div className="flex gap-1">
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={() => handleDownloadAttachment(attachment.id)}
-                            >
-                              Download
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              className="text-red-500 hover:text-red-700 hover:bg-red-100"
-                              onClick={() => handleDeleteAttachment(attachment.id)}
-                            >
-                              <TrashIcon className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </CardContent>
-                <CardFooter>
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button>
-                        <PlusIcon className="h-4 w-4 mr-2" />
-                        Add Attachment
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-md">
-                      <DialogHeader>
-                        <DialogTitle>Upload Attachment</DialogTitle>
-                        <DialogDescription>
-                          Upload a file to attach to this task
-                        </DialogDescription>
-                      </DialogHeader>
-                      <div className="py-4">
-                        <input
-                          type="file"
-                          className="w-full"
-                          onChange={handleFileChange}
-                        />
-                      </div>
-                      <DialogFooter>
-                        <Button
-                          type="submit"
-                          onClick={handleUploadAttachment}
-                          disabled={!file || uploading}
-                        >
-                          {uploading ? 'Uploading...' : 'Upload'}
-                        </Button>
-                      </DialogFooter>
-                    </DialogContent>
-                  </Dialog>
-                </CardFooter>
-              </Card>
-            </TabsContent>
+                <Separator />
 
-            {/* Subtasks Tab */}
-            <TabsContent value="subtasks" className="space-y-4 pt-4">
-              <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle>Subtasks</CardTitle>
-                  <CardDescription>
-                    Child tasks under this parent task
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {(!task.subtasks || task.subtasks.length === 0) ? (
-                    <div className="text-center text-sm text-gray-500 dark:text-gray-400 py-8">
-                      <UsersIcon className="h-8 w-8 mx-auto mb-2 text-gray-400" />
-                      <p>No subtasks yet</p>
-                      <p className="text-xs mt-1">Break down complex tasks into smaller subtasks for better management</p>
-                    </div>
-                  ) : (
-                    <div className="space-y-2">
-                      {task.subtasks.map((subtask) => (
-                        <div
-                          key={subtask.id}
-                          className="p-3 rounded border dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800"
-                        >
-                          <div className="flex justify-between items-start">
-                            <Link
-                              href={`/agents/tasks/${subtask.id}`}
-                              className="font-medium hover:underline"
-                            >
-                              {subtask.title}
-                            </Link>
-                            <TaskStatusBadge status={subtask.status} />
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </CardContent>
-                <CardFooter>
-                  <Button onClick={() => router.push(`/agents/tasks/create?parent=${task.id}`)}>
-                    <PlusIcon className="h-4 w-4 mr-2" />
-                    Create Subtask
-                  </Button>
-                </CardFooter>
-              </Card>
-            </TabsContent>
-          </Tabs>
-        </div>
-
-        {/* Task Info Sidebar */}
-        <div className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Task Information</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Assignee</h3>
-                {!task.assigned_to ? (
-                  <div className="flex items-center gap-2 mt-2">
-                    <p className="text-sm text-gray-500 dark:text-gray-400 italic">
-                      Not assigned
+                {/* Other Task Information */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <span className="text-sm font-medium">Created</span>
+                    <p className="text-sm">
+                      {format(createdAt, 'MMM d, yyyy')}
                     </p>
                   </div>
-                ) : (
-                  <div className="flex flex-wrap gap-2 mt-2">
-                    <div className="flex items-center gap-2">
-                      <Avatar>
-                        <AvatarFallback>
-                          {task.assigned_to_user?.first_name?.substring(0, 2).toUpperCase() ||
-                            task.assigned_to_user?.last_name?.substring(0, 2).toUpperCase() ||
-                            task.assigned_to.substring(0, 2).toUpperCase()}
-                        </AvatarFallback>
-                        <AvatarImage src={`/api/avatars/${task.assigned_to}`} />
-                      </Avatar>
-                      <div>
-                        <p className="text-sm font-medium">
-                          {task.assigned_to_user ?
-                            `${task.assigned_to_user.first_name || ''} ${task.assigned_to_user.last_name || ''}`.trim() ||
-                            task.assigned_to_user.email :
-                            "User"}
-                        </p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
-                          {task.assigned_to_user?.email || "ID: " + task.assigned_to}
-                        </p>
-                        {task.assigned_at && (
-                          <p className="text-xs text-gray-500 dark:text-gray-400">
-                            Assigned {formatDistanceToNow(new Date(task.assigned_at), { addSuffix: true })}
-                          </p>
-                        )}
+
+                  <div>
+                    <span className="text-sm font-medium">Last Updated</span>
+                    <p className="text-sm">
+                      {formatDistanceToNow(updatedAt, { addSuffix: true })}
+                    </p>
+                  </div>
+
+                  <div>
+                    <span className="text-sm font-medium">Created By</span>
+                    <p className="text-sm">
+                      {task.owner ?
+                        `${task.owner.first_name || ''} ${task.owner.last_name || ''}`.trim() ||
+                        task.owner.email :
+                        `ID: ${task.created_by.substring(0, 8)}...`}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Subtasks */}
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle>Subtasks</CardTitle>
+            <Button onClick={() => router.push(`/agents/tasks/create?parent=${task.id}`)}>
+              <PlusIcon className="h-4 w-4 mr-2" />
+              Create Subtask
+            </Button>
+          </CardHeader>
+          <CardContent>
+            {(!task.subtasks || task.subtasks.length === 0) ? (
+              <div className="text-center text-sm text-gray-500 dark:text-gray-400 py-8">
+                <UsersIcon className="h-8 w-8 mx-auto mb-2 text-gray-400" />
+                <p>No subtasks yet</p>
+                <p className="text-xs mt-1">Break down complex tasks into smaller subtasks for better management</p>
+              </div>
+            ) : (
+              <div>
+                <div className="space-y-2">
+                  {task.subtasks.map((subtask) => (
+                    <div
+                      key={subtask.id}
+                      className="p-3 rounded border dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800"
+                    >
+                      <div className="flex justify-between items-start">
+                        <Link
+                          href={`/agents/tasks/${subtask.id}`}
+                          className="font-medium hover:underline"
+                        >
+                          {subtask.title}
+                        </Link>
+                        <TaskStatusBadge status={subtask.status} />
                       </div>
                     </div>
-                  </div>
-                )}
-                <div className="mt-2">
-                  {!task.assigned_to ? (
-                    <Button variant="outline" size="sm" className="w-full" onClick={handleAssignTask}>
-                      <PlusIcon className="h-4 w-4 mr-2" />
-                      Assign User
-                    </Button>
-                  ) : (
-                    null
-                  )}
-                </div>
-              </div>
-
-              <Separator />
-
-              <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm font-medium">Created</span>
-                  <span className="text-sm">
-                    {format(createdAt, 'MMM d, yyyy')}
-                  </span>
+                  ))}
                 </div>
 
-                <div className="flex justify-between items-center">
-                  <span className="text-sm font-medium">Last Updated</span>
-                  <span className="text-sm">
-                    {formatDistanceToNow(updatedAt, { addSuffix: true })}
-                  </span>
-                </div>
-
-                <div className="flex justify-between items-center">
-                  <span className="text-sm font-medium">Created By</span>
-                  <span className="text-sm">
-                    {task.owner ?
-                      `${task.owner.first_name || ''} ${task.owner.last_name || ''}`.trim() ||
-                      task.owner.email :
-                      `ID: ${task.created_by.substring(0, 8)}...`}
-                  </span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Related Tasks Card */}
-          {task.subtasks && task.subtasks.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Subtasks Summary</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-1">
-                  <p className="text-sm font-medium">Subtasks: {task.subtasks.length}</p>
+                {/* Subtasks Progress Summary */}
+                <div className="mt-4 space-y-1">
                   <Progress
                     value={
                       task.subtasks.length > 0
@@ -698,10 +577,82 @@ export default function TaskPage({ params }: TaskPageProps) {
                     <span>Total: {task.subtasks.length}</span>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-          )}
-        </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Comments */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Comments</CardTitle>
+            <CardDescription>
+              Discuss this task with your team
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {task.comments.length === 0 ? (
+                <div className="text-center text-sm text-gray-500 dark:text-gray-400 py-8">
+                  <MessageSquareIcon className="h-8 w-8 mx-auto mb-2 text-gray-400" />
+                  <p>No comments yet. Be the first to comment!</p>
+                  <p className="text-xs mt-1">Comments help track progress and discussions about this task.</p>
+                </div>
+              ) : (
+                <div className="max-h-[400px] overflow-y-auto pr-4">
+                  <div className="space-y-4">
+                    {task.comments.map((comment) => (
+                      <div key={comment.id} className="flex gap-4">
+                        <Avatar>
+                          <AvatarFallback>
+                            {comment.user_id.substring(0, 2).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1 space-y-1">
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <span className="font-medium">{comment.user_id}</span>
+                              <span className="text-xs text-gray-500 dark:text-gray-400 ml-2">
+                                {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true })}
+                              </span>
+                            </div>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-6 w-6"
+                              onClick={() => handleDeleteComment(comment.id)}
+                            >
+                              <TrashIcon className="h-4 w-4" />
+                            </Button>
+                          </div>
+                          <p className="text-sm whitespace-pre-line">{comment.content}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </CardContent>
+          <CardFooter className="flex flex-col items-start pt-0">
+            <div className="w-full space-y-2">
+              <Textarea
+                placeholder="Add a comment..."
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+                className="min-h-[100px]"
+              />
+              <div className="flex justify-end">
+                <Button
+                  onClick={handleAddComment}
+                  disabled={!newComment.trim() || submittingComment}
+                >
+                  {submittingComment ? 'Posting...' : 'Post Comment'}
+                </Button>
+              </div>
+            </div>
+          </CardFooter>
+        </Card>
       </div>
     </div>
   )
