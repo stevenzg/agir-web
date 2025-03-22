@@ -42,6 +42,12 @@ export interface TaskAttachment {
   task_id: string;
   user_id: string;
   file_name: string;
+  /**
+   * The URL to the file attachment
+   * IMPORTANT: This URL should never be accessed directly in the frontend.
+   * Always use the /tasks/{taskId}/attachments/{attachmentId}/download endpoint
+   * to get a secure, authenticated URL with proper access control.
+   */
   file_url: string;
   file_size: number;
   mime_type: string;
