@@ -101,6 +101,63 @@ const TaskForm = ({
   // 应用防抖到搜索查询
   const debouncedSearchQuery = useDebounce(searchQuery, 300)
 
+  // Handle searching for users by email
+  const handleUserSearch = useCallback(async (query: string) => {
+    if (!query || query.length < 3) {
+      setSearchResults([])
+      return
+    }
+
+    try {
+      setIsSearching(true)
+      // 清空上次的搜索结果，避免错误
+      setSearchResults([])
+      setSubmitError(null) // 清除之前的错误信息
+
+      let users = await searchUsers(query)
+
+      // 确保返回结果是数组
+      if (!users) {
+        users = []
+      }
+
+      // 确保只处理有效数据
+      if (Array.isArray(users)) {
+        setSearchResults(users)
+      } else {
+        // 如果结果不是数组但有数据（可能是单个对象），尝试转换
+        if (users && typeof users === 'object') {
+          try {
+            setSearchResults([users as User])
+          } catch (e) {
+            console.error('Failed to convert single user object to array:', e)
+            setSearchResults([])
+          }
+        } else {
+          setSearchResults([])
+        }
+
+        // 如果API返回了结果但格式不符合预期
+        console.warn('User search returned unexpected data format:', users)
+      }
+    } catch (error) {
+      console.error('Error searching users:', error)
+      setSearchResults([])
+      setSubmitError('Failed to search users. Please try again.')
+    } finally {
+      setIsSearching(false)
+    }
+  }, [])
+
+  // 当防抖查询变化时执行搜索
+  useEffect(() => {
+    if (debouncedSearchQuery && debouncedSearchQuery.length >= 3) {
+      handleUserSearch(debouncedSearchQuery)
+    } else if (debouncedSearchQuery === '') {
+      setSearchResults([])
+    }
+  }, [debouncedSearchQuery, handleUserSearch])
+
   // 定义不同状态的表单验证模式
   const editSchema = z.object({
     title: z.string().min(3, 'Title must be at least 3 characters'),
@@ -151,63 +208,6 @@ const TaskForm = ({
       assignee_id: defaultValues.assignee_id,
     },
   })
-
-  // 当防抖查询变化时执行搜索
-  useEffect(() => {
-    if (debouncedSearchQuery && debouncedSearchQuery.length >= 3) {
-      handleUserSearch(debouncedSearchQuery)
-    } else if (debouncedSearchQuery === '') {
-      setSearchResults([])
-    }
-  }, [debouncedSearchQuery])
-
-  // Handle searching for users by email
-  const handleUserSearch = useCallback(async (query: string) => {
-    if (!query || query.length < 3) {
-      setSearchResults([])
-      return
-    }
-
-    try {
-      setIsSearching(true)
-      // 清空上次的搜索结果，避免错误
-      setSearchResults([])
-      setSubmitError(null) // 清除之前的错误信息
-
-      let users = await searchUsers(query)
-
-      // 确保返回结果是数组
-      if (!users) {
-        users = []
-      }
-
-      // 确保只处理有效数据
-      if (Array.isArray(users)) {
-        setSearchResults(users)
-      } else {
-        // 如果结果不是数组但有数据（可能是单个对象），尝试转换
-        if (users && typeof users === 'object') {
-          try {
-            setSearchResults([users as User])
-          } catch (e) {
-            console.error('Failed to convert single user object to array:', e)
-            setSearchResults([])
-          }
-        } else {
-          setSearchResults([])
-        }
-
-        // 如果API返回了结果但格式不符合预期
-        console.warn('User search returned unexpected data format:', users)
-      }
-    } catch (error) {
-      console.error('Error searching users:', error)
-      setSearchResults([])
-      setSubmitError('Failed to search users. Please try again.')
-    } finally {
-      setIsSearching(false)
-    }
-  }, [])
 
   // Handle selecting a user from search results
   const handleSelectUser = useCallback((user: User) => {
