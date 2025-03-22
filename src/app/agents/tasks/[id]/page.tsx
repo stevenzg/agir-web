@@ -243,24 +243,6 @@ export default function TaskPage({ params }: TaskPageProps) {
     }
   }
 
-  // 添加取消任务分配处理函数
-  const handleUnassignTask = async () => {
-    try {
-      if (window.confirm('Are you sure you want to unassign this task?')) {
-        await taskService.unassignTask(id)
-
-        // 重新获取任务详情以获取更新后的完整信息
-        const refreshedTask = await taskService.getTask(id)
-
-        // 更新本地状态
-        setTask(refreshedTask)
-      }
-    } catch (err) {
-      console.error('Failed to unassign task:', err)
-      setError('Failed to unassign task. Please try again later.')
-    }
-  }
-
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -659,10 +641,7 @@ export default function TaskPage({ params }: TaskPageProps) {
                       Assign User
                     </Button>
                   ) : (
-                    <Button variant="outline" size="sm" className="w-full" onClick={handleUnassignTask}>
-                      <TrashIcon className="h-4 w-4 mr-2" />
-                      Unassign
-                    </Button>
+                    null
                   )}
                 </div>
               </div>
