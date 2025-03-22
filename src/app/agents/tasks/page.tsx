@@ -7,7 +7,6 @@ import Link from 'next/link'
 import { PlusIcon, SearchIcon, AlertTriangleIcon } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -18,15 +17,6 @@ import { Task, TaskStatus } from '@/services/tasks'
 import taskService from '@/services/tasks'
 import TaskCard from './components/TaskCard'
 import TaskStatusBadge from './components/TaskStatusBadge'
-
-// Interface for task count summary
-interface TaskCountSummary {
-  todo: number
-  in_progress: number
-  review: number
-  done: number
-  archived: number
-}
 
 // Interface for API request parameters
 interface TasksRequestParams {
@@ -44,15 +34,6 @@ export default function TasksPage() {
   const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-
-  // Task counts
-  const [taskCounts, setTaskCounts] = useState<TaskCountSummary>({
-    todo: 0,
-    in_progress: 0,
-    review: 0,
-    done: 0,
-    archived: 0
-  })
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1)
@@ -85,16 +66,6 @@ export default function TasksPage() {
         setTasks(response.items)
         setTotal(response.total)
 
-        // In a real implementation, we would have a dedicated API endpoint for task counts
-        // This is a placeholder that should be replaced with a proper API call
-        try {
-          const countsResponse = await taskService.getTaskCounts()
-          setTaskCounts(countsResponse)
-        } catch (err) {
-          console.error('Failed to fetch task counts:', err)
-          // If we don't have a dedicated endpoint, at least optimize by using the total count
-          // from the tasks response rather than fetching all tasks
-        }
       } catch (err) {
         console.error('Failed to fetch tasks:', err)
         setError('Failed to load tasks. Please try again later.')
@@ -195,7 +166,6 @@ export default function TasksPage() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Task Management</h1>
           <p className="text-gray-600 dark:text-gray-300 mt-1">
             Create and manage your tasks for AI assistants to help complete
           </p>
@@ -204,36 +174,6 @@ export default function TasksPage() {
           <PlusIcon className="h-4 w-4" />
           Create Task
         </Button>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">To Do</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{taskCounts.todo}</div>
-            <p className="text-xs text-muted-foreground">Tasks waiting to be started</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">In Progress</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{taskCounts.in_progress}</div>
-            <p className="text-xs text-muted-foreground">Tasks currently being worked on</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Completed</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{taskCounts.done}</div>
-            <p className="text-xs text-muted-foreground">Tasks successfully completed</p>
-          </CardContent>
-        </Card>
       </div>
 
       {/* Filters and search */}
