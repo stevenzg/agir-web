@@ -21,10 +21,11 @@ export interface Task {
   parent_id?: string;
   parent?: Task;
   subtasks?: Task[];
-  assignees?: TaskAssignment[];
   comments?: TaskComment[];
   attachments?: TaskAttachment[];
-  assignee_id?: string;
+  assigned_to?: string;
+  assigned_by?: string;
+  assigned_at?: string;
 }
 
 export interface TaskComment {
@@ -55,16 +56,6 @@ export interface TaskAttachment {
   user: User;
 }
 
-export interface TaskAssignment {
-  id: string;
-  task_id: string;
-  user_id: string;
-  assigned_at: string;
-  assigned_by: string;
-  user: User;
-  assigner: User;
-}
-
 export interface TaskParent {
   id: string;
   title: string;
@@ -81,7 +72,8 @@ export interface TaskDetail extends Task {
   owner: User;
   parent?: TaskDetail;
   subtasks?: TaskDetail[];
-  assignees: TaskAssignment[];
+  assigned_to_user?: User;
+  assigned_by_user?: User;
   comments: TaskComment[];
   attachments: TaskAttachment[];
 }
@@ -91,7 +83,7 @@ export interface TaskCreate {
   description?: string;
   status?: TaskStatus;
   parent_id?: string;
-  assignee_id?: string;
+  assigned_to?: string;
   attachments?: FileUploadResponse[];
 }
 
@@ -262,9 +254,9 @@ const taskService = {
     window.open(`${API_URL}/${taskId}/attachments/${attachmentId}/download`, '_blank');
   },
   
-  // Assignees
-  assignUser: async (taskId: string, userId: string): Promise<TaskAssignment> => {
-    const response = await fetchWithAuth(`${API_URL}/${taskId}/assignees`, {
+  // Task assignment
+  assignTask: async (taskId: string, userId: string): Promise<Task> => {
+    const response = await fetchWithAuth(`${API_URL}/${taskId}/assign`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -273,20 +265,22 @@ const taskService = {
     });
     
     if (!response.ok) {
-      throw new Error('Failed to assign user');
+      throw new Error('Failed to assign task');
     }
     
     return await response.json();
   },
   
-  unassignUser: async (taskId: string, assignmentId: string): Promise<void> => {
-    const response = await fetchWithAuth(`${API_URL}/${taskId}/assignees/${assignmentId}`, {
-      method: 'DELETE',
+  unassignTask: async (taskId: string): Promise<Task> => {
+    const response = await fetchWithAuth(`${API_URL}/${taskId}/unassign`, {
+      method: 'POST',
     });
     
     if (!response.ok) {
-      throw new Error('Failed to unassign user');
+      throw new Error('Failed to unassign task');
     }
+    
+    return await response.json();
   },
   
   // Task Counts

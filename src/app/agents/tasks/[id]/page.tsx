@@ -218,6 +218,49 @@ export default function TaskPage({ params }: TaskPageProps) {
     taskService.downloadAttachment(id, attachmentId)
   }
 
+  // 添加任务分配处理函数
+  const handleAssignTask = async () => {
+    // 这里应该打开一个对话框让用户选择分配给谁
+    // 为简化示例，我们只实现功能框架
+    try {
+      if (window.confirm('Would you like to assign this task to yourself or another user?')) {
+        // 这里应该显示用户选择对话框
+        // 为简化示例，我们直接使用当前用户ID
+        const currentUserId = "current-user-id" // 这应该从用户认证状态中获取
+
+        // 调用分配任务的API
+        await taskService.assignTask(id, currentUserId)
+
+        // 重新获取任务详情以获取更新后的完整信息
+        const refreshedTask = await taskService.getTask(id)
+
+        // 更新本地状态
+        setTask(refreshedTask)
+      }
+    } catch (err) {
+      console.error('Failed to assign task:', err)
+      setError('Failed to assign task. Please try again later.')
+    }
+  }
+
+  // 添加取消任务分配处理函数
+  const handleUnassignTask = async () => {
+    try {
+      if (window.confirm('Are you sure you want to unassign this task?')) {
+        await taskService.unassignTask(id)
+
+        // 重新获取任务详情以获取更新后的完整信息
+        const refreshedTask = await taskService.getTask(id)
+
+        // 更新本地状态
+        setTask(refreshedTask)
+      }
+    } catch (err) {
+      console.error('Failed to unassign task:', err)
+      setError('Failed to unassign task. Please try again later.')
+    }
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -572,30 +615,48 @@ export default function TaskPage({ params }: TaskPageProps) {
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Assignees</h3>
-                {task.assignees.length === 0 ? (
+                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Assignee</h3>
+                {!task.assigned_to ? (
                   <div className="flex items-center gap-2 mt-2">
                     <p className="text-sm text-gray-500 dark:text-gray-400 italic">
-                      No assignees yet
+                      Not assigned
                     </p>
                   </div>
                 ) : (
                   <div className="flex flex-wrap gap-2 mt-2">
-                    {task.assignees.map((assignee) => (
-                      <Avatar key={assignee.id}>
+                    <div className="flex items-center gap-2">
+                      <Avatar>
                         <AvatarFallback>
-                          {assignee.user_id.substring(0, 2).toUpperCase()}
+                          {task.assigned_to_user?.full_name?.substring(0, 2).toUpperCase() ||
+                            task.assigned_to.substring(0, 2).toUpperCase()}
                         </AvatarFallback>
-                        <AvatarImage src={`/api/avatars/${assignee.user_id}`} />
+                        <AvatarImage src={`/api/avatars/${task.assigned_to}`} />
                       </Avatar>
-                    ))}
+                      <div>
+                        <p className="text-sm font-medium">
+                          {task.assigned_to_user?.full_name || task.assigned_to}
+                        </p>
+                        {task.assigned_at && (
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                            Assigned {formatDistanceToNow(new Date(task.assigned_at), { addSuffix: true })}
+                          </p>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 )}
                 <div className="mt-2">
-                  <Button variant="outline" size="sm" className="w-full">
-                    <PlusIcon className="h-4 w-4 mr-2" />
-                    Assign User
-                  </Button>
+                  {!task.assigned_to ? (
+                    <Button variant="outline" size="sm" className="w-full" onClick={handleAssignTask}>
+                      <PlusIcon className="h-4 w-4 mr-2" />
+                      Assign User
+                    </Button>
+                  ) : (
+                    <Button variant="outline" size="sm" className="w-full" onClick={handleUnassignTask}>
+                      <TrashIcon className="h-4 w-4 mr-2" />
+                      Unassign
+                    </Button>
+                  )}
                 </div>
               </div>
 

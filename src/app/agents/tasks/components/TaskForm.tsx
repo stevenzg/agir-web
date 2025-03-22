@@ -32,7 +32,7 @@ import {
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Command, CommandEmpty, CommandGroup, CommandItem } from '@/components/ui/command'
 
-import { TaskDetail, TaskStatus, Task, TaskCreate } from '@/services/tasks'
+import { TaskDetail, TaskStatus, Task } from '@/services/tasks'
 import taskService from '@/services/tasks'
 import { searchUsers, User } from '@/services/users'
 import { uploadFile, FileUploadResponse } from '@/services/files'
@@ -49,8 +49,8 @@ type CreateFormValues = {
   title: string
   description?: string
   parent_id?: string
-  assignee_email?: string
-  assignee_id?: string
+  user_email?: string
+  assigned_to?: string
 }
 
 interface TaskFormProps {
@@ -170,11 +170,11 @@ const TaskForm = ({
     title: z.string().min(3, 'Title must be at least 3 characters'),
     description: z.string().optional(),
     parent_id: z.string().optional(),
-    assignee_email: z.string().optional().refine(val => {
+    user_email: z.string().optional().refine(val => {
       // Allow empty/undefined values or valid emails
       return !val || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)
     }, { message: 'Please enter a valid email or leave empty' }),
-    assignee_id: z.string().optional(),
+    assigned_to: z.string().optional(),
   })
 
   // Memoize default values to prevent unnecessary re-renders
@@ -183,8 +183,8 @@ const TaskForm = ({
     description: initialData?.description || '',
     status: initialData?.status || TaskStatus.TODO,
     parent_id: initialData?.parent_id || parentTaskId || '',
-    assignee_email: '',
-    assignee_id: '',
+    user_email: '',
+    assigned_to: initialData?.assigned_to || '',
   }), [initialData, parentTaskId])
 
   // 使用两个单独的表单实例，避免条件类型带来的复杂性
@@ -204,24 +204,24 @@ const TaskForm = ({
       title: defaultValues.title,
       description: defaultValues.description,
       parent_id: defaultValues.parent_id,
-      assignee_email: defaultValues.assignee_email,
-      assignee_id: defaultValues.assignee_id,
+      user_email: defaultValues.user_email,
+      assigned_to: defaultValues.assigned_to,
     },
   })
 
   // Handle selecting a user from search results
   const handleSelectUser = useCallback((user: User) => {
     setSelectedUser(user)
-    createForm.setValue('assignee_email', user.email)
-    createForm.setValue('assignee_id', user.id)
+    createForm.setValue('user_email', user.email)
+    createForm.setValue('assigned_to', user.id)
     setSearchOpen(false)
   }, [createForm])
 
   // Handle clearing selected user
   const handleClearUser = useCallback(() => {
     setSelectedUser(null)
-    createForm.setValue('assignee_email', '')
-    createForm.setValue('assignee_id', '')
+    createForm.setValue('user_email', '')
+    createForm.setValue('assigned_to', '')
   }, [createForm])
 
   // Handle file selection for attachments
@@ -308,52 +308,26 @@ const TaskForm = ({
 
   // Handle form submission for Create mode
   const onCreateSubmit = async (values: CreateFormValues) => {
+    setIsSubmitting(true)
+    setSubmitError(null)
+
     try {
-      setIsSubmitting(true)
-      setSubmitError(null)
+      const uploadResponses = await uploadAttachments()
 
-      // If assignee_email is empty string, set it to undefined to avoid validation errors
-      if (values.assignee_email === '') {
-        values.assignee_email = undefined
-      }
-
-      // Upload attachments first if there are any
-      let fileUploadResponses: FileUploadResponse[] = []
-      if (attachments.length > 0) {
-        try {
-          fileUploadResponses = await uploadAttachments()
-        } catch {
-          // Error is already logged in uploadAttachments
-          setSubmitError('Failed to upload attachments. Please try again.')
-          return
-        }
-      }
-
-      // Build task submission data
-      const submissionData: TaskCreate = {
+      // 更新字段名称
+      const taskData = {
         title: values.title,
-        description: values.description,
+        description: values.description || '',
         parent_id: values.parent_id || undefined,
-        status: TaskStatus.TODO // 创建模式，设置为TODO
+        assigned_to: values.assigned_to || undefined,
+        attachments: uploadResponses.length > 0 ? uploadResponses : undefined
       }
 
-      // If a user was selected, include the assignee_id in the submission data
-      if (selectedUser) {
-        submissionData.assignee_id = selectedUser.id
-      }
-
-      // Add attachment information if available
-      if (fileUploadResponses.length > 0) {
-        submissionData.attachments = fileUploadResponses
-      }
-
-      // Create new task
-      const task = await taskService.createTask(submissionData)
-
+      const task = await taskService.createTask(taskData)
       onSuccess(task)
-    } catch (error) {
-      console.error('Error submitting task:', error)
-      setSubmitError('Failed to save task. Please try again.')
+    } catch (err) {
+      console.error('Failed to create task:', err)
+      setSubmitError('Failed to create task. Please try again.')
     } finally {
       setIsSubmitting(false)
     }
@@ -462,8 +436,8 @@ const TaskForm = ({
 
               // Ensure empty email doesn't trigger validation
               if (!selectedUser) {
-                createForm.setValue('assignee_email', undefined)
-                createForm.setValue('assignee_id', undefined)
+                createForm.setValue('user_email', undefined)
+                createForm.setValue('assigned_to', undefined)
               }
 
               // Then submit the form
@@ -511,7 +485,7 @@ const TaskForm = ({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormField
                 control={createForm.control}
-                name="assignee_email"
+                name="user_email"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
                     <FormLabel>Assign To (Optional)</FormLabel>

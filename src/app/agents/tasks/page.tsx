@@ -164,9 +164,9 @@ export default function TasksPage() {
       cell: (value) => <TaskStatusBadge status={value as TaskStatus} />,
     },
     {
-      accessorKey: 'assignees',
-      header: 'Assignees',
-      cell: (value) => (value as { id: string; user_id: string }[]).length,
+      accessorKey: 'assigned_to',
+      header: 'Assignee',
+      cell: (value) => value ? 'Assigned' : 'Unassigned',
     },
     {
       accessorKey: 'id',
