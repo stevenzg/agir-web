@@ -97,6 +97,7 @@ const TaskForm = ({
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [attachments, setAttachments] = useState<File[]>([])
   const [uploadingAttachments, setUploadingAttachments] = useState(false)
+  const isProcessing = isSubmitting || uploadingAttachments || isLoading
 
   // 应用防抖到搜索查询
   const debouncedSearchQuery = useDebounce(searchQuery, 300)
@@ -160,14 +161,14 @@ const TaskForm = ({
 
   // 定义不同状态的表单验证模式
   const editSchema = z.object({
-    title: z.string().min(3, 'Title must be at least 3 characters'),
+    title: z.string().min(2, 'Title must be at least 2 characters'),
     description: z.string().optional(),
     status: z.nativeEnum(TaskStatus),
     parent_id: z.string().optional(),
   })
 
   const createSchema = z.object({
-    title: z.string().min(3, 'Title must be at least 3 characters'),
+    title: z.string().min(2, 'Title must be at least 2 characters'),
     description: z.string().optional(),
     parent_id: z.string().optional(),
     user_email: z.string().optional().refine(val => {
@@ -260,6 +261,8 @@ const TaskForm = ({
 
   // Handle form submission for Edit mode
   const onEditSubmit = async (values: EditFormValues) => {
+    if (isProcessing) return // Prevent multiple submissions
+
     try {
       setIsSubmitting(true)
       setSubmitError(null)
@@ -308,6 +311,8 @@ const TaskForm = ({
 
   // Handle form submission for Create mode
   const onCreateSubmit = async (values: CreateFormValues) => {
+    if (isProcessing) return // Prevent multiple submissions
+
     setIsSubmitting(true)
     setSubmitError(null)
 
@@ -339,90 +344,92 @@ const TaskForm = ({
       return (
         <Form {...editForm}>
           <form onSubmit={editForm.handleSubmit(onEditSubmit)} className="space-y-6">
-            <FormField
-              control={editForm.control}
-              name="title"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Task Title <span className="text-red-500">*</span></FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Enter task title"
-                      {...field}
-                      className="transition-all duration-200 focus:ring-2"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={editForm.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Description</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="Enter task description"
-                      className="min-h-[120px] transition-all duration-200 focus:ring-2"
-                      {...field}
-                      value={field.value || ''}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <fieldset disabled={isProcessing} className="space-y-6">
               <FormField
                 control={editForm.control}
-                name="status"
+                name="title"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Status <span className="text-red-500">*</span></FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select status" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value={TaskStatus.TODO}>To Do</SelectItem>
-                        <SelectItem value={TaskStatus.IN_PROGRESS}>In Progress</SelectItem>
-                        <SelectItem value={TaskStatus.REVIEW}>In Review</SelectItem>
-                        <SelectItem value={TaskStatus.DONE}>Done</SelectItem>
-                        <SelectItem value={TaskStatus.ARCHIVED}>Archived</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <FormLabel>Task Title <span className="text-red-500">*</span></FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Enter task title"
+                        {...field}
+                        className="transition-all duration-200 focus:ring-2"
+                      />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-            </div>
 
-            {/* Attachments section */}
-            {renderAttachments()}
+              <FormField
+                control={editForm.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Enter task description"
+                        className="min-h-[120px] transition-all duration-200 focus:ring-2"
+                        {...field}
+                        value={field.value || ''}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <div className="flex justify-end gap-2">
-              <Button
-                type="submit"
-                disabled={isSubmitting || isLoading || uploadingAttachments}
-                className="transition-all duration-200 hover:scale-105"
-              >
-                {(isSubmitting || uploadingAttachments) ? (
-                  <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    {uploadingAttachments ? 'Uploading...' : 'Saving...'}
-                  </>
-                ) : 'Update Task'}
-              </Button>
-            </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={editForm.control}
+                  name="status"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Status <span className="text-red-500">*</span></FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select status" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value={TaskStatus.TODO}>To Do</SelectItem>
+                          <SelectItem value={TaskStatus.IN_PROGRESS}>In Progress</SelectItem>
+                          <SelectItem value={TaskStatus.REVIEW}>In Review</SelectItem>
+                          <SelectItem value={TaskStatus.DONE}>Done</SelectItem>
+                          <SelectItem value={TaskStatus.ARCHIVED}>Archived</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              {/* Attachments section */}
+              {renderAttachments()}
+
+              <div className="flex justify-end gap-2">
+                <Button
+                  type="submit"
+                  disabled={isProcessing}
+                  className={`transition-all duration-200 hover:scale-105 ${isProcessing ? 'opacity-80' : ''}`}
+                >
+                  {isProcessing ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      {uploadingAttachments ? 'Uploading...' : 'Saving...'}
+                    </>
+                  ) : 'Update Task'}
+                </Button>
+              </div>
+            </fieldset>
           </form>
         </Form>
       )
@@ -433,6 +440,9 @@ const TaskForm = ({
             onSubmit={(e) => {
               // Prevent default form submission
               e.preventDefault()
+
+              // Don't proceed if already submitting
+              if (isProcessing) return
 
               // Ensure empty email doesn't trigger validation
               if (!selectedUser) {
@@ -445,179 +455,181 @@ const TaskForm = ({
             }}
             className="space-y-6"
           >
-            <FormField
-              control={createForm.control}
-              name="title"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Task Title <span className="text-red-500">*</span></FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Enter task title"
-                      {...field}
-                      className="transition-all duration-200 focus:ring-2"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={createForm.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Description</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="Enter task description"
-                      className="min-h-[120px] transition-all duration-200 focus:ring-2"
-                      {...field}
-                      value={field.value || ''}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <fieldset disabled={isProcessing} className="space-y-6">
               <FormField
                 control={createForm.control}
-                name="user_email"
+                name="title"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col">
-                    <FormLabel>Assign To (Optional)</FormLabel>
-                    <Popover open={searchOpen} onOpenChange={setSearchOpen}>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <div>
-                            {selectedUser ? (
-                              <div className="flex items-center justify-between border rounded-md p-2">
-                                <div className="flex items-center gap-2">
-                                  <Avatar className="h-6 w-6">
-                                    <AvatarFallback>
-                                      {selectedUser.first_name && selectedUser.first_name[0] || ''}
-                                      {selectedUser.last_name && selectedUser.last_name[0] || ''}
-                                    </AvatarFallback>
-                                  </Avatar>
-                                  <div className="flex flex-col">
-                                    <span>{selectedUser.email}</span>
-                                    <span className="text-xs text-muted-foreground">
-                                      {selectedUser.first_name} {selectedUser.last_name}
-                                    </span>
-                                  </div>
-                                </div>
-                                <Button
-                                  type="button"
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={(e) => {
-                                    e.preventDefault()
-                                    handleClearUser()
-                                  }}
-                                >
-                                  <XIcon className="h-4 w-4" />
-                                </Button>
-                              </div>
-                            ) : (
-                              <div
-                                className="flex items-center justify-between border rounded-md p-2 text-muted-foreground cursor-pointer"
-                                onClick={() => setSearchOpen(true)}
-                              >
-                                <span>Search by email...</span>
-                                <SearchIcon className="h-4 w-4 opacity-50" />
-                              </div>
-                            )}
-                            <input
-                              type="hidden"
-                              {...field}
-                              value={field.value || ''}
-                            />
-                          </div>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="p-0" align="start">
-                        <Command>
-                          <div className="flex items-center gap-2 border-b px-3 h-10">
-                            <SearchIcon className="h-4 w-4 shrink-0 opacity-50" />
-                            <input
-                              className="flex h-10 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground"
-                              placeholder="Search users..."
-                              value={searchQuery || ''}
-                              onChange={(e) => {
-                                const value = e.target.value
-                                setSearchQuery(value)
-                              }}
-                            />
-                          </div>
-                          {isSearching && (
-                            <div className="flex items-center justify-center p-2">
-                              <Loader2 className="h-4 w-4 animate-spin" />
-                            </div>
-                          )}
-                          <CommandEmpty>No users found</CommandEmpty>
-                          <CommandGroup>
-                            {Array.isArray(searchResults) && searchResults.length > 0 ? (
-                              searchResults
-                                .filter(user => user && typeof user === 'object')
-                                .map((user) => {
-                                  return (
-                                    <CommandItem
-                                      key={user?.id || Math.random().toString()}
-                                      onSelect={() => user && handleSelectUser(user)}
-                                      className="flex items-center gap-2"
-                                    >
-                                      <Avatar className="h-6 w-6">
-                                        <AvatarFallback>
-                                          {user?.first_name && user?.first_name[0] || ''}
-                                          {user?.last_name && user?.last_name[0] || ''}
-                                        </AvatarFallback>
-                                      </Avatar>
-                                      <div className="flex flex-col">
-                                        <span>{user?.email || ''}</span>
-                                        <span className="text-xs text-muted-foreground">
-                                          {user?.first_name || ''} {user?.last_name || ''}
-                                        </span>
-                                      </div>
-                                    </CommandItem>
-                                  )
-                                })
-                            ) : (
-                              searchQuery && searchQuery.length >= 3 && !isSearching && (
-                                <div className="p-2 text-center text-sm text-muted-foreground">
-                                  No users found
-                                </div>
-                              )
-                            )}
-                          </CommandGroup>
-                        </Command>
-                      </PopoverContent>
-                    </Popover>
+                  <FormItem>
+                    <FormLabel>Task Title <span className="text-red-500">*</span></FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Enter task title"
+                        {...field}
+                        className="transition-all duration-200 focus:ring-2"
+                      />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-            </div>
 
-            {/* Attachments section */}
-            {renderAttachments()}
+              <FormField
+                control={createForm.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Enter task description"
+                        className="min-h-[120px] transition-all duration-200 focus:ring-2"
+                        {...field}
+                        value={field.value || ''}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <div className="flex justify-end gap-2">
-              <Button
-                type="submit"
-                disabled={isSubmitting || isLoading || uploadingAttachments}
-                className="transition-all duration-200 hover:scale-105"
-              >
-                {(isSubmitting || uploadingAttachments) ? (
-                  <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    {uploadingAttachments ? 'Uploading...' : 'Saving...'}
-                  </>
-                ) : 'Create Task'}
-              </Button>
-            </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={createForm.control}
+                  name="user_email"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col">
+                      <FormLabel>Assign To (Optional)</FormLabel>
+                      <Popover open={searchOpen} onOpenChange={setSearchOpen}>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <div>
+                              {selectedUser ? (
+                                <div className="flex items-center justify-between border rounded-md p-2">
+                                  <div className="flex items-center gap-2">
+                                    <Avatar className="h-6 w-6">
+                                      <AvatarFallback>
+                                        {selectedUser.first_name && selectedUser.first_name[0] || ''}
+                                        {selectedUser.last_name && selectedUser.last_name[0] || ''}
+                                      </AvatarFallback>
+                                    </Avatar>
+                                    <div className="flex flex-col">
+                                      <span>{selectedUser.email}</span>
+                                      <span className="text-xs text-muted-foreground">
+                                        {selectedUser.first_name} {selectedUser.last_name}
+                                      </span>
+                                    </div>
+                                  </div>
+                                  <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={(e) => {
+                                      e.preventDefault()
+                                      handleClearUser()
+                                    }}
+                                  >
+                                    <XIcon className="h-4 w-4" />
+                                  </Button>
+                                </div>
+                              ) : (
+                                <div
+                                  className="flex items-center justify-between border rounded-md p-2 text-muted-foreground cursor-pointer"
+                                  onClick={() => setSearchOpen(true)}
+                                >
+                                  <span>Search by email...</span>
+                                  <SearchIcon className="h-4 w-4 opacity-50" />
+                                </div>
+                              )}
+                              <input
+                                type="hidden"
+                                {...field}
+                                value={field.value || ''}
+                              />
+                            </div>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="p-0" align="start">
+                          <Command>
+                            <div className="flex items-center gap-2 border-b px-3 h-10">
+                              <SearchIcon className="h-4 w-4 shrink-0 opacity-50" />
+                              <input
+                                className="flex h-10 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground"
+                                placeholder="Search users..."
+                                value={searchQuery || ''}
+                                onChange={(e) => {
+                                  const value = e.target.value
+                                  setSearchQuery(value)
+                                }}
+                              />
+                            </div>
+                            {isSearching && (
+                              <div className="flex items-center justify-center p-2">
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                              </div>
+                            )}
+                            <CommandEmpty>No users found</CommandEmpty>
+                            <CommandGroup>
+                              {Array.isArray(searchResults) && searchResults.length > 0 ? (
+                                searchResults
+                                  .filter(user => user && typeof user === 'object')
+                                  .map((user) => {
+                                    return (
+                                      <CommandItem
+                                        key={user?.id || Math.random().toString()}
+                                        onSelect={() => user && handleSelectUser(user)}
+                                        className="flex items-center gap-2"
+                                      >
+                                        <Avatar className="h-6 w-6">
+                                          <AvatarFallback>
+                                            {user?.first_name && user?.first_name[0] || ''}
+                                            {user?.last_name && user?.last_name[0] || ''}
+                                          </AvatarFallback>
+                                        </Avatar>
+                                        <div className="flex flex-col">
+                                          <span>{user?.email || ''}</span>
+                                          <span className="text-xs text-muted-foreground">
+                                            {user?.first_name || ''} {user?.last_name || ''}
+                                          </span>
+                                        </div>
+                                      </CommandItem>
+                                    )
+                                  })
+                              ) : (
+                                searchQuery && searchQuery.length >= 3 && !isSearching && (
+                                  <div className="p-2 text-center text-sm text-muted-foreground">
+                                    No users found
+                                  </div>
+                                )
+                              )}
+                            </CommandGroup>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              {/* Attachments section */}
+              {renderAttachments()}
+
+              <div className="flex justify-end gap-2">
+                <Button
+                  type="submit"
+                  disabled={isProcessing}
+                  className={`transition-all duration-200 hover:scale-105 ${isProcessing ? 'opacity-80' : ''}`}
+                >
+                  {isProcessing ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      {uploadingAttachments ? 'Uploading...' : 'Saving...'}
+                    </>
+                  ) : 'Create Task'}
+                </Button>
+              </div>
+            </fieldset>
           </form>
         </Form>
       )
@@ -681,7 +693,15 @@ const TaskForm = ({
   }
 
   return (
-    <Card className="shadow-sm transition-all duration-300 hover:shadow-md">
+    <Card className="shadow-sm transition-all duration-300 hover:shadow-md relative">
+      {isProcessing && (
+        <div className="absolute inset-0 bg-white/60 dark:bg-gray-900/60 z-10 flex items-center justify-center rounded-md">
+          <div className="bg-background p-4 rounded-md shadow-md flex items-center gap-2">
+            <Loader2 className="h-5 w-5 animate-spin" />
+            <span>{uploadingAttachments ? 'Uploading attachments...' : 'Saving task...'}</span>
+          </div>
+        </div>
+      )}
       <CardContent className="pt-6">
         {submitError && (
           <Alert variant="destructive" className="mb-4 animate-fadeIn">

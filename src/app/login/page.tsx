@@ -73,7 +73,7 @@ export default function LoginPage() {
 
       // Get URL parameters - using the recommended Next.js approach
       // Need to get the redirect parameter from the URL
-      let redirectPath = '/'
+      let redirectPath = '/agents'
 
       if (typeof window !== 'undefined') {
         const urlParams = new URLSearchParams(window.location.search)
