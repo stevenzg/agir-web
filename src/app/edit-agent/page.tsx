@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
-// 错误类型定义
+// Error type definition
 interface ApiError {
   code: string
   message: string
@@ -23,7 +23,7 @@ function EditAgentContent() {
   const [error, setError] = useState<ApiError | null>(null)
   const [isNew, setIsNew] = useState(false)
 
-  // Agent表单状态
+  // Agent form state
   const [formData, setFormData] = useState({
     id: '',
     name: '',
@@ -36,20 +36,20 @@ function EditAgentContent() {
     background: ''
   })
 
-  // 获取Agent详情
+  // Get Agent details
   const fetchAgentDetails = useCallback(async (id: string) => {
     setIsLoading(true)
     setError(null)
 
     try {
-      // TODO: 实际的API调用获取Agent详情
+      // TODO: Actual API call to fetch Agent details
       // const response = await fetchAgent(id)
       // setFormData(response)
 
-      // 模拟API响应
+      // Simulate API response
       await new Promise(resolve => setTimeout(resolve, 1000))
 
-      // 使用模拟数据
+      // Use simulated data
       setFormData({
         id,
         name: 'Sample Agent',
@@ -68,7 +68,7 @@ function EditAgentContent() {
     }
   }, [])
 
-  // 获取URL参数并初始化表单
+  // Get URL parameters and initialize form
   useEffect(() => {
     const id = searchParams.get('id')
     const name = searchParams.get('name')
@@ -77,7 +77,7 @@ function EditAgentContent() {
     setIsNew(newAgent)
 
     if (id) {
-      // 如果是新创建的Agent，使用URL中的信息
+      // If it's a newly created Agent, use information from URL
       if (newAgent && name) {
         setFormData(prev => ({
           ...prev,
@@ -85,31 +85,31 @@ function EditAgentContent() {
           name: decodeURIComponent(name)
         }))
       } else {
-        // 否则，从API获取已有Agent的信息
+        // Otherwise, get existing Agent information from API
         fetchAgentDetails(id)
       }
     } else {
-      // 没有ID参数，返回到首页
+      // No ID parameter, return to homepage
       router.push('/')
     }
   }, [searchParams, router, fetchAgentDetails])
 
-  // 处理表单字段变化
+  // Handle form field changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
   }
 
-  // 错误处理工具函数
+  // Error handling utility function
   const handleApiError = (err: unknown): ApiError => {
     console.error('API Error:', err)
 
-    // 标准API错误
+    // Standard API error
     if (typeof err === 'object' && err !== null && 'code' in err && 'message' in err) {
       return err as ApiError
     }
 
-    // 未知错误或网络错误
+    // Unknown error or network error
     if (err instanceof Error) {
       return {
         code: 'unknown_error',
@@ -117,14 +117,14 @@ function EditAgentContent() {
       }
     }
 
-    // 默认错误
+    // Default error
     return {
       code: 'system_error',
       message: 'System error, please try again later'
     }
   }
 
-  // 提交表单保存Agent
+  // Submit form to save Agent
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
@@ -140,13 +140,13 @@ function EditAgentContent() {
       setIsSaving(true)
       setError(null)
 
-      // TODO: 调用API保存Agent
+      // TODO: Call API to save Agent
       // const response = await saveAgent(formData)
 
-      // 模拟成功保存
+      // Simulate successful save
       await new Promise(resolve => setTimeout(resolve, 1000))
 
-      // 保存后跳转到定制面部页面或其他页面
+      // Save and redirect to customize face page or other page
       router.push(`/customize-face?id=${formData.id}`)
 
     } catch (err) {

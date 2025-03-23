@@ -27,43 +27,43 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const router = useRouter()
 
-  // 从存储中获取 token
+  // Get token from storage
   const getAccessToken = (): string | null => {
     if (typeof window === 'undefined') return null
     return localStorage.getItem(AUTH_CONFIG.TOKEN_STORAGE_KEY)
   }
 
-  // 存储 token
+  // Store token
   const login = (accessToken: string, refreshTokenValue: string) => {
     if (typeof window === 'undefined') return
 
-    // 存储到 localStorage
+    // Store in localStorage
     localStorage.setItem(AUTH_CONFIG.TOKEN_STORAGE_KEY, accessToken)
     localStorage.setItem(AUTH_CONFIG.REFRESH_TOKEN_STORAGE_KEY, refreshTokenValue)
 
-    // 同时存储到 cookie，用于 middleware
-    // 设置过期时间为7天
+    // Also store in cookie for middleware
+    // Set expiration to 7 days
     const expiryDate = new Date()
     expiryDate.setDate(expiryDate.getDate() + 7)
 
-    // 安全地设置 cookie
+    // Securely set cookie
     document.cookie = `${AUTH_CONFIG.TOKEN_STORAGE_KEY}=${accessToken}; expires=${expiryDate.toUTCString()}; path=/; secure; samesite=strict`
     document.cookie = `${AUTH_CONFIG.REFRESH_TOKEN_STORAGE_KEY}=${refreshTokenValue}; expires=${expiryDate.toUTCString()}; path=/; secure; samesite=strict`
 
     setIsAuthenticated(true)
-    // 这里可以解析 JWT 获取用户信息，或者发起请求获取用户信息
-    setUser({ email: 'user@example.com' }) // 示例，实际应获取真实用户信息
+    // Can parse JWT to get user info here, or make a request to get user info
+    setUser({ email: 'user@example.com' }) // Example, should get real user info
   }
 
-  // 登出并清除 token
+  // Logout and clear token
   const logout = () => {
     if (typeof window === 'undefined') return
 
-    // 清除 localStorage
+    // Clear localStorage
     localStorage.removeItem(AUTH_CONFIG.TOKEN_STORAGE_KEY)
     localStorage.removeItem(AUTH_CONFIG.REFRESH_TOKEN_STORAGE_KEY)
 
-    // 清除 cookie
+    // Clear cookie
     document.cookie = `${AUTH_CONFIG.TOKEN_STORAGE_KEY}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`
     document.cookie = `${AUTH_CONFIG.REFRESH_TOKEN_STORAGE_KEY}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`
 
@@ -72,7 +72,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     router.push('/login')
   }
 
-  // 初始化检查认证状态
+  // Initialize authentication check
   useEffect(() => {
     const initAuth = async () => {
       try {
@@ -85,22 +85,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           return
         }
 
-        // 如果有token，则视为已认证
+        // If there's a token, consider as authenticated
         if (token) {
           setIsAuthenticated(true)
-          // 这里应该加入获取用户信息的逻辑
-          setUser({ email: 'user@example.com' }) // 示例，实际应获取真实用户信息
+          // Should add logic to get user information here
+          setUser({ email: 'user@example.com' }) // Example, should get real user info
         }
-        // 如果token过期但有刷新token，尝试刷新
+        // If token is expired but we have refresh token, try to refresh
         else if (storedRefreshToken) {
           try {
             const result = await refreshToken(storedRefreshToken)
             localStorage.setItem(AUTH_CONFIG.TOKEN_STORAGE_KEY, result.access_token)
             setIsAuthenticated(true)
-            // 同样，这里应该获取用户信息
+            // Similarly, should get user info here
             setUser({ email: 'user@example.com' })
           } catch {
-            // 刷新失败，清除所有token
+            // Refresh failed, clear all tokens
             localStorage.removeItem(AUTH_CONFIG.TOKEN_STORAGE_KEY)
             localStorage.removeItem(AUTH_CONFIG.REFRESH_TOKEN_STORAGE_KEY)
           }

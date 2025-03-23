@@ -71,8 +71,8 @@ export default function LoginPage() {
       // Use AuthContext to login
       login(result.access_token, result.refresh_token)
 
-      // 获取URL参数 - 使用Next.js推荐的方式
-      // 需要获取URL中的redirect参数
+      // Get URL parameters - using the recommended Next.js approach
+      // Need to get the redirect parameter from the URL
       let redirectPath = '/'
 
       if (typeof window !== 'undefined') {
@@ -83,9 +83,9 @@ export default function LoginPage() {
         }
       }
 
-      // 增加一个短暂延迟，确保token已被正确设置
+      // Add a brief delay to ensure the token is properly set
       setTimeout(() => {
-        // 使用replace而不是push，避免浏览器历史堆栈问题
+        // Use replace instead of push to avoid browser history stack issues
         router.replace(redirectPath)
       }, 100)
     } catch (err) {

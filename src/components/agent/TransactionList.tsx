@@ -12,10 +12,10 @@ import { ResponsiveDataView, Column } from '@/components/ui/responsive-data-view
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 
-// 交易类型
+// Transaction types
 type TransactionType = 'income' | 'expense'
 
-// 交易记录接口
+// Transaction interface
 interface Transaction {
   id: string
   date: string
@@ -25,7 +25,7 @@ interface Transaction {
   category: string
 }
 
-// 模拟交易数据
+// Mock transaction data
 const mockTransactions: Transaction[] = [
   {
     id: 'tx1',
@@ -82,7 +82,7 @@ export default function TransactionList({
     limit ? mockTransactions.slice(0, limit) : mockTransactions
   )
 
-  // 格式化日期
+  // Format date
   const formatDate = (dateString: string): string => {
     const date = new Date(dateString)
     return date.toLocaleDateString('en-US', {
@@ -92,7 +92,7 @@ export default function TransactionList({
     })
   }
 
-  // 格式化金额和类型
+  // Format amount and type
   const formatAmount = (amount: number, type: TransactionType): React.ReactElement => {
     const formattedAmount = `$${amount.toFixed(2)}`
     return type === 'income'
@@ -100,7 +100,7 @@ export default function TransactionList({
       : <span className="text-red-600 dark:text-red-400">-{formattedAmount}</span>
   }
 
-  // 定义列
+  // Define columns
   const columns: Column<Transaction>[] = [
     {
       accessorKey: 'date',

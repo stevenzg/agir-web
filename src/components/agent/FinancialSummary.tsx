@@ -11,7 +11,7 @@ import {
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 
-// 模拟财务数据类型
+// Mock financial data type
 interface FinancialData {
   balance: number
   monthlyIncome: number
@@ -19,7 +19,7 @@ interface FinancialData {
   currency: string
 }
 
-// 模拟数据
+// Mock data
 const mockFinancialData: FinancialData = {
   balance: 2580.75,
   monthlyIncome: 1250.00,
@@ -30,7 +30,7 @@ const mockFinancialData: FinancialData = {
 export default function FinancialSummary({ agentId }: { agentId?: string }) {
   const [financialData] = useState<FinancialData>(mockFinancialData)
 
-  // 格式化货币显示
+  // Format currency display
   const formatCurrency = (amount: number): string => {
     return `${financialData.currency}${amount.toFixed(2)}`
   }

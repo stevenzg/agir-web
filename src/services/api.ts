@@ -9,7 +9,7 @@ export const api = axios.create({
   }
 })
 
-// 请求拦截器，添加 token
+// Request interceptor, add token
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('accessToken')
@@ -23,23 +23,23 @@ api.interceptors.request.use(
   }
 )
 
-// 响应拦截器
+// Response interceptor
 api.interceptors.response.use(
   (response) => {
     return response
   },
   (error) => {
-    // 处理错误状态码
+    // Handle error status codes
     if (error.response) {
       switch (error.response.status) {
         case 401:
-          // 可以在这里处理身份验证错误
+          // Handle authentication errors here
           break
         case 403:
-          // 权限错误
+          // Permission error
           break
         case 500:
-          // 服务器错误
+          // Server error
           break
       }
     }

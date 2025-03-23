@@ -3,21 +3,21 @@ import type { NextRequest } from 'next/server'
 import { AUTH_CONFIG } from './config'
 
 export function middleware(request: NextRequest) {
-  // 从cookie中获取认证令牌
+  // Get authentication token from cookie
   const token = request.cookies.get(AUTH_CONFIG.TOKEN_STORAGE_KEY)?.value
   
-  // 如果没有从cookie获取到token，尝试从请求头获取
+  // If no token in cookie, try to get from request header
   const authHeader = request.headers.get('Authorization')
   const tokenFromHeader = authHeader?.startsWith('Bearer ') 
     ? authHeader.substring(7) 
     : null
   
-  // 使用cookie或头部中的token
+  // Use token from cookie or header
   const hasValidToken = Boolean(token || tokenFromHeader)
   
   const path = request.nextUrl.pathname
   
-  // 定义需要保护的路径
+  // Define protected paths
   const protectedPaths = [
     '/agents',
     '/edit-agent',
@@ -28,12 +28,12 @@ export function middleware(request: NextRequest) {
     '/dashboard'
   ]
   
-  // 检查当前路径是否需要保护
+  // Check if current path needs protection
   const isProtectedPath = protectedPaths.some(protectedPath => 
     path === protectedPath || path.startsWith(`${protectedPath}/`)
   )
   
-  // 如果是受保护的路径但没有认证令牌，重定向到首页
+  // If it's a protected path but no authentication token, redirect to homepage
   if (isProtectedPath && !hasValidToken) {
     const url = request.nextUrl.clone()
     url.pathname = '/'
@@ -44,10 +44,10 @@ export function middleware(request: NextRequest) {
   return NextResponse.next()
 }
 
-// 配置中间件应用的路径
+// Configure paths where middleware applies
 export const config = {
   matcher: [
-    // 需要保护的路径
+    // Paths that need protection
     '/agents/:path*',
     '/edit-agent/:path*',
     '/customize-face/:path*',

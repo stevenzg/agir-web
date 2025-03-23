@@ -159,7 +159,7 @@ export async function searchUsers(query: string): Promise<User[]> {
       return [];
     }
     
-    // 确保返回的是数组格式
+    // Ensure the returned data is in array format
     if (!data) return [];
     if (Array.isArray(data)) return data;
     if (typeof data === 'object' && data !== null) return [data]; 

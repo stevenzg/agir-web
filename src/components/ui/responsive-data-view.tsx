@@ -56,7 +56,7 @@ export interface ResponsiveDataViewProps<T> {
 }
 
 /**
- * 安全地获取对象属性值
+ * Safely get object property value
  */
 function getPropertyValue<T>(obj: T, key: string): unknown {
   return key in (obj as Record<string, unknown>)
@@ -134,7 +134,7 @@ export function ResponsiveDataView<T>({
     )
   }
 
-  // 桌面视图 - 表格
+  // Desktop view - Table
   if (isDesktop) {
     return (
       <div className={cn("w-full", className)}>
@@ -226,7 +226,7 @@ export function ResponsiveDataView<T>({
     )
   }
 
-  // 移动视图 - 卡片列表
+  // Mobile view - Card list
   return (
     <div className={cn("w-full space-y-4", className)}>
       {caption && <h2 className="text-lg font-semibold mb-2">{caption}</h2>}
