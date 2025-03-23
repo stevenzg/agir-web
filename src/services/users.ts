@@ -1,5 +1,6 @@
 import { API_BASE_URL, REQUEST_TIMEOUT } from '@/config';
 import { ApiError } from './auth';
+import { api } from './api'
 
 export interface UserCreateRequest {
   first_name: string;
@@ -10,14 +11,36 @@ export interface UserCreateRequest {
 export interface User {
   id: string;
   email: string;
-  first_name: string;
-  last_name: string;
-  avatar?: string;
-  description?: string;
+  first_name: string | null;
+  last_name: string | null;
+  avatar: string | null;
+  description: string | null;
   is_active: boolean;
   created_at: string;
   created_by?: string;
-  last_login_at?: string;
+  last_login_at: string | null;
+  llm_model: string | null;
+  embedding_model: string | null;
+}
+
+export interface UserCreateData {
+  first_name: string;
+  last_name: string;
+  llm_model?: string;
+  embedding_model?: string;
+}
+
+export interface ModelInfo {
+  id: string;
+  name: string;
+  value: string;
+  category: 'llm' | 'embedding';
+  provider: string;
+}
+
+export interface ModelsResponse {
+  llm_models: ModelInfo[];
+  embedding_models: ModelInfo[];
 }
 
 /**
@@ -85,35 +108,9 @@ async function handleResponse<T>(response: Response): Promise<T> {
  * @param userData User data including first_name and last_name
  * @returns The created user
  */
-export async function createUser(userData: UserCreateRequest): Promise<User> {
-  const accessToken = localStorage.getItem('accessToken');
-  
-  if (!accessToken) {
-    throw new ApiError('Not authenticated', 'not_authenticated');
-  }
-
-  try {
-    const response = await fetchWithTimeout(`${API_BASE_URL}/users/`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(userData),
-    });
-
-    return await handleResponse<User>(response);
-  } catch (error) {
-    if (error instanceof ApiError) {
-      throw error;
-    }
-    
-    if (error instanceof Error) {
-      throw new ApiError(error.message || 'Failed to create user', 'create_user_failed');
-    }
-    
-    throw new ApiError('Failed to create user', 'create_user_failed');
-  }
+export async function createUser(userData: UserCreateData): Promise<User> {
+  const response = await api.post('/users', userData)
+  return response.data
 }
 
 /**
@@ -121,33 +118,8 @@ export async function createUser(userData: UserCreateRequest): Promise<User> {
  * @returns List of users
  */
 export async function getUsers(): Promise<User[]> {
-  const accessToken = localStorage.getItem('accessToken');
-  
-  if (!accessToken) {
-    throw new ApiError('Not authenticated', 'not_authenticated');
-  }
-
-  try {
-    const response = await fetchWithTimeout(`${API_BASE_URL}/users/`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
-      },
-    });
-
-    return await handleResponse<User[]>(response);
-  } catch (error) {
-    if (error instanceof ApiError) {
-      throw error;
-    }
-    
-    if (error instanceof Error) {
-      throw new ApiError(error.message || 'Failed to fetch users', 'fetch_users_failed');
-    }
-    
-    throw new ApiError('Failed to fetch users', 'fetch_users_failed');
-  }
+  const response = await api.get('/users')
+  return response.data
 }
 
 /**
@@ -197,4 +169,19 @@ export async function searchUsers(query: string): Promise<User[]> {
     console.error('Error searching users:', error);
     return [];
   }
+}
+
+export async function getModels(): Promise<ModelsResponse> {
+  const response = await api.get('/models')
+  return response.data
+}
+
+export async function getUser(id: string): Promise<User> {
+  const response = await api.get(`/users/${id}`)
+  return response.data
+}
+
+export async function updateUser(id: string, userData: Partial<UserCreateData>): Promise<User> {
+  const response = await api.put(`/users/${id}`, userData)
+  return response.data
 } 

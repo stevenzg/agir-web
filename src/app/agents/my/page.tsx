@@ -9,15 +9,18 @@ import { formatDate } from '@/lib/utils'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { createUser, getUsers, User } from '@/services/users'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { createUser, getUsers, getModels, User, ModelInfo } from '@/services/users'
 import { toast } from 'sonner'
 
 export default function MyAgentsPage() {
   const [agents, setAgents] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
   const [showCreateDialog, setShowCreateDialog] = useState(false)
-  const [newAgent, setNewAgent] = useState({ firstName: '', lastName: '' })
+  const [newAgent, setNewAgent] = useState({ firstName: '', lastName: '', llmModel: '', embeddingModel: '' })
   const [creating, setCreating] = useState(false)
+  const [models, setModels] = useState<{ llm: ModelInfo[], embedding: ModelInfo[] }>({ llm: [], embedding: [] })
+  const [loadingModels, setLoadingModels] = useState(false)
   const searchParams = useSearchParams()
   const router = useRouter()
 
@@ -38,6 +41,37 @@ export default function MyAgentsPage() {
 
     loadAgents()
   }, [])
+
+  // Load models when the dialog opens
+  useEffect(() => {
+    async function loadModels() {
+      if (showCreateDialog) {
+        try {
+          setLoadingModels(true)
+          const modelData = await getModels()
+          setModels({
+            llm: modelData.llm_models,
+            embedding: modelData.embedding_models
+          })
+
+          // Set default models if available
+          if (modelData.llm_models.length > 0) {
+            setNewAgent(prev => ({ ...prev, llmModel: modelData.llm_models[0].value }))
+          }
+          if (modelData.embedding_models.length > 0) {
+            setNewAgent(prev => ({ ...prev, embeddingModel: modelData.embedding_models[0].value }))
+          }
+        } catch (error) {
+          console.error('Failed to load models:', error)
+          toast.error('Failed to load available models. Please try again.')
+        } finally {
+          setLoadingModels(false)
+        }
+      }
+    }
+
+    loadModels()
+  }, [showCreateDialog])
 
   // Check for the "createAgent" query parameter to open the dialog
   useEffect(() => {
@@ -69,13 +103,19 @@ export default function MyAgentsPage() {
     setNewAgent(prev => ({ ...prev, [name]: value }))
   }
 
+  const handleSelectChange = (name: string, value: string) => {
+    setNewAgent(prev => ({ ...prev, [name]: value }))
+  }
+
   const handleCreateAgent = async () => {
     try {
       setCreating(true)
 
       const userData = {
         first_name: newAgent.firstName,
-        last_name: newAgent.lastName
+        last_name: newAgent.lastName,
+        llm_model: newAgent.llmModel || undefined,
+        embedding_model: newAgent.embeddingModel || undefined
       }
 
       const createdUser = await createUser(userData)
@@ -85,7 +125,7 @@ export default function MyAgentsPage() {
 
       // Close the dialog and reset the form
       setShowCreateDialog(false)
-      setNewAgent({ firstName: '', lastName: '' })
+      setNewAgent({ firstName: '', lastName: '', llmModel: '', embeddingModel: '' })
 
       toast.success('Human agent created successfully!')
     } catch (error) {
@@ -146,6 +186,52 @@ export default function MyAgentsPage() {
                 className="col-span-3"
                 placeholder="Enter last name"
               />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="llmModel" className="text-right">
+                LLM Model
+              </Label>
+              <div className="col-span-3">
+                <Select
+                  value={newAgent.llmModel}
+                  onValueChange={(value) => handleSelectChange('llmModel', value)}
+                  disabled={loadingModels || models.llm.length === 0}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder={loadingModels ? "Loading models..." : "Select LLM model"} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {models.llm.map((model) => (
+                      <SelectItem key={model.value} value={model.value}>
+                        {model.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="embeddingModel" className="text-right">
+                Embedding
+              </Label>
+              <div className="col-span-3">
+                <Select
+                  value={newAgent.embeddingModel}
+                  onValueChange={(value) => handleSelectChange('embeddingModel', value)}
+                  disabled={loadingModels || models.embedding.length === 0}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder={loadingModels ? "Loading models..." : "Select embedding model"} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {models.embedding.map((model) => (
+                      <SelectItem key={model.value} value={model.value}>
+                        {model.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </div>
           <DialogFooter>
@@ -243,6 +329,18 @@ export default function MyAgentsPage() {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                         </svg>
                         <span>{agent.email}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                        <span>{agent.llm_model || 'Default LLM'}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+                        </svg>
+                        <span>{agent.embedding_model || 'Default Embedding'}</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
