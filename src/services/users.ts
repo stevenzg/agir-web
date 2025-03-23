@@ -76,34 +76,6 @@ async function fetchWithTimeout(url: string, options: RequestInit): Promise<Resp
 }
 
 /**
- * Handle API response and parse errors
- */
-async function handleResponse<T>(response: Response): Promise<T> {
-  if (response.ok) {
-    return response.json();
-  }
-
-  // Handle error response
-  let errorData;
-  try {
-    errorData = await response.json();
-  } catch {
-    // If unable to parse as JSON, use status text
-    throw new ApiError(
-      response.statusText || 'Request failed',
-      'request_failed',
-    );
-  }
-
-  // Build standardized error object
-  const message = errorData.detail || errorData.message || 'Request failed';
-  const code = errorData.code || `http_${response.status}`;
-  const details = errorData.errors || errorData.details;
-
-  throw new ApiError(message, code, details);
-}
-
-/**
  * Create a new user (human agent)
  * @param userData User data including first_name and last_name
  * @returns The created user
